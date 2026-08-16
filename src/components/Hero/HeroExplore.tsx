@@ -1,4 +1,10 @@
-export default function HeroExplore({ visible }: { visible: boolean }) {
+"use client";
+
+interface HeroExploreProps {
+  visible: boolean;
+}
+
+export default function HeroExplore({ visible }: HeroExploreProps) {
   return (
     <div
       className={`absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 transition-all duration-1000 ease-out ${
@@ -16,7 +22,13 @@ export default function HeroExplore({ visible }: { visible: boolean }) {
         fill="none"
         className="text-white/30 animate-[subtleDrift_3s_ease-in-out_infinite]"
       >
-        <path d="M1 4L6 9L11 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          d="M1 4L6 9L11 4"
+          stroke="currentColor"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     </div>
   );

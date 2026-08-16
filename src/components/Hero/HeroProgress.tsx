@@ -11,14 +11,24 @@ export default function HeroProgress({ sceneIndex, visible }: HeroProgressProps)
 
   return (
     <div
-      className={`absolute bottom-8 md:bottom-10 right-6 md:right-10 lg:right-16 z-20 transition-all duration-1000 ease-out ${
+      className={`absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-3 transition-all duration-1000 ease-out ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
       }`}
       style={{ transitionDelay: "1400ms" }}
     >
-      <span className="text-[11px] md:text-[12px] font-normal tracking-[0.15em] text-white/50 tabular-nums">
+      <span className="font-[family-name:var(--font-jetbrains-mono)] text-[11px] text-white/70 tracking-wider">
         {current} / {total}
       </span>
+      <div className="flex items-center gap-[6px]">
+        {scenes.map((_, i) => (
+          <div
+            key={i}
+            className={`w-[16px] h-[2px] transition-colors duration-500 ${
+              i === sceneIndex ? "bg-lime-400" : "bg-white/30"
+            }`}
+          />
+        ))}
+      </div>
     </div>
   );
 }

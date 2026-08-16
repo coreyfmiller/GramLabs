@@ -1,78 +1,51 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+const NAV_LINKS = ["TOOLS", "PACK LAB", "TRIP PLANNER", "GEAR COMPARE", "TRAILS"];
 
-const navLinks = ["GEAR", "FIELD NOTES", "ABOUT"];
+interface HeroNavigationProps {
+  visible: boolean;
+}
 
-export default function HeroNavigation({ visible }: { visible: boolean }) {
-  const [menuOpen, setMenuOpen] = useState(false);
-
+export default function HeroNavigation({ visible }: HeroNavigationProps) {
   return (
     <nav
-      className={`relative z-20 flex items-center justify-between w-full pt-8 px-6 md:px-10 lg:px-16 transition-opacity duration-1000 ease-out ${
-        visible ? "opacity-100" : "opacity-0"
+      className={`relative z-20 flex items-center justify-between px-6 md:px-10 pt-6 md:pt-8 transition-all duration-1000 ease-out ${
+        visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
       }`}
       style={{ transitionDelay: "200ms" }}
     >
       {/* Logo */}
-      <Link
-        href="/"
-        className="text-[15px] md:text-[17px] font-medium tracking-[0.2em] text-white/90 uppercase"
-      >
-        RIDGELINE
-      </Link>
+      <span className="text-[14px] md:text-[16px] font-bold tracking-[0.2em] text-white">
+        GRAMLAB.AI
+      </span>
 
-      {/* Desktop nav */}
-      <div className="hidden md:flex items-center gap-10">
-        {navLinks.map((link) => (
+      {/* Desktop nav links */}
+      <div className="hidden md:flex items-center gap-8">
+        {NAV_LINKS.map((link) => (
           <a
             key={link}
             href="#"
-            className="text-[13px] font-normal tracking-[0.15em] text-white/60 hover:text-white/90 transition-colors duration-300 uppercase"
+            className="text-[12px] font-medium tracking-[0.15em] text-white hover:text-white/80 transition-colors duration-300"
           >
             {link}
           </a>
         ))}
-        <button
-          className="ml-4 text-white/60 hover:text-white/90 transition-colors duration-300"
-          aria-label="Menu"
+        <a
+          href="#"
+          className="text-[12px] font-bold tracking-[0.15em] text-white hover:text-white/80 transition-colors duration-300 ml-4"
         >
-          <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
-            <line x1="0" y1="1" x2="20" y2="1" stroke="currentColor" strokeWidth="1.5" />
-            <line x1="0" y1="7" x2="20" y2="7" stroke="currentColor" strokeWidth="1.5" />
-            <line x1="0" y1="13" x2="20" y2="13" stroke="currentColor" strokeWidth="1.5" />
-          </svg>
-        </button>
+          BUILD MY PACK →
+        </a>
       </div>
 
-      {/* Mobile menu icon */}
+      {/* Mobile hamburger */}
       <button
-        className="md:hidden text-white/70 hover:text-white/90 transition-colors"
-        onClick={() => setMenuOpen(!menuOpen)}
-        aria-label="Toggle menu"
+        className="md:hidden flex flex-col gap-[5px] p-1"
+        aria-label="Menu"
       >
-        <svg width="22" height="14" viewBox="0 0 22 14" fill="none">
-          <line x1="0" y1="1" x2="22" y2="1" stroke="currentColor" strokeWidth="1.5" />
-          <line x1="0" y1="7" x2="22" y2="7" stroke="currentColor" strokeWidth="1.5" />
-          <line x1="0" y1="13" x2="22" y2="13" stroke="currentColor" strokeWidth="1.5" />
-        </svg>
+        <span className="block w-5 h-[1.5px] bg-white" />
+        <span className="block w-5 h-[1.5px] bg-white" />
       </button>
-
-      {/* Mobile dropdown */}
-      {menuOpen && (
-        <div className="absolute top-full right-6 mt-4 flex flex-col gap-4 md:hidden">
-          {navLinks.map((link) => (
-            <a
-              key={link}
-              href="#"
-              className="text-[13px] tracking-[0.15em] text-white/70 uppercase"
-            >
-              {link}
-            </a>
-          ))}
-        </div>
-      )}
     </nav>
   );
 }

@@ -17,10 +17,10 @@ export default function HeroMetadata({ sceneIndex, visible }: HeroMetadataProps)
       }`}
       style={{ transitionDelay: "1400ms" }}
     >
-      <p className="text-[11px] md:text-[12px] font-normal tracking-[0.2em] text-white/70 uppercase">
+      <p className="text-[11px] md:text-[12px] font-medium tracking-[0.2em] text-white uppercase">
         {scene.location}
       </p>
-      <p className="mt-1 text-[10px] md:text-[11px] font-normal tracking-[0.15em] text-white/45 uppercase transition-opacity duration-700">
+      <p className="mt-1 text-[10px] md:text-[11px] font-normal tracking-[0.15em] text-white/70 uppercase transition-opacity duration-700">
         {scene.label}
       </p>
     </div>
