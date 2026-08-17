@@ -310,7 +310,7 @@ export const usePackStore = create<PackStore>()(
         const state = get();
         const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
         if (!loadout) return 0;
-        const big3Categories = ["shelter", "insulation", "sleeping-pad", "sleep-system", "pack"];
+        const big3Categories = ["shelter", "sleep", "pack"];
         return loadout.items
           .filter((i) => i.status === "packed" && big3Categories.includes(i.item.category))
           .reduce((sum, i) => sum + i.item.weightOz * i.quantity, 0);

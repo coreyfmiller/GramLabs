@@ -34,7 +34,7 @@ export function StatsPanel() {
   const underTarget = baseWeight <= UL_THRESHOLD_OZ;
 
   // Compute Big 3 items for display
-  const big3Categories = ["shelter", "insulation", "sleeping-pad", "sleep-system", "pack"];
+  const big3Categories = ["shelter", "sleep", "pack"];
   const big3Items = items
     .filter((i) => i.status === "packed" && big3Categories.includes(i.item.category))
     .sort((a, b) => b.item.weightOz * b.quantity - a.item.weightOz * a.quantity)

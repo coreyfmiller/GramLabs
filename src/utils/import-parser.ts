@@ -15,16 +15,11 @@ export function mapCategory(raw: string): GearCategory {
   const s = raw.toLowerCase().trim();
 
   if (/\b(big\s*3|shelter|tent|tarp|hammock|bivy)\b/.test(s)) return "shelter";
-  if (/\b(insulation|quilt|sleeping\s*bag|down\s*bag|underquilt|top\s*quilt)\b/.test(s)) return "insulation";
-  if (/\b(pad|mattress|foam|sleeping\s*pad|mat)\b/.test(s)) return "sleeping-pad";
-  if (/\b(sleep|sleeping)\b/.test(s)) return "insulation"; // fallback for generic "sleep system"
+  if (/\b(insulation|quilt|sleeping\s*bag|down\s*bag|underquilt|top\s*quilt|pad|mattress|foam|sleeping\s*pad|mat|sleep|sleeping)\b/.test(s)) return "sleep";
   if (/\b(pack|backpack|rucksack)\b/.test(s)) return "pack";
+  if (/\b(cook|stove|food|eating|kitchen|pot|water|hydration|filter|purif)\b/.test(s)) return "kitchen";
+  if (/\b(electr|power|light|headlamp|battery|phone|solar|nav|maps?|compass|gps)\b/.test(s)) return "electronics";
   if (/\b(clothing|clothes|worn|apparel|layers?)\b/.test(s)) return "clothing";
-  if (/\b(cook|stove|food|eating|kitchen|pot)\b/.test(s)) return "cooking";
-  if (/\b(water|hydration|filter|purif)\b/.test(s)) return "water";
-  if (/\b(electr|power|light|headlamp|battery|phone|solar)\b/.test(s)) return "electronics";
-  if (/\b(hygiene|toiletries|toilet|soap)\b/.test(s)) return "hygiene";
-  if (/\b(nav|maps?|compass|gps)\b/.test(s)) return "navigation";
   if (/\b(safety|first\s*aid|emergency|repair)\b/.test(s)) return "safety";
 
   return "accessories";

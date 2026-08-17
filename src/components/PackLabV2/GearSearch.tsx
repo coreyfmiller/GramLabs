@@ -14,15 +14,11 @@ import { cn } from "@/lib/utils";
 
 const CATEGORY_ORDER: GearCategory[] = [
   "shelter",
-  "insulation",
-  "sleeping-pad",
+  "sleep",
   "pack",
-  "clothing",
-  "cooking",
-  "water",
+  "kitchen",
   "electronics",
-  "hygiene",
-  "navigation",
+  "clothing",
   "safety",
   "accessories",
 ];

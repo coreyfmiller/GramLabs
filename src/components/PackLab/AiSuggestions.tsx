@@ -81,7 +81,7 @@ function generateSuggestions(items: PackItem[]): Suggestion[] {
   });
 
   // Check for missing essentials
-  const hasWater = items.some((i) => i.item.category === "water");
+  const hasWater = items.some((i) => i.item.category === "kitchen");
   const hasSafety = items.some((i) => i.item.category === "safety");
 
   if (!hasWater && items.length > 3) {
