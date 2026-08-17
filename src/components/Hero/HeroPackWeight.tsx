@@ -7,7 +7,7 @@ interface HeroPackWeightProps {
 export default function HeroPackWeight({ visible }: HeroPackWeightProps) {
   return (
     <div
-      className={`absolute right-6 md:right-10 lg:right-16 bottom-[100px] md:bottom-[110px] z-20 transition-all duration-1000 ease-out ${
+      className={`absolute right-6 md:right-10 lg:right-16 bottom-[100px] md:bottom-[110px] z-20 hidden md:block transition-all duration-1000 ease-out ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
       }`}
       style={{ transitionDelay: "1200ms" }}

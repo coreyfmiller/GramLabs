@@ -35,10 +35,10 @@ export default function HeroContent({ sceneIndex, visible }: HeroContentProps) {
   const scene = scenes[displayIndex];
 
   return (
-    <div className="absolute left-6 md:left-10 lg:left-16 bottom-[15%] flex flex-col items-start text-left z-20 pointer-events-none max-w-[520px]">
+    <div className="absolute left-4 md:left-10 lg:left-16 bottom-[18%] md:bottom-[15%] flex flex-col items-start text-left z-20 pointer-events-none max-w-[85%] md:max-w-[520px]">
       {/* Technical label */}
       <span
-        className={`text-[13px] md:text-[15px] font-bold tracking-[0.3em] text-lime-400 uppercase mb-5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] transition-all duration-700 ease-out ${
+        className={`text-[11px] md:text-[15px] font-bold tracking-[0.3em] text-lime-400 uppercase mb-3 md:mb-5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] transition-all duration-700 ease-out ${
           contentVisible
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-3"
@@ -50,7 +50,7 @@ export default function HeroContent({ sceneIndex, visible }: HeroContentProps) {
 
       {/* Headline */}
       <h1
-        className={`text-[40px] md:text-[60px] lg:text-[72px] font-bold tracking-tight leading-[1.05] text-white uppercase mb-5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] transition-all duration-700 ease-out ${
+        className={`text-[28px] md:text-[60px] lg:text-[72px] font-bold tracking-tight leading-[1.05] text-white uppercase mb-3 md:mb-5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] transition-all duration-700 ease-out ${
           contentVisible
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-3"
@@ -62,7 +62,7 @@ export default function HeroContent({ sceneIndex, visible }: HeroContentProps) {
 
       {/* Copy */}
       <p
-        className={`text-[17px] md:text-[20px] lg:text-[21px] font-normal leading-relaxed text-white/90 mb-7 max-w-[480px] drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)] transition-all duration-700 ease-out ${
+        className={`text-[14px] md:text-[20px] lg:text-[21px] font-normal leading-relaxed text-white/90 mb-5 md:mb-7 max-w-[480px] drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)] transition-all duration-700 ease-out ${
           contentVisible
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-3"
@@ -74,7 +74,7 @@ export default function HeroContent({ sceneIndex, visible }: HeroContentProps) {
 
       {/* CTA */}
       <span
-        className={`text-[15px] md:text-[16px] font-bold tracking-[0.2em] text-white uppercase pointer-events-auto cursor-pointer hover:text-lime-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] transition-all duration-700 ease-out ${
+        className={`text-[13px] md:text-[16px] font-bold tracking-[0.2em] text-white uppercase pointer-events-auto cursor-pointer hover:text-lime-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] transition-all duration-700 ease-out ${
           contentVisible
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-3"

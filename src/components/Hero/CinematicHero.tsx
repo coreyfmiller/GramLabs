@@ -29,8 +29,8 @@ export default function CinematicHero() {
       </div>
 
       {/* Cinematic video window */}
-      <div className="relative flex-1 flex items-center justify-center px-4 md:px-8">
-        <div className="relative w-full h-full max-h-[75vh] rounded-2xl overflow-hidden ring-1 ring-white/[0.06]">
+      <div className="relative flex-1 flex items-center justify-center px-3 md:px-8">
+        <div className="relative w-full h-full max-h-[65vh] md:max-h-[75vh] rounded-xl md:rounded-2xl overflow-hidden ring-1 ring-white/[0.06]">
           {/* Video layer */}
           <HeroVideoSequence onSceneChange={handleSceneChange} />
 
@@ -39,7 +39,7 @@ export default function CinematicHero() {
             {/* Subtle overall darken */}
             <div className="absolute inset-0 bg-black/[0.08]" />
             {/* Strong bottom gradient for text readability */}
-            <div className="absolute inset-x-0 bottom-0 h-[50%] bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-[60%] md:h-[50%] bg-gradient-to-t from-black/70 via-black/35 to-transparent" />
             {/* Edge fade to blend into background */}
             <div className="absolute inset-0 shadow-[inset_0_0_80px_30px_rgba(0,0,0,0.15)]" />
           </div>

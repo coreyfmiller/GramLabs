@@ -82,7 +82,7 @@ export default function HeroVideoSequence({ onSceneChange }: HeroVideoSequencePr
   }, []);
 
   const videoBaseStyles =
-    "absolute inset-[-10%] w-[120%] h-[120%] object-cover transition-opacity duration-1000 ease-in-out";
+    "absolute inset-0 w-full h-full md:inset-[-10%] md:w-[120%] md:h-[120%] object-cover transition-opacity duration-1000 ease-in-out";
 
   const isAActive = activeSlot === "A";
   const showA = (isAActive && !transitioning) || (!isAActive && transitioning);
