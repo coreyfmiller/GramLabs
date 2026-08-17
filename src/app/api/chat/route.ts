@@ -58,10 +58,20 @@ FORMATTING RULES (use markdown):
 - Use **bold** for product names and key numbers
 - Use bullet points (- ) for lists of gear
 - Use ### headers to organize sections (e.g., ### Shelter, ### Sleep System)
-- When listing gear, format as: **Brand Name** (weight) — $price — reason
-- For comparisons, use a clear side-by-side format
 - Keep paragraphs short (2-3 sentences max)
-- End with a clear recommendation or next step`;
+- End with a clear recommendation or next step
+
+GEAR RECOMMENDATIONS FORMAT:
+When recommending specific gear items, ALWAYS include a JSON code block with the items. Format exactly like this:
+
+\`\`\`gear
+[
+  {"category": "Shelter", "brand": "Durston", "name": "X-Mid Pro 1", "weight": "17.1 oz", "price": "$599", "reason": "Lightest full-coverage tent. Most popular on PCT."},
+  {"category": "Sleep", "brand": "Katabatic", "name": "Sawatch 15F", "weight": "24.6 oz", "price": "$509", "reason": "Highest rated quilt. Drafts-free to 15°F."}
+]
+\`\`\`
+
+You can include explanatory text BEFORE and AFTER the gear block. Always use the \`\`\`gear fence (not \`\`\`json). Include 1-15 items depending on what was asked. Each item MUST have: category, brand, name, weight, price, and reason.`;
 
 export async function POST(req: NextRequest) {
   try {

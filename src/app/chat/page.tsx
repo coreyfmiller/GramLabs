@@ -100,9 +100,7 @@ export default function ChatPage() {
                     {msg.content}
                   </div>
                 ) : (
-                  <div className="text-[14px] leading-relaxed prose-invert">
-                    <ReactMarkdown>{msg.content}</ReactMarkdown>
-                  </div>
+                  <ChatResponse content={msg.content} />
                 )}
               </div>
               {msg.role === "user" && (
@@ -204,3 +202,86 @@ const SUGGESTED_PROMPTS = [
   "Compare the EE Enigma vs Katabatic Palisade",
   "I need a complete beginner UL setup",
 ];
+
+interface GearCard {
+  category: string;
+  brand: string;
+  name: string;
+  weight: string;
+  price: string;
+  reason: string;
+}
+
+function ChatResponse({ content }: { content: string }) {
+  // Parse gear blocks from the response
+  const parts: Array<{ type: "text"; content: string } | { type: "gear"; items: GearCard[] }> = [];
+
+  const gearRegex = /```gear\s*\n([\s\S]*?)```/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = gearRegex.exec(content)) !== null) {
+    // Text before the gear block
+    if (match.index > lastIndex) {
+      const text = content.slice(lastIndex, match.index).trim();
+      if (text) parts.push({ type: "text", content: text });
+    }
+
+    // Parse the gear JSON
+    try {
+      const items = JSON.parse(match[1]) as GearCard[];
+      parts.push({ type: "gear", items });
+    } catch {
+      // If JSON parsing fails, treat as text
+      parts.push({ type: "text", content: match[0] });
+    }
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Remaining text after last gear block
+  const remaining = content.slice(lastIndex).trim();
+  if (remaining) parts.push({ type: "text", content: remaining });
+
+  // If no gear blocks found, just render as markdown
+  if (parts.length === 0) {
+    parts.push({ type: "text", content });
+  }
+
+  return (
+    <div className="text-[14px] leading-relaxed space-y-4">
+      {parts.map((part, i) =>
+        part.type === "text" ? (
+          <div key={i} className="prose-invert">
+            <ReactMarkdown>{part.content}</ReactMarkdown>
+          </div>
+        ) : (
+          <div key={i} className="space-y-2">
+            {part.items.map((item, j) => (
+              <div
+                key={j}
+                className="flex items-start gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-3 hover:border-primary/30 transition-colors"
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    {item.category}
+                  </p>
+                  <p className="text-sm font-medium text-foreground">
+                    {item.brand} {item.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground/70 mt-1">
+                    {item.reason}
+                  </p>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="num text-sm font-medium text-primary">{item.weight}</p>
+                  <p className="num text-xs text-muted-foreground">{item.price}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )
+      )}
+    </div>
+  );
+}
