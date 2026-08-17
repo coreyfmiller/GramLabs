@@ -26,6 +26,7 @@ export default function HeroVideoSequence({ onSceneChange }: HeroVideoSequencePr
     const videoA = videoARef.current;
     if (!videoA) return;
     videoA.src = scenes[0].src;
+    videoA.playbackRate = 0.7;
     videoA.load();
     videoA.play().catch(() => {});
     onSceneChange?.(0);
@@ -35,6 +36,7 @@ export default function HeroVideoSequence({ onSceneChange }: HeroVideoSequencePr
   useEffect(() => {
     const inactiveVideo = activeSlot === "A" ? videoBRef.current : videoARef.current;
     if (!inactiveVideo) return;
+    inactiveVideo.playbackRate = 0.7;
     const nextSrc = scenes[nextSceneIndex].src;
     if (inactiveVideo.src !== window.location.origin + nextSrc) {
       inactiveVideo.src = nextSrc;
@@ -80,7 +82,7 @@ export default function HeroVideoSequence({ onSceneChange }: HeroVideoSequencePr
   }, []);
 
   const videoBaseStyles =
-    "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out";
+    "absolute inset-[-10%] w-[120%] h-[120%] object-cover transition-opacity duration-1000 ease-in-out";
 
   const isAActive = activeSlot === "A";
   const showA = (isAActive && !transitioning) || (!isAActive && transitioning);
