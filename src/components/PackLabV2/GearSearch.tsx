@@ -210,10 +210,14 @@ function ResultCard({
   inPack: boolean;
   onAdd: () => void;
 }) {
+  const [expanded, setExpanded] = useState(false);
   const color = CATEGORY_COLORS[gear.category];
 
   return (
-    <div className="glass group relative flex items-center gap-3 rounded-xl border border-white/10 p-3 transition-all duration-200 hover:border-primary/30 hover:bg-white/[0.06]">
+    <div
+      onClick={() => setExpanded(!expanded)}
+      className="glass group relative flex items-start gap-3 rounded-xl border border-white/10 p-3 transition-all duration-200 hover:border-primary/30 hover:bg-white/[0.06] cursor-pointer"
+    >
       <span
         aria-hidden="true"
         className="absolute inset-y-3 left-0 w-px opacity-0 transition-opacity group-hover:opacity-100"
@@ -221,7 +225,7 @@ function ResultCard({
       />
       <span
         aria-hidden="true"
-        className="mt-0.5 size-2 shrink-0 self-start rounded-full ring-2 ring-inset ring-black/40"
+        className="mt-1.5 size-2 shrink-0 rounded-full ring-2 ring-inset ring-black/40"
         style={{ backgroundColor: color }}
       />
 
@@ -232,7 +236,10 @@ function ResultCard({
         <p className="truncate text-base font-medium leading-tight text-foreground">
           {gear.name}
         </p>
-        <p className="mt-1 text-xs text-muted-foreground/70 line-clamp-2 leading-relaxed">
+        <p className={cn(
+          "mt-1 text-xs text-muted-foreground/70 leading-relaxed",
+          expanded ? "" : "line-clamp-1"
+        )}>
           {gear.description}
         </p>
         <div className="mt-1.5 flex items-center gap-2">
@@ -249,7 +256,7 @@ function ResultCard({
 
       <button
         type="button"
-        onClick={onAdd}
+        onClick={(e) => { e.stopPropagation(); onAdd(); }}
         aria-label={`Add ${gear.brand} ${gear.name} to pack`}
         className={cn(
           "flex size-8 shrink-0 items-center justify-center rounded-lg border transition-all duration-200 active:scale-95",
