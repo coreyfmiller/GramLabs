@@ -59,7 +59,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
+    const model = genAI.getGenerativeModel({
+      model: "gemini-3.5-flash",
+      systemInstruction: SYSTEM_PROMPT,
+    });
 
     const prompt = `Build me a complete backpacking kit with these constraints:
 - Budget: $${budget} maximum total
@@ -68,11 +71,10 @@ export async function POST(req: NextRequest) {
 - Sleep style: ${sleepStyle}
 - Priority: ${priority} (${priority === "lightest" ? "minimize weight above all" : priority === "value" ? "best weight savings per dollar spent" : "maximize comfort and livability"})
 
-Pick the best items from the database for this build. Include 15-25 items for a complete kit. Stay under budget. Respond with JSON only.`;
+Pick the best items from the database for this build. Include 15-25 items for a complete kit. Stay under budget. Be honest — if the budget is low, use ultra-budget and budget tier items. Respond with JSON only.`;
 
     const result = await model.generateContent({
       contents: [{ role: "user", parts: [{ text: prompt }] }],
-      systemInstruction: SYSTEM_PROMPT,
     });
 
     const responseText = result.response.text();

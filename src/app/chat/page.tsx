@@ -197,10 +197,10 @@ function EmptyState() {
 }
 
 const SUGGESTED_PROMPTS = [
-  "Build me a PCT kit under $500",
-  "What's the lightest 3-season shelter under $200?",
-  "Compare the EE Enigma vs Katabatic Palisade",
-  "I need a complete beginner UL setup",
+  "Build me a complete 3-season kit for $500",
+  "What's the best budget shelter under $150?",
+  "I have $300 total — what can I actually get?",
+  "Compare budget vs premium quilt options for the PCT",
 ];
 
 interface GearCard {

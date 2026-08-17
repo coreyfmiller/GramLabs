@@ -11,75 +11,46 @@ function buildGearContext(): string {
     const cat = CATEGORY_LABELS[item.category];
     if (!grouped.has(cat)) grouped.set(cat, []);
     grouped.get(cat)!.push(
-      `- ${item.brand} ${item.name}: ${item.weightOz}oz, $${item.priceUsd}, ${TIER_LABELS[item.tier]}${item.tempRating ? `, rated ${item.tempRating}°F` : ""}${item.rValue ? `, R-${item.rValue}` : ""}${item.volume ? `, ${item.volume}L` : ""} — ${item.description}`
+      `${item.brand} ${item.name} | ${item.weightOz}oz | $${item.priceUsd} | ${TIER_LABELS[item.tier]}${item.tempRating ? ` | ${item.tempRating}°F` : ""}${item.rValue ? ` | R-${item.rValue}` : ""}${item.volume ? ` | ${item.volume}L` : ""}`
     );
   });
 
   let context = "";
   grouped.forEach((items, category) => {
-    context += `\n## ${category}\n${items.join("\n")}\n`;
+    context += `\n${category}: ${items.join("; ")}\n`;
   });
 
   return context;
 }
 
-const SYSTEM_PROMPT = `You are HikeMind AI, an expert ultralight backpacking gear advisor. You have deep knowledge of the ultralight hiking community, gear specifications, trail conditions, and pack optimization.
+const SYSTEM_INSTRUCTION = `You are HikeMind AI, an expert ultralight backpacking gear advisor.
 
-You have access to the following gear database with real weights, prices, and specifications:
-
+DATABASE OF AVAILABLE GEAR:
 ${buildGearContext()}
 
-ADDITIONAL KNOWLEDGE:
-- The ultralight threshold is sub-10lb base weight (packed gear minus food, water, fuel)
-- Lightweight is 10-15lb base weight, traditional is 15-20lb+
-- The "Big 3" = pack + shelter + sleep system (quilt/bag + pad). This is where most weight lives.
-- PCT (Pacific Crest Trail) average starting base weight is 17.76lb (2025 survey, 790 hikers)
-- Most common PCT gear: ULA Circuit pack, Durston X-Mid Pro 1 tent, EE Enigma quilt, Therm-a-Rest XLite NXT pad
-- Highest-rated PCT gear: Atom Packs Prospector, Zpacks Duplex, Katabatic Sawatch, NEMO Tensor Extreme
-- 69.6% of PCT hikers use quilts over sleeping bags
-- 60% use non-freestanding (trekking pole) shelters
-- 92% wear trail runners (not boots), 94.5% non-waterproof
-- Warmth modeling: Quilt rating + pad R-value + clothing layers = actual comfort temp. R-4 pad adds ~10-15°F to your system.
-- For budget builds: A complete sub-10lb kit is possible for under $350 using AliExpress/budget gear.
-- For premium builds: Expect $2,000-4,000 for an optimized sub-8lb kit.
+RULES:
+- Only recommend items from the database above
+- Be honest about budget constraints — if $500 won't cover premium gear, recommend budget alternatives
+- Use lb+oz format for weights
+- When recommending gear, ALWAYS output a code block fenced with three backticks followed by "gear" containing a JSON array
+- Each item in the array must have: category, brand, name, weight, price, reason
+- For budget builds, recommend the cheapest viable option in each category
+- Give 2-3 options per category when comparing (budget/mid/premium)
+- Group recommendations by category
+- Keep text explanations brief — the gear cards are the main content
+- Be real: a $500 budget means AliExpress tents and budget quilts, not Zpacks and Katabatic
 
-RESPONSE GUIDELINES:
-- Be specific: recommend actual products with weights, prices, and tier
-- Be opinionated: say what YOU would carry and why
-- Consider the user's budget, trail, season, and experience level
-- Flag safety concerns (no water treatment, insufficient warmth, missing essentials)
-- Use lb+oz format for weights (e.g., "2 lb 6 oz" not "2.38 lb")
-- Keep responses concise but thorough — hikers want facts, not fluff
-- When suggesting a full kit, organize by category and show total base weight + total cost
-- If comparing items, show weight savings and cost difference
-- Reference community data when relevant ("87% of PCT hikers use X")
+RESPONSE STRUCTURE:
+1. Brief intro (1-2 sentences acknowledging what they asked)
+2. Gear recommendations in a code block (fenced with three backticks then the word gear, containing valid JSON)
+3. Brief summary with total weight and cost
 
-FORMATTING RULES (use markdown):
-- Use **bold** for product names and key numbers
-- Use bullet points (- ) for lists of gear
-- Use ### headers to organize sections (e.g., ### Shelter, ### Sleep System)
-- Keep paragraphs short (2-3 sentences max)
-- End with a clear recommendation or next step
-
-GEAR RECOMMENDATIONS FORMAT:
-When recommending specific gear items, you MUST include a JSON code block fenced with three backticks followed by the word "gear". This is NOT optional — every time you suggest gear, wrap it in a code block.
-
-Example (use three backticks + gear as the fence):
-
-${"```"}gear
-[
-  {"category": "Shelter", "brand": "Durston", "name": "X-Mid Pro 1", "weight": "17.1 oz", "price": "$599", "reason": "Lightest full-coverage tent. Most popular on PCT."},
-  {"category": "Sleep", "brand": "Katabatic", "name": "Sawatch 15F", "weight": "24.6 oz", "price": "$509", "reason": "Highest rated quilt. Drafts-free to 15°F."}
+EXAMPLE of the gear code block format:
+` + "```gear\n" + `[
+  {"category":"Shelter","brand":"3F UL Gear","name":"Lanshan 1","weight":"28 oz","price":"$100","reason":"Best budget 1-person tent. Trekking pole setup."},
+  {"category":"Insulation","brand":"Hammock Gear","name":"Econ Burrow 20F","weight":"25 oz","price":"$160","reason":"Affordable 800-fill quilt. Warm to 20°F."}
 ]
-${"```"}
-
-CRITICAL RULES FOR GEAR BLOCKS:
-- ALWAYS fence with three backticks followed by the word gear
-- ALWAYS valid JSON array inside
-- ALWAYS include ALL six fields: category, brand, name, weight, price, reason
-- Put explanatory text BEFORE the gear block, not mixed into it
-- Even for single item recommendations, use the gear block format
-- For comparisons, put both items in the same gear block`;
+` + "```";
 
 export async function POST(req: NextRequest) {
   try {
@@ -92,14 +63,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
+    const model = genAI.getGenerativeModel({
+      model: "gemini-3.5-flash",
+      systemInstruction: SYSTEM_INSTRUCTION,
+    });
 
     const chat = model.startChat({
       history: messages.slice(0, -1).map((msg: { role: string; content: string }) => ({
         role: msg.role === "assistant" ? "model" : "user",
         parts: [{ text: msg.content }],
       })),
-      systemInstruction: SYSTEM_PROMPT,
     });
 
     const lastMessage = messages[messages.length - 1];
