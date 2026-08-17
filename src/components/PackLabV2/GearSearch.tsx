@@ -8,6 +8,7 @@ import {
   GearItem,
   CATEGORY_LABELS,
   CATEGORY_COLORS,
+  SUBCATEGORIES,
 } from "@/data/gear-database";
 import { usePackStore } from "@/store/pack-store";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,7 @@ const CATEGORY_ORDER: GearCategory[] = [
 export function GearSearch() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<GearCategory | "all">("all");
+  const [subFilter, setSubFilter] = useState<string | "all">("all");
 
   const addItem = usePackStore((s) => s.addItem);
   const loadouts = usePackStore((s) => s.loadouts);
@@ -36,11 +38,15 @@ export function GearSearch() {
     [packItems]
   );
 
+  // Get subcategories for the active category
+  const activeSubcategories = filter !== "all" ? SUBCATEGORIES[filter] ?? [] : [];
+
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
     return gearDatabase
       .filter((g) => {
         if (filter !== "all" && g.category !== filter) return false;
+        if (subFilter !== "all" && g.subcategory !== subFilter) return false;
         if (!q) return true;
         return (
           g.name.toLowerCase().includes(q) ||
@@ -54,7 +60,7 @@ export function GearSearch() {
           CATEGORY_ORDER.indexOf(b.category);
         return catDiff !== 0 ? catDiff : a.weightOz - b.weightOz;
       });
-  }, [query, filter]);
+  }, [query, filter, subFilter]);
 
   const counts = useMemo(() => {
     return gearDatabase.reduce<Partial<Record<GearCategory, number>>>(
@@ -65,6 +71,23 @@ export function GearSearch() {
       {}
     );
   }, []);
+
+  // Count items per subcategory within active category
+  const subCounts = useMemo(() => {
+    if (filter === "all") return {};
+    return gearDatabase
+      .filter((g) => g.category === filter)
+      .reduce<Record<string, number>>((acc, g) => {
+        const sub = g.subcategory ?? "other";
+        acc[sub] = (acc[sub] ?? 0) + 1;
+        return acc;
+      }, {});
+  }, [filter]);
+
+  function handleCategoryClick(cat: GearCategory | "all") {
+    setFilter(cat);
+    setSubFilter("all"); // Reset subcategory when switching category
+  }
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -106,7 +129,7 @@ export function GearSearch() {
         <div className="flex flex-col gap-1.5">
           <FilterChip
             active={filter === "all"}
-            onClick={() => setFilter("all")}
+            onClick={() => handleCategoryClick("all")}
             label="All systems"
             count={gearDatabase.length}
             full
@@ -116,7 +139,7 @@ export function GearSearch() {
               <FilterChip
                 key={id}
                 active={filter === id}
-                onClick={() => setFilter(id)}
+                onClick={() => handleCategoryClick(id)}
                 label={CATEGORY_LABELS[id]}
                 color={CATEGORY_COLORS[id]}
                 count={counts[id] ?? 0}
@@ -124,6 +147,27 @@ export function GearSearch() {
             ))}
           </div>
         </div>
+
+        {/* Subcategory pills — appear when a category is selected */}
+        {activeSubcategories.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            <SubFilterChip
+              active={subFilter === "all"}
+              onClick={() => setSubFilter("all")}
+              label="All"
+              count={counts[filter as GearCategory] ?? 0}
+            />
+            {activeSubcategories.map((sub) => (
+              <SubFilterChip
+                key={sub.id}
+                active={subFilter === sub.id}
+                onClick={() => setSubFilter(sub.id)}
+                label={sub.label}
+                count={subCounts[sub.id] ?? 0}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="scroll-thin min-h-0 flex-1 overflow-y-auto p-3">
@@ -146,6 +190,42 @@ export function GearSearch() {
         )}
       </div>
     </div>
+  );
+}
+
+function SubFilterChip({
+  active,
+  onClick,
+  label,
+  count,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  count: number;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={cn(
+        "rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors",
+        active
+          ? "border-primary/50 bg-primary/15 text-primary"
+          : "border-white/10 text-muted-foreground hover:border-white/20 hover:text-foreground"
+      )}
+    >
+      {label}
+      {count > 0 && (
+        <span className={cn(
+          "num ml-1 text-[10px]",
+          active ? "text-primary/60" : "text-muted-foreground/50"
+        )}>
+          {count}
+        </span>
+      )}
+    </button>
   );
 }
 
