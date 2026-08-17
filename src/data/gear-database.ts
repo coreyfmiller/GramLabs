@@ -21,6 +21,7 @@ export interface GearItem {
   weightOz: number;
   priceUsd: number;
   description: string;
+  url?: string; // Manufacturer/purchase link
   tempRating?: number; // °F for sleep system items
   rValue?: number; // For sleeping pads
   volume?: number; // Liters for packs
