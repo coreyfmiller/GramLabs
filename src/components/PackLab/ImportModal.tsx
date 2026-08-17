@@ -503,6 +503,7 @@ function importItems(
       name: parsed.name,
       brand: parsed.brand || "Imported",
       category: parsed.category || "accessories",
+      tier: "mid",
       weightOz: parsed.weightOz,
       priceUsd: parsed.price || 0,
       description: "Imported item",

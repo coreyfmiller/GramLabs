@@ -7,6 +7,9 @@ import {
   GearItem,
   CATEGORY_LABELS,
   GearCategory,
+  GearTier,
+  TIER_LABELS,
+  TIER_COLORS,
 } from "@/data/gear-database";
 import { usePackStore, formatWeight } from "@/store/pack-store";
 import ImportModal from "./ImportModal";
@@ -16,6 +19,7 @@ export default function GearSearch() {
   const [selectedCategory, setSelectedCategory] = useState<
     GearCategory | "all"
   >("all");
+  const [selectedTier, setSelectedTier] = useState<GearTier | "all">("all");
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const { addItem, items, weightUnit } = usePackStore();
@@ -30,7 +34,9 @@ export default function GearSearch() {
     const matchesCategory =
       selectedCategory === "all" || item.category === selectedCategory;
 
-    return matchesQuery && matchesCategory;
+    const matchesTier = selectedTier === "all" || item.tier === selectedTier;
+
+    return matchesQuery && matchesCategory && matchesTier;
   });
 
   const isInPack = (id: string) => items.some((i) => i.gearId === id);
@@ -39,6 +45,8 @@ export default function GearSearch() {
     GearCategory,
     string,
   ][];
+
+  const tiers = Object.entries(TIER_LABELS) as [GearTier, string][];
 
   return (
     <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
@@ -89,6 +97,36 @@ export default function GearSearch() {
           placeholder="Search gear..."
           className="w-full bg-white/[0.05] border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-[14px] text-white placeholder:text-white/30 outline-none focus:border-lime-400/50 transition-colors"
         />
+      </div>
+
+      {/* Tier filter */}
+      <div className="flex flex-wrap gap-1.5 mb-2">
+        <button
+          onClick={() => setSelectedTier("all")}
+          className={`px-2.5 py-1 rounded-md text-[10px] font-medium tracking-wide uppercase transition-colors ${
+            selectedTier === "all"
+              ? "bg-lime-400/20 text-lime-400"
+              : "bg-white/[0.05] text-white/50 hover:text-white/80"
+          }`}
+        >
+          All Tiers
+        </button>
+        {tiers.map(([key, label]) => (
+          <button
+            key={key}
+            onClick={() => setSelectedTier(key)}
+            className={`px-2.5 py-1 rounded-md text-[10px] font-medium tracking-wide uppercase transition-colors ${
+              selectedTier !== key ? "bg-white/[0.05] text-white/50 hover:text-white/80" : ""
+            }`}
+            style={
+              selectedTier === key
+                ? { backgroundColor: `${TIER_COLORS[key]}20`, color: TIER_COLORS[key] }
+                : undefined
+            }
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       {/* Category filter */}
@@ -167,6 +205,7 @@ function CustomItemForm({
       name: name.trim(),
       brand: brand.trim() || "Custom",
       category,
+      tier: "mid",
       weightOz: parseFloat(weightOz),
       priceUsd: price ? parseFloat(price) : 0,
       description: "Custom item",
@@ -270,6 +309,15 @@ function GearResultItem({
               ${item.priceUsd}
             </span>
           )}
+          <span
+            className="text-[9px] font-bold tracking-wide uppercase px-1.5 py-0.5 rounded"
+            style={{
+              color: TIER_COLORS[item.tier],
+              backgroundColor: `${TIER_COLORS[item.tier]}15`,
+            }}
+          >
+            {TIER_LABELS[item.tier]}
+          </span>
           <span className="text-[10px] text-white/20 uppercase tracking-wide">
             {CATEGORY_LABELS[item.category]}
           </span>

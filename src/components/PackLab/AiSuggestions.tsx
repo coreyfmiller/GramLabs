@@ -5,10 +5,11 @@ import { usePackStore, PackItem } from "@/store/pack-store";
 import { gearDatabase } from "@/data/gear-database";
 
 interface Suggestion {
-  type: "swap" | "remove" | "warning";
+  type: "swap" | "remove" | "warning" | "budget-swap";
   title: string;
   description: string;
   savingsOz?: number;
+  savingsDollars?: number;
 }
 
 function generateSuggestions(items: PackItem[]): Suggestion[] {
@@ -40,10 +41,47 @@ function generateSuggestions(items: PackItem[]): Suggestion[] {
     }
   });
 
+  // Budget swap suggestions: suggest cheaper alternatives for premium/mid items
+  items.forEach((packItem) => {
+    if (packItem.item.tier === "premium" || packItem.item.tier === "mid") {
+      const budgetAlternatives = gearDatabase.filter(
+        (g) =>
+          g.category === packItem.item.category &&
+          g.id !== packItem.item.id &&
+          g.tier === "budget" &&
+          g.priceUsd < packItem.item.priceUsd &&
+          !items.some((i) => i.gearId === g.id)
+      );
+
+      if (budgetAlternatives.length > 0) {
+        // Pick the cheapest budget alternative
+        const cheapest = budgetAlternatives.sort(
+          (a, b) => a.priceUsd - b.priceUsd
+        )[0];
+        const dollarSavings = packItem.item.priceUsd - cheapest.priceUsd;
+        const weightPenalty = cheapest.weightOz - packItem.item.weightOz;
+
+        if (dollarSavings >= 50) {
+          const weightNote =
+            weightPenalty > 0
+              ? ` +${weightPenalty.toFixed(1)}oz heavier`
+              : weightPenalty < 0
+                ? ` −${Math.abs(weightPenalty).toFixed(1)}oz lighter`
+                : "";
+
+          suggestions.push({
+            type: "budget-swap",
+            title: `Budget swap: ${packItem.item.name}`,
+            description: `Replace ${packItem.item.brand} ${packItem.item.name} ($${packItem.item.priceUsd}) with ${cheapest.brand} ${cheapest.name} ($${cheapest.priceUsd}) — save $${dollarSavings}${weightNote}`,
+            savingsDollars: dollarSavings,
+          });
+        }
+      }
+    }
+  });
+
   // Check for missing essentials
   const hasWater = items.some((i) => i.item.category === "water");
-  const hasShelter = items.some((i) => i.item.category === "shelter");
-  const hasSleep = items.some((i) => i.item.category === "sleep-system");
   const hasSafety = items.some((i) => i.item.category === "safety");
 
   if (!hasWater && items.length > 3) {
@@ -62,14 +100,43 @@ function generateSuggestions(items: PackItem[]): Suggestion[] {
     });
   }
 
-  // Sort: warnings first, then by savings
+  // Sort: warnings first, then budget-swaps by dollar savings, then swaps by weight savings
   return suggestions
     .sort((a, b) => {
       if (a.type === "warning" && b.type !== "warning") return -1;
       if (b.type === "warning" && a.type !== "warning") return 1;
+      if (a.type === "budget-swap" && b.type === "budget-swap") {
+        return (b.savingsDollars || 0) - (a.savingsDollars || 0);
+      }
+      if (a.type === "budget-swap" && b.type !== "budget-swap") return -1;
+      if (b.type === "budget-swap" && a.type !== "budget-swap") return 1;
       return (b.savingsOz || 0) - (a.savingsOz || 0);
     })
-    .slice(0, 5);
+    .slice(0, 7);
+}
+
+function getSuggestionStyles(type: Suggestion["type"]) {
+  switch (type) {
+    case "warning":
+      return "border-yellow-400/20 bg-yellow-400/[0.03]";
+    case "budget-swap":
+      return "border-orange-400/20 bg-orange-400/[0.03]";
+    case "swap":
+    default:
+      return "border-lime-400/20 bg-lime-400/[0.03]";
+  }
+}
+
+function getSuggestionAccent(type: Suggestion["type"]) {
+  switch (type) {
+    case "warning":
+      return "text-yellow-400";
+    case "budget-swap":
+      return "text-orange-400";
+    case "swap":
+    default:
+      return "text-lime-400";
+  }
 }
 
 export default function AiSuggestions() {
@@ -105,19 +172,20 @@ export default function AiSuggestions() {
         {suggestions.map((s, i) => (
           <div
             key={i}
-            className={`p-3 rounded-lg border ${
-              s.type === "warning"
-                ? "border-yellow-400/20 bg-yellow-400/[0.03]"
-                : "border-lime-400/20 bg-lime-400/[0.03]"
-            }`}
+            className={`p-3 rounded-lg border ${getSuggestionStyles(s.type)}`}
           >
             <div className="flex items-center justify-between mb-1">
               <span className="text-[12px] font-medium text-white">
                 {s.title}
               </span>
               {s.savingsOz && (
-                <span className="text-[10px] font-[family-name:var(--font-jetbrains-mono)] text-lime-400">
+                <span className={`text-[10px] font-[family-name:var(--font-jetbrains-mono)] ${getSuggestionAccent(s.type)}`}>
                   −{s.savingsOz.toFixed(1)} oz
+                </span>
+              )}
+              {s.savingsDollars && !s.savingsOz && (
+                <span className={`text-[10px] font-[family-name:var(--font-jetbrains-mono)] ${getSuggestionAccent(s.type)}`}>
+                  −${s.savingsDollars}
                 </span>
               )}
             </div>
