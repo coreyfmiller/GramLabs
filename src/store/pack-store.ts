@@ -24,6 +24,14 @@ export interface PackStore {
   activeLoadoutId: string;
   weightUnit: WeightUnit;
 
+  // Buy List
+  buyList: GearItem[];
+  addToBuyList: (item: GearItem) => void;
+  removeFromBuyList: (id: string) => void;
+  moveToPack: (id: string) => void;
+  clearBuyList: () => void;
+  getBuyListCost: () => number;
+
   // Loadout management
   createLoadout: (name: string) => void;
   deleteLoadout: (id: string) => void;
@@ -68,6 +76,48 @@ export const usePackStore = create<PackStore>()(
       loadouts: [{ id: DEFAULT_LOADOUT_ID, name: "My Pack", items: [] }],
       activeLoadoutId: DEFAULT_LOADOUT_ID,
       weightUnit: "oz" as WeightUnit,
+      buyList: [],
+
+      // Buy List
+      addToBuyList: (item) => {
+        const state = get();
+        if (state.buyList.some((i) => i.id === item.id)) return;
+        set({ buyList: [...state.buyList, item] });
+      },
+
+      removeFromBuyList: (id) => {
+        set((state) => ({ buyList: state.buyList.filter((i) => i.id !== id) }));
+      },
+
+      moveToPack: (id) => {
+        const state = get();
+        const item = state.buyList.find((i) => i.id === id);
+        if (!item) return;
+        // Remove from buy list
+        const newBuyList = state.buyList.filter((i) => i.id !== id);
+        // Add to active loadout
+        const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
+        if (!loadout) return;
+        const existing = loadout.items.find((i) => i.gearId === item.id);
+        if (existing) {
+          set({ buyList: newBuyList });
+          return;
+        }
+        set({
+          buyList: newBuyList,
+          loadouts: state.loadouts.map((l) =>
+            l.id === state.activeLoadoutId
+              ? { ...l, items: [...l.items, { gearId: item.id, item, status: "packed" as ItemStatus, quantity: 1 }] }
+              : l
+          ),
+        });
+      },
+
+      clearBuyList: () => set({ buyList: [] }),
+
+      getBuyListCost: () => {
+        return get().buyList.reduce((sum, item) => sum + item.priceUsd, 0);
+      },
 
       setWeightUnit: (unit) => set({ weightUnit: unit }),
 

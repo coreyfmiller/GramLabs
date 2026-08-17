@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, Loader2, Sparkles } from "lucide-react";
+import { Send, Bot, User, Loader2, Sparkles, Plus, ShoppingCart } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Nav } from "@/components/Nav";
+import { usePackStore } from "@/store/pack-store";
+import { gearDatabase } from "@/data/gear-database";
 import { cn } from "@/lib/utils";
 
 interface Message {
@@ -191,6 +193,8 @@ interface GearCard {
 function ChatResponse({ content }: { content: string }) {
   const gearRegex = /```gear\s*\n([\s\S]*?)```/g;
   const jsonRegex = /```json\s*\n([\s\S]*?)```/g;
+  const addItem = usePackStore((s) => s.addItem);
+  const addToBuyList = usePackStore((s) => s.addToBuyList);
 
   let gearItems: GearCard[] = [];
   let textContent = content;
@@ -220,6 +224,52 @@ function ChatResponse({ content }: { content: string }) {
 
   // Clean remaining code fences
   textContent = textContent.replace(/```[\s\S]*?```/g, "").trim();
+
+  const handleAddToPack = (item: GearCard) => {
+    // Try to find the item in our database
+    const dbItem = gearDatabase.find(
+      (g) => g.brand.toLowerCase() === item.brand.toLowerCase() && g.name.toLowerCase() === item.name.toLowerCase()
+    );
+    if (dbItem) {
+      addItem(dbItem);
+    } else {
+      // Create a custom item from the card data
+      const weightOz = parseFloat(item.weight) || 0;
+      const priceUsd = parseFloat(item.price.replace("$", "")) || 0;
+      addItem({
+        id: `advisor-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`,
+        name: item.name,
+        brand: item.brand,
+        category: "accessories",
+        tier: "mid",
+        weightOz,
+        priceUsd,
+        description: item.reason,
+      });
+    }
+  };
+
+  const handleAddToBuyList = (item: GearCard) => {
+    const dbItem = gearDatabase.find(
+      (g) => g.brand.toLowerCase() === item.brand.toLowerCase() && g.name.toLowerCase() === item.name.toLowerCase()
+    );
+    if (dbItem) {
+      addToBuyList(dbItem);
+    } else {
+      const weightOz = parseFloat(item.weight) || 0;
+      const priceUsd = parseFloat(item.price.replace("$", "")) || 0;
+      addToBuyList({
+        id: `advisor-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`,
+        name: item.name,
+        brand: item.brand,
+        category: "accessories",
+        tier: "mid",
+        weightOz,
+        priceUsd,
+        description: item.reason,
+      });
+    }
+  };
 
   return (
     <div className="text-sm leading-relaxed space-y-4">
@@ -252,9 +302,25 @@ function ChatResponse({ content }: { content: string }) {
                       <p className="text-sm font-medium">{item.brand} {item.name}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">{item.reason}</p>
                     </div>
-                    <div className="text-right shrink-0">
-                      <p className="num text-sm font-medium text-primary">{item.weight}</p>
-                      <p className="num text-xs text-muted-foreground">{item.price}</p>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <div className="text-right mr-2">
+                        <p className="num text-sm font-medium text-primary">{item.weight}</p>
+                        <p className="num text-xs text-muted-foreground">{item.price}</p>
+                      </div>
+                      <button
+                        onClick={() => handleAddToPack(item)}
+                        title="Add to Pack Lab"
+                        className="size-7 flex items-center justify-center rounded-md border border-white/10 bg-white/[0.04] text-muted-foreground hover:border-primary/50 hover:bg-primary hover:text-primary-foreground transition-colors active:scale-95"
+                      >
+                        <Plus className="size-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleAddToBuyList(item)}
+                        title="Save to Buy List"
+                        className="size-7 flex items-center justify-center rounded-md border border-white/10 bg-white/[0.04] text-muted-foreground hover:border-yellow-500/50 hover:bg-yellow-500 hover:text-black transition-colors active:scale-95"
+                      >
+                        <ShoppingCart className="size-3.5" />
+                      </button>
                     </div>
                   </div>
                 ))}
