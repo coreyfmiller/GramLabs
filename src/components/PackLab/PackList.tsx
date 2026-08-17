@@ -2,10 +2,11 @@
 
 import { Trash2 } from "lucide-react";
 import { usePackStore, ItemStatus, PackItem } from "@/store/pack-store";
+import { formatWeight } from "@/store/pack-store";
 import { CATEGORY_LABELS, CATEGORY_COLORS } from "@/data/gear-database";
 
 export default function PackList() {
-  const { items, removeItem, updateItemStatus } = usePackStore();
+  const { items, removeItem, updateItemStatus, weightUnit } = usePackStore();
 
   const packedItems = items.filter((i) => i.status === "packed");
   const wornItems = items.filter((i) => i.status === "worn");
@@ -31,6 +32,7 @@ export default function PackList() {
           items={packedItems}
           onRemove={removeItem}
           onStatusChange={updateItemStatus}
+          weightUnit={weightUnit}
         />
       )}
       {wornItems.length > 0 && (
@@ -40,6 +42,7 @@ export default function PackList() {
           items={wornItems}
           onRemove={removeItem}
           onStatusChange={updateItemStatus}
+          weightUnit={weightUnit}
         />
       )}
       {consumableItems.length > 0 && (
@@ -49,6 +52,7 @@ export default function PackList() {
           items={consumableItems}
           onRemove={removeItem}
           onStatusChange={updateItemStatus}
+          weightUnit={weightUnit}
         />
       )}
     </div>
@@ -61,12 +65,14 @@ function PackSection({
   items,
   onRemove,
   onStatusChange,
+  weightUnit,
 }: {
   title: string;
   subtitle: string;
   items: PackItem[];
   onRemove: (id: string) => void;
   onStatusChange: (id: string, status: ItemStatus) => void;
+  weightUnit: "oz" | "g";
 }) {
   return (
     <div className="bg-white/[0.03] border border-white/10 rounded-xl overflow-hidden">
@@ -78,7 +84,7 @@ function PackSection({
           <span className="text-[11px] text-white/30">{subtitle}</span>
         </div>
         <span className="text-[11px] font-[family-name:var(--font-jetbrains-mono)] text-white/50">
-          {(items.reduce((s, i) => s + i.item.weightOz * i.quantity, 0) / 16).toFixed(2)} lb
+          {formatWeight(items.reduce((s, i) => s + i.item.weightOz * i.quantity, 0), weightUnit)}
         </span>
       </div>
       <div className="divide-y divide-white/5">
@@ -104,7 +110,7 @@ function PackSection({
 
             <div className="flex items-center gap-3">
               <span className="text-[12px] font-[family-name:var(--font-jetbrains-mono)] text-white/60">
-                {packItem.item.weightOz} oz
+                {formatWeight(packItem.item.weightOz, weightUnit)}
               </span>
 
               {/* Status toggle */}

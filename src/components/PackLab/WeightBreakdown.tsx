@@ -1,10 +1,11 @@
 "use client";
 
-import { usePackStore } from "@/store/pack-store";
+import { usePackStore, formatWeight } from "@/store/pack-store";
 import { CATEGORY_LABELS, CATEGORY_COLORS, GearCategory } from "@/data/gear-database";
 
 export default function WeightBreakdown() {
-  const { getBaseWeight, getCategoryBreakdown, items } = usePackStore();
+  const { getBaseWeight, getCategoryBreakdown, items, weightUnit } =
+    usePackStore();
 
   const baseWeightOz = getBaseWeight();
   const baseWeightLb = baseWeightOz / 16;
@@ -40,34 +41,25 @@ export default function WeightBreakdown() {
           Base Weight
         </h3>
         <div className="flex items-baseline gap-2">
-          <span className="text-[36px] font-bold font-[family-name:var(--font-jetbrains-mono)] text-white">
-            {baseWeightLb.toFixed(2)}
+          <span className="text-[28px] font-bold font-[family-name:var(--font-jetbrains-mono)] text-white">
+            {formatWeight(baseWeightOz, weightUnit)}
           </span>
-          <span className="text-[14px] text-white/40">lb</span>
         </div>
         <div className="flex items-center gap-2 mt-1">
           <div className={`w-2 h-2 rounded-full ${weightClass.bg}`} />
-          <span className={`text-[11px] font-bold tracking-[0.15em] ${weightClass.color}`}>
+          <span
+            className={`text-[11px] font-bold tracking-[0.15em] ${weightClass.color}`}
+          >
             {weightClass.label}
           </span>
         </div>
       </div>
 
-      {/* Visual bar breakdown */}
-      <div>
-        <div className="flex rounded-full h-3 overflow-hidden bg-white/5">
-          {breakdown.map(({ category, percentage }) => (
-            <div
-              key={category}
-              className="h-full transition-all duration-500"
-              style={{
-                width: `${percentage}%`,
-                backgroundColor: CATEGORY_COLORS[category],
-              }}
-            />
-          ))}
-        </div>
-      </div>
+      {/* Donut Chart */}
+      <DonutChart
+        breakdown={breakdown}
+        centerLabel={formatWeight(baseWeightOz, weightUnit)}
+      />
 
       {/* Category list */}
       <div className="space-y-2">
@@ -84,7 +76,7 @@ export default function WeightBreakdown() {
             </div>
             <div className="flex items-center gap-3">
               <span className="text-[11px] font-[family-name:var(--font-jetbrains-mono)] text-white/50">
-                {(weightOz / 16).toFixed(2)} lb
+                {formatWeight(weightOz, weightUnit)}
               </span>
               <span className="text-[10px] font-[family-name:var(--font-jetbrains-mono)] text-white/30 w-8 text-right">
                 {percentage.toFixed(0)}%
@@ -102,8 +94,8 @@ export default function WeightBreakdown() {
           </span>
           <span className="text-[11px] font-[family-name:var(--font-jetbrains-mono)] text-white/40">
             {baseWeightLb <= 10
-              ? `${((10 - baseWeightLb) * 16).toFixed(1)} oz under`
-              : `${((baseWeightLb - 10) * 16).toFixed(1)} oz over`}
+              ? `${formatWeight((10 - baseWeightLb) * 16, weightUnit)} under`
+              : `${formatWeight((baseWeightLb - 10) * 16, weightUnit)} over`}
           </span>
         </div>
         <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
@@ -115,6 +107,80 @@ export default function WeightBreakdown() {
           />
         </div>
       </div>
+    </div>
+  );
+}
+
+function DonutChart({
+  breakdown,
+  centerLabel,
+}: {
+  breakdown: { category: GearCategory; weightOz: number; percentage: number }[];
+  centerLabel: string;
+}) {
+  const size = 180;
+  const strokeWidth = 24;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const cx = size / 2;
+  const cy = size / 2;
+
+  let cumulativePercentage = 0;
+
+  return (
+    <div className="flex justify-center">
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        {/* Background circle */}
+        <circle
+          cx={cx}
+          cy={cy}
+          r={radius}
+          fill="none"
+          stroke="rgba(255,255,255,0.05)"
+          strokeWidth={strokeWidth}
+        />
+        {/* Category segments */}
+        {breakdown.map(({ category, percentage }) => {
+          const offset = circumference * (1 - cumulativePercentage / 100);
+          const segmentLength = (percentage / 100) * circumference;
+          cumulativePercentage += percentage;
+
+          return (
+            <circle
+              key={category}
+              cx={cx}
+              cy={cy}
+              r={radius}
+              fill="none"
+              stroke={CATEGORY_COLORS[category]}
+              strokeWidth={strokeWidth}
+              strokeDasharray={`${segmentLength} ${circumference - segmentLength}`}
+              strokeDashoffset={offset}
+              strokeLinecap="butt"
+              transform={`rotate(-90 ${cx} ${cy})`}
+              className="transition-all duration-500"
+            />
+          );
+        })}
+        {/* Center text */}
+        <text
+          x={cx}
+          y={cy - 6}
+          textAnchor="middle"
+          className="fill-white text-[13px] font-bold"
+          style={{ fontFamily: "var(--font-jetbrains-mono)" }}
+        >
+          {centerLabel}
+        </text>
+        <text
+          x={cx}
+          y={cy + 12}
+          textAnchor="middle"
+          className="fill-white/40 text-[9px] uppercase tracking-widest"
+        >
+          base weight
+        </text>
+      </svg>
     </div>
   );
 }

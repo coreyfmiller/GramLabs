@@ -4,6 +4,8 @@ import { GearItem, GearCategory } from "@/data/gear-database";
 
 export type ItemStatus = "packed" | "worn" | "consumable";
 
+export type WeightUnit = "oz" | "g";
+
 export interface PackItem {
   gearId: string;
   item: GearItem;
@@ -11,7 +13,26 @@ export interface PackItem {
   quantity: number;
 }
 
+export interface Loadout {
+  id: string;
+  name: string;
+  items: PackItem[];
+}
+
 export interface PackStore {
+  // Multiple loadouts
+  loadouts: Loadout[];
+  activeLoadoutId: string;
+  createLoadout: (name: string) => void;
+  deleteLoadout: (id: string) => void;
+  switchLoadout: (id: string) => void;
+  renameLoadout: (id: string, name: string) => void;
+
+  // Weight unit
+  weightUnit: WeightUnit;
+  setWeightUnit: (unit: WeightUnit) => void;
+
+  // Current loadout helpers (proxied)
   packName: string;
   items: PackItem[];
   setPackName: (name: string) => void;
@@ -25,72 +46,207 @@ export interface PackStore {
   getWornWeight: () => number;
   getConsumableWeight: () => number;
   getCategoryBreakdown: () => { category: GearCategory; weightOz: number; percentage: number }[];
+
+  // Share URL
+  hydrateFromShareData: (items: PackItem[], name: string) => void;
 }
+
+function generateId() {
+  return Math.random().toString(36).substring(2, 10);
+}
+
+const DEFAULT_LOADOUT_ID = "default";
 
 export const usePackStore = create<PackStore>()(
   persist(
     (set, get) => ({
-      packName: "My Pack",
-      items: [],
+      loadouts: [{ id: DEFAULT_LOADOUT_ID, name: "My Pack", items: [] }],
+      activeLoadoutId: DEFAULT_LOADOUT_ID,
+      weightUnit: "oz" as WeightUnit,
 
-      setPackName: (name) => set({ packName: name }),
+      setWeightUnit: (unit) => set({ weightUnit: unit }),
 
-      addItem: (item, status = "packed") => {
-        const existing = get().items.find((i) => i.gearId === item.id);
-        if (existing) return;
+      createLoadout: (name) => {
+        const id = generateId();
         set((state) => ({
-          items: [...state.items, { gearId: item.id, item, status, quantity: 1 }],
+          loadouts: [...state.loadouts, { id, name, items: [] }],
+          activeLoadoutId: id,
         }));
       },
 
-      removeItem: (gearId) =>
-        set((state) => ({
-          items: state.items.filter((i) => i.gearId !== gearId),
-        })),
+      deleteLoadout: (id) => {
+        const state = get();
+        if (state.loadouts.length <= 1) return;
+        const remaining = state.loadouts.filter((l) => l.id !== id);
+        set({
+          loadouts: remaining,
+          activeLoadoutId:
+            state.activeLoadoutId === id ? remaining[0].id : state.activeLoadoutId,
+        });
+      },
 
-      updateItemStatus: (gearId, status) =>
+      switchLoadout: (id) => set({ activeLoadoutId: id }),
+
+      renameLoadout: (id, name) =>
         set((state) => ({
-          items: state.items.map((i) =>
-            i.gearId === gearId ? { ...i, status } : i
+          loadouts: state.loadouts.map((l) =>
+            l.id === id ? { ...l, name } : l
           ),
         })),
 
-      updateItemQuantity: (gearId, quantity) =>
-        set((state) => ({
-          items: state.items.map((i) =>
-            i.gearId === gearId ? { ...i, quantity } : i
-          ),
-        })),
+      // Proxied getters for active loadout
+      get packName() {
+        const state = get();
+        const loadout = state.loadouts.find(
+          (l) => l.id === state.activeLoadoutId
+        );
+        return loadout?.name ?? "My Pack";
+      },
 
-      clearPack: () => set({ items: [] }),
+      get items() {
+        const state = get();
+        const loadout = state.loadouts.find(
+          (l) => l.id === state.activeLoadoutId
+        );
+        return loadout?.items ?? [];
+      },
+
+      setPackName: (name) => {
+        const state = get();
+        set({
+          loadouts: state.loadouts.map((l) =>
+            l.id === state.activeLoadoutId ? { ...l, name } : l
+          ),
+        });
+      },
+
+      addItem: (item, status = "packed") => {
+        const state = get();
+        const loadout = state.loadouts.find(
+          (l) => l.id === state.activeLoadoutId
+        );
+        if (!loadout) return;
+        const existing = loadout.items.find((i) => i.gearId === item.id);
+        if (existing) return;
+        set({
+          loadouts: state.loadouts.map((l) =>
+            l.id === state.activeLoadoutId
+              ? {
+                  ...l,
+                  items: [
+                    ...l.items,
+                    { gearId: item.id, item, status, quantity: 1 },
+                  ],
+                }
+              : l
+          ),
+        });
+      },
+
+      removeItem: (gearId) => {
+        const state = get();
+        set({
+          loadouts: state.loadouts.map((l) =>
+            l.id === state.activeLoadoutId
+              ? { ...l, items: l.items.filter((i) => i.gearId !== gearId) }
+              : l
+          ),
+        });
+      },
+
+      updateItemStatus: (gearId, status) => {
+        const state = get();
+        set({
+          loadouts: state.loadouts.map((l) =>
+            l.id === state.activeLoadoutId
+              ? {
+                  ...l,
+                  items: l.items.map((i) =>
+                    i.gearId === gearId ? { ...i, status } : i
+                  ),
+                }
+              : l
+          ),
+        });
+      },
+
+      updateItemQuantity: (gearId, quantity) => {
+        const state = get();
+        set({
+          loadouts: state.loadouts.map((l) =>
+            l.id === state.activeLoadoutId
+              ? {
+                  ...l,
+                  items: l.items.map((i) =>
+                    i.gearId === gearId ? { ...i, quantity } : i
+                  ),
+                }
+              : l
+          ),
+        });
+      },
+
+      clearPack: () => {
+        const state = get();
+        set({
+          loadouts: state.loadouts.map((l) =>
+            l.id === state.activeLoadoutId ? { ...l, items: [] } : l
+          ),
+        });
+      },
 
       getBaseWeight: () => {
-        return get()
-          .items.filter((i) => i.status === "packed")
+        const state = get();
+        const loadout = state.loadouts.find(
+          (l) => l.id === state.activeLoadoutId
+        );
+        if (!loadout) return 0;
+        return loadout.items
+          .filter((i) => i.status === "packed")
           .reduce((sum, i) => sum + i.item.weightOz * i.quantity, 0);
       },
 
       getTotalWeight: () => {
-        return get().items.reduce(
+        const state = get();
+        const loadout = state.loadouts.find(
+          (l) => l.id === state.activeLoadoutId
+        );
+        if (!loadout) return 0;
+        return loadout.items.reduce(
           (sum, i) => sum + i.item.weightOz * i.quantity,
           0
         );
       },
 
       getWornWeight: () => {
-        return get()
-          .items.filter((i) => i.status === "worn")
+        const state = get();
+        const loadout = state.loadouts.find(
+          (l) => l.id === state.activeLoadoutId
+        );
+        if (!loadout) return 0;
+        return loadout.items
+          .filter((i) => i.status === "worn")
           .reduce((sum, i) => sum + i.item.weightOz * i.quantity, 0);
       },
 
       getConsumableWeight: () => {
-        return get()
-          .items.filter((i) => i.status === "consumable")
+        const state = get();
+        const loadout = state.loadouts.find(
+          (l) => l.id === state.activeLoadoutId
+        );
+        if (!loadout) return 0;
+        return loadout.items
+          .filter((i) => i.status === "consumable")
           .reduce((sum, i) => sum + i.item.weightOz * i.quantity, 0);
       },
 
       getCategoryBreakdown: () => {
-        const items = get().items.filter((i) => i.status === "packed");
+        const state = get();
+        const loadout = state.loadouts.find(
+          (l) => l.id === state.activeLoadoutId
+        );
+        if (!loadout) return [];
+        const items = loadout.items.filter((i) => i.status === "packed");
         const baseWeight = items.reduce(
           (sum, i) => sum + i.item.weightOz * i.quantity,
           0
@@ -110,9 +266,28 @@ export const usePackStore = create<PackStore>()(
           }))
           .sort((a, b) => b.weightOz - a.weightOz);
       },
+
+      hydrateFromShareData: (items, name) => {
+        const state = get();
+        const newId = generateId();
+        set({
+          loadouts: [
+            ...state.loadouts,
+            { id: newId, name: `${name} (shared)`, items },
+          ],
+          activeLoadoutId: newId,
+        });
+      },
     }),
     {
       name: "gramlab-pack",
     }
   )
 );
+
+// Re-export formatting utilities from the canonical location
+export {
+  formatWeight as formatWeightLbOz,
+  formatWeightWithUnit as formatWeight,
+  ozToGrams,
+} from "@/utils/format";

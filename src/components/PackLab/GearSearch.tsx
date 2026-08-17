@@ -1,14 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Plus } from "lucide-react";
-import { gearDatabase, GearItem, CATEGORY_LABELS, GearCategory } from "@/data/gear-database";
-import { usePackStore } from "@/store/pack-store";
+import { Search, Plus, PackagePlus } from "lucide-react";
+import {
+  gearDatabase,
+  GearItem,
+  CATEGORY_LABELS,
+  GearCategory,
+} from "@/data/gear-database";
+import { usePackStore, formatWeight } from "@/store/pack-store";
 
 export default function GearSearch() {
   const [query, setQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<GearCategory | "all">("all");
-  const { addItem, items } = usePackStore();
+  const [selectedCategory, setSelectedCategory] = useState<
+    GearCategory | "all"
+  >("all");
+  const [showCustomForm, setShowCustomForm] = useState(false);
+  const { addItem, items, weightUnit } = usePackStore();
 
   const filteredGear = gearDatabase.filter((item) => {
     const matchesQuery =
@@ -25,13 +33,40 @@ export default function GearSearch() {
 
   const isInPack = (id: string) => items.some((i) => i.gearId === id);
 
-  const categories = Object.entries(CATEGORY_LABELS) as [GearCategory, string][];
+  const categories = Object.entries(CATEGORY_LABELS) as [
+    GearCategory,
+    string,
+  ][];
 
   return (
     <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
-      <h3 className="text-[13px] font-bold tracking-[0.2em] text-white/60 uppercase mb-4">
-        Gear Database
-      </h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-[13px] font-bold tracking-[0.2em] text-white/60 uppercase">
+          Gear Database
+        </h3>
+        <button
+          onClick={() => setShowCustomForm(!showCustomForm)}
+          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-medium tracking-wide uppercase transition-colors ${
+            showCustomForm
+              ? "bg-lime-400/20 text-lime-400"
+              : "bg-white/[0.05] text-white/50 hover:text-white/80"
+          }`}
+        >
+          <PackagePlus className="w-3.5 h-3.5" />
+          Custom
+        </button>
+      </div>
+
+      {/* Custom Item Form */}
+      {showCustomForm && (
+        <CustomItemForm
+          onAdd={(item) => {
+            addItem(item);
+            setShowCustomForm(false);
+          }}
+          categories={categories}
+        />
+      )}
 
       {/* Search input */}
       <div className="relative mb-3">
@@ -80,6 +115,7 @@ export default function GearSearch() {
             item={item}
             inPack={isInPack(item.id)}
             onAdd={() => addItem(item)}
+            weightUnit={weightUnit}
           />
         ))}
         {filteredGear.length === 0 && (
@@ -92,14 +128,113 @@ export default function GearSearch() {
   );
 }
 
+function CustomItemForm({
+  onAdd,
+  categories,
+}: {
+  onAdd: (item: GearItem) => void;
+  categories: [GearCategory, string][];
+}) {
+  const [name, setName] = useState("");
+  const [brand, setBrand] = useState("");
+  const [category, setCategory] = useState<GearCategory>("accessories");
+  const [weightOz, setWeightOz] = useState("");
+  const [price, setPrice] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !weightOz) return;
+
+    const customItem: GearItem = {
+      id: `custom-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      name: name.trim(),
+      brand: brand.trim() || "Custom",
+      category,
+      weightOz: parseFloat(weightOz),
+      priceUsd: price ? parseFloat(price) : 0,
+      description: "Custom item",
+    };
+
+    onAdd(customItem);
+    setName("");
+    setBrand("");
+    setCategory("accessories");
+    setWeightOz("");
+    setPrice("");
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="mb-4 p-3 bg-white/[0.03] border border-white/10 rounded-lg space-y-2"
+    >
+      <div className="grid grid-cols-2 gap-2">
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Item name *"
+          required
+          className="col-span-2 bg-white/[0.05] border border-white/10 rounded-md px-3 py-2 text-[13px] text-white placeholder:text-white/30 outline-none focus:border-lime-400/50 transition-colors"
+        />
+        <input
+          type="text"
+          value={brand}
+          onChange={(e) => setBrand(e.target.value)}
+          placeholder="Brand (optional)"
+          className="bg-white/[0.05] border border-white/10 rounded-md px-3 py-2 text-[13px] text-white placeholder:text-white/30 outline-none focus:border-lime-400/50 transition-colors"
+        />
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value as GearCategory)}
+          className="bg-white/[0.05] border border-white/10 rounded-md px-3 py-2 text-[13px] text-white outline-none focus:border-lime-400/50 transition-colors"
+        >
+          {categories.map(([key, label]) => (
+            <option key={key} value={key} className="bg-[#1a1a1a]">
+              {label}
+            </option>
+          ))}
+        </select>
+        <input
+          type="number"
+          value={weightOz}
+          onChange={(e) => setWeightOz(e.target.value)}
+          placeholder="Weight (oz) *"
+          required
+          min="0"
+          step="0.1"
+          className="bg-white/[0.05] border border-white/10 rounded-md px-3 py-2 text-[13px] text-white placeholder:text-white/30 outline-none focus:border-lime-400/50 transition-colors"
+        />
+        <input
+          type="number"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          placeholder="Price $ (optional)"
+          min="0"
+          step="0.01"
+          className="bg-white/[0.05] border border-white/10 rounded-md px-3 py-2 text-[13px] text-white placeholder:text-white/30 outline-none focus:border-lime-400/50 transition-colors"
+        />
+      </div>
+      <button
+        type="submit"
+        className="w-full py-2 rounded-md bg-lime-400/20 text-lime-400 text-[12px] font-bold tracking-wider uppercase hover:bg-lime-400/30 transition-colors"
+      >
+        Add Custom Item
+      </button>
+    </form>
+  );
+}
+
 function GearResultItem({
   item,
   inPack,
   onAdd,
+  weightUnit,
 }: {
   item: GearItem;
   inPack: boolean;
   onAdd: () => void;
+  weightUnit: "oz" | "g";
 }) {
   return (
     <div className="flex items-center justify-between p-2.5 rounded-lg hover:bg-white/[0.04] transition-colors group">
@@ -111,11 +246,13 @@ function GearResultItem({
         </div>
         <div className="flex items-center gap-3 mt-0.5">
           <span className="text-[11px] font-[family-name:var(--font-jetbrains-mono)] text-white/50">
-            {item.weightOz} oz
+            {formatWeight(item.weightOz, weightUnit)}
           </span>
-          <span className="text-[11px] text-white/30">
-            ${item.priceUsd}
-          </span>
+          {item.priceUsd > 0 && (
+            <span className="text-[11px] text-white/30">
+              ${item.priceUsd}
+            </span>
+          )}
           <span className="text-[10px] text-white/20 uppercase tracking-wide">
             {CATEGORY_LABELS[item.category]}
           </span>
