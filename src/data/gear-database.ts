@@ -172,7 +172,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 19.4,
     priceUsd: 699,
-    description: "DCF 2-person trekking pole tent. Gold standard UL shelter.",
+    description: "2-person ultralight tent using trekking poles. Dyneema fabric. 19oz, the benchmark shelter.",
   },
   {
     id: "tarptent-notch-li",
@@ -182,7 +182,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 22,
     priceUsd: 525,
-    description: "DCF single-wall trekking pole tent with integrated bug net.",
+    description: "1-person trekking pole tent with built-in bug net. Dyneema fabric. Single-wall design.",
   },
   {
     id: "gossamer-gear-one",
@@ -192,7 +192,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 18,
     priceUsd: 350,
-    description: "Silnylon single-person trekking pole shelter. Budget UL pick.",
+    description: "1-person trekking pole tent. Silicone-nylon fabric. 18oz for an affordable ultralight option.",
   },
   {
     id: "hmg-unbound-2p",
@@ -202,7 +202,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 28,
     priceUsd: 895,
-    description: "DCF freestanding 2-person tent. Bomber in weather.",
+    description: "Freestanding 2-person tent. Dyneema fabric. Handles high winds and heavy rain.",
   },
   {
     id: "sixmoon-lunar-solo",
@@ -212,7 +212,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 26,
     priceUsd: 260,
-    description: "Silnylon single-wall trekking pole tent. Solid mid-range pick.",
+    description: "1-person trekking pole tent. Silicone-nylon single-wall. Roomy for the weight at 26oz.",
   },
   {
     id: "3ful-lanshan-2-pro",
@@ -222,7 +222,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 37,
     priceUsd: 130,
-    description: "Budget DCF alternative. 2-person trekking pole tent. Thin materials need care.",
+    description: "2-person trekking pole tent. Thin Dyneema-like fabric. Affordable but requires gentle use.",
   },
   {
     id: "3ful-lanshan-1",
@@ -232,7 +232,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 28,
     priceUsd: 100,
-    description: "Budget 1-person trekking pole tent. Great entry into UL shelters.",
+    description: "1-person trekking pole tent. Silicone-nylon fabric. Solid entry-level ultralight shelter.",
   },
   {
     id: "naturehike-cloud-up-2",
@@ -242,7 +242,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 45,
     priceUsd: 110,
-    description: "Freestanding 2-person tent. Heavier but bombproof for budget.",
+    description: "Freestanding 2-person tent. No trekking poles needed. Heavier but very durable for the price.",
   },
 
   // === SLEEP SYSTEM ===
@@ -254,7 +254,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 22.8,
     priceUsd: 465,
-    description: "900fp down quilt. Drafts-free collar. Top-tier warmth-to-weight.",
+    description: "Down quilt (open-bottom blanket). 900-fill goose down. Comfortable to 15°F. No drafts.",
     tempRating: 15,
   },
   {
@@ -265,7 +265,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 20.5,
     priceUsd: 340,
-    description: "850fp down quilt. Customizable length/width/fill.",
+    description: "Down quilt (open-bottom blanket). 850-fill down. Comfortable to 20°F. Custom sizing available.",
     tempRating: 20,
   },
   {
@@ -276,7 +276,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 24,
     priceUsd: 560,
-    description: "Premium 950fp quilt with differential cut. Virtually no drafts.",
+    description: "Down quilt (open-bottom blanket). 950-fill goose down. Comfortable to 20°F. Virtually no drafts.",
     tempRating: 20,
   },
   {
@@ -287,7 +287,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 15,
     priceUsd: 200,
-    description: "Air pad with excellent R-value for weight. Quiet fabric.",
+    description: "Inflatable sleeping pad. R-value 4.2. Quiet fabric. Good warmth-to-weight ratio.",
     rValue: 4.2,
   },
   {
@@ -298,7 +298,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 12.5,
     priceUsd: 230,
-    description: "Lightest insulated air pad. Industry benchmark.",
+    description: "Inflatable sleeping pad. R-value 4.5. 12.5oz — lightest insulated air pad available.",
     rValue: 4.5,
   },
   {
@@ -309,7 +309,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 8.8,
     priceUsd: 200,
-    description: "Ultralight 3-season pad. Minimal R-value for summer use.",
+    description: "Inflatable sleeping pad. R-value 2.3. 8.8oz. Best for summer/warm conditions only.",
     rValue: 2.3,
   },
   {
@@ -320,7 +320,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 32,
     priceUsd: 250,
-    description: "Budget 700fp down quilt. 50% cheaper than premium quilts, solid warmth.",
+    description: "Down quilt (open-bottom blanket). 700-fill down. Comfortable to 15°F. Half the price of premium.",
     tempRating: 15,
   },
   {
@@ -331,7 +331,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 28,
     priceUsd: 160,
-    description: "Budget summer quilt. 700fp down. Great 3-season starter.",
+    description: "Down quilt (open-bottom blanket). 700-fill down. Comfortable to 30°F. Great 3-season starter.",
     tempRating: 30,
   },
   {
@@ -342,7 +342,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 25,
     priceUsd: 160,
-    description: "Budget 800fp down quilt. Ground or hammock. Excellent value-to-warmth.",
+    description: "Down quilt (open-bottom blanket). 800-fill down. Comfortable to 20°F. Works in hammock or on ground.",
     tempRating: 20,
   },
   {
@@ -353,7 +353,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 18,
     priceUsd: 60,
-    description: "Budget insulated air pad. R-value 5.0. Surprisingly warm for price.",
+    description: "Inflatable sleeping pad. R-value 5.0. Surprisingly warm for a $60 pad.",
     rValue: 5.0,
   },
   {
@@ -364,7 +364,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 14.5,
     priceUsd: 50,
-    description: "Closed-cell foam pad. Can't pop. R-2.0. Doubles as sit pad.",
+    description: "Closed-cell foam sleeping pad. R-value 2.0. Cannot puncture. Doubles as a sit pad.",
     rValue: 2.0,
   },
   {
@@ -375,7 +375,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 14,
     priceUsd: 50,
-    description: "Classic CCF pad. Indestructible. R-2.0. Accordion fold.",
+    description: "Closed-cell foam sleeping pad. R-value 2.0. Accordion-fold. Cannot puncture.",
     rValue: 2.0,
   },
 
@@ -388,7 +388,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 30.4,
     priceUsd: 405,
-    description: "DCF frameless-to-framed hybrid. Waterproof. Comfortable to 25lbs.",
+    description: "55-liter backpack. Dyneema fabric, waterproof. Comfortable to 25lb loads.",
     volume: 55,
   },
   {
@@ -399,7 +399,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 26.5,
     priceUsd: 285,
-    description: "Best UL pack for carrying heavier loads. Internal frame.",
+    description: "60-liter backpack with internal frame. Comfortable carrying heavier loads up to 30lb.",
     volume: 60,
   },
   {
@@ -410,7 +410,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 39,
     priceUsd: 275,
-    description: "Reliable workhorse. Handles 35lbs. Excellent hip belt.",
+    description: "68-liter framed backpack. Handles 35lb loads. Excellent hip belt support.",
     volume: 68,
   },
   {
@@ -421,7 +421,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 15,
     priceUsd: 250,
-    description: "Minimalist frameless pack. For sub-12lb base weights only.",
+    description: "Frameless 35-liter backpack. 15oz. For hikers with sub-12lb base weights only.",
     volume: 35,
   },
   {
@@ -432,7 +432,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 22,
     priceUsd: 260,
-    description: "Frameless DCF pack with great organization. Solid to 20lbs.",
+    description: "Frameless 55-liter backpack. Dyneema grid fabric. Comfortable to 20lb loads.",
     volume: 55,
   },
   {
@@ -443,7 +443,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 31,
     priceUsd: 90,
-    description: "Budget frameless UL pack. 40-45L. Good to 20lbs.",
+    description: "Frameless 45-liter backpack. Comfortable to 20lb loads. Budget ultralight option.",
     volume: 45,
   },
   {
@@ -454,7 +454,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 38,
     priceUsd: 200,
-    description: "Budget framed pack. Comfortable to 30lbs. Removable frame/lid.",
+    description: "60-liter framed backpack. Comfortable to 30lb loads. Removable frame sheet and lid.",
     volume: 60,
   },
   {
@@ -465,7 +465,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 45,
     priceUsd: 229,
-    description: "Best value framed pack. Ventilated back. Comfortable to 30lbs.",
+    description: "55-liter framed backpack. Ventilated back panel. Comfortable to 30lb loads.",
     volume: 55,
   },
 
@@ -478,7 +478,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 3.7,
     priceUsd: 129,
-    description: "Breathable wind shell. Essential above treeline.",
+    description: "Lightweight wind shell jacket. Not waterproof. Essential for exposed ridgelines.",
     waterproof: false,
   },
   {
@@ -489,7 +489,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 5.5,
     priceUsd: 20,
-    description: "Cheap disposable rain jacket. Not durable but incredibly light.",
+    description: "Disposable rain jacket and pants. Very light but tears easily. Replace as needed.",
     waterproof: true,
   },
   {
@@ -500,7 +500,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 8.5,
     priceUsd: 220,
-    description: "Synthetic insulated jacket. Works when wet. Camp warmth.",
+    description: "Synthetic insulated jacket. Retains warmth when wet. Good for camp and cold evenings.",
   },
   {
     id: "katabatic-tarn",
@@ -510,7 +510,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 7.8,
     priceUsd: 340,
-    description: "Premium down jacket. Incredible warmth-to-weight.",
+    description: "Down insulated jacket. 800-fill goose. 7.8oz. Exceptional warmth-to-weight.",
   },
   {
     id: "montbell-versalite",
@@ -520,7 +520,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 6.4,
     priceUsd: 249,
-    description: "Gore-Tex Infinium rain jacket. Light, breathable, bombproof.",
+    description: "Waterproof rain jacket. GORE-TEX membrane. Lightweight and breathable.",
     waterproof: true,
   },
   {
@@ -531,7 +531,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 8.2,
     priceUsd: 72,
-    description: "Cult-classic fleece. Breathable, wicking, great as active layer.",
+    description: "Fleece hoodie. Grid-pattern polyester. Breathable and fast-wicking while active.",
   },
   {
     id: "decathlon-simond-mt100",
@@ -541,7 +541,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 11.3,
     priceUsd: 120,
-    description: "Highest-rated PCT jacket. Down hooded puffy. Incredible value.",
+    description: "Hooded down insulated jacket. 700-fill duck down. Great warmth for the price.",
   },
   {
     id: "decathlon-quechua-mh500-rain",
@@ -551,7 +551,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 20,
     priceUsd: 70,
-    description: "Waterproof rain jacket. Heavy but durable and cheap.",
+    description: "Waterproof rain jacket. Heavy but very durable and affordable for rough conditions.",
     waterproof: true,
   },
   {
@@ -562,7 +562,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 9.5,
     priceUsd: 25,
-    description: "Budget quarter-zip fleece. Recycled polyester. Hard to beat for $25.",
+    description: "Quarter-zip fleece pullover. Recycled polyester. Hard to beat for $25.",
   },
   {
     id: "rei-650-down-jacket",
@@ -572,7 +572,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 10.9,
     priceUsd: 129,
-    description: "Budget hooded down jacket. 650fp. Solid camp warmth.",
+    description: "Hooded down insulated jacket. 650-fill. Solid camp warmth at a budget price.",
   },
 
   // === COOKING ===
@@ -584,7 +584,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 0.9,
     priceUsd: 18,
-    description: "Titanium canister stove. Lightest hot-cooking option.",
+    description: "Titanium canister stove. 0.9oz — lightest hot-cook stove available.",
   },
   {
     id: "toaks-550-ti",
@@ -594,7 +594,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 2.6,
     priceUsd: 35,
-    description: "Solo cooking pot. Fits a small fuel canister inside.",
+    description: "Titanium cooking pot. 550ml. Fits a small fuel canister inside for packing.",
   },
   {
     id: "litesmith-cold-soak-jar",
@@ -604,7 +604,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 2.8,
     priceUsd: 8,
-    description: "Talenti jar for cold soaking. No stove needed.",
+    description: "Plastic jar for cold-soaking meals without a stove. No heat source needed.",
   },
   {
     id: "bic-mini-lighter",
@@ -614,7 +614,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 0.5,
     priceUsd: 2,
-    description: "Standard mini lighter. Backup fire starter.",
+    description: "Mini butane lighter. 0.5oz. Backup fire starter for stoves or emergencies.",
   },
   {
     id: "diy-alcohol-stove",
@@ -624,7 +624,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 0.5,
     priceUsd: 0,
-    description: "Homemade alcohol stove from cat food can. Lightest cook option. Slow boil.",
+    description: "Homemade stove from a cat food can. Burns denatured alcohol. Slow boil but weighs 0.5oz.",
   },
   {
     id: "toaks-650-ti",
@@ -634,7 +634,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 3.5,
     priceUsd: 40,
-    description: "Solo/duo pot. Fits 110g canister inside. Budget titanium.",
+    description: "Titanium cooking pot. 650ml. Fits 110g fuel canister inside. Good solo/duo size.",
   },
   {
     id: "esbit-stove",
@@ -644,7 +644,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 0.4,
     priceUsd: 13,
-    description: "Tiny folding stove for solid fuel tabs. Lightest hot-cook option.",
+    description: "Folding stove for solid fuel tablets. 0.4oz. Boils water with no liquid fuel.",
   },
 
   // === WATER ===
@@ -656,7 +656,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 3,
     priceUsd: 37,
-    description: "Gravity/squeeze filter. Community standard. Backflush to maintain.",
+    description: "Hollow-fiber water filter. Squeeze or gravity setup. Filters bacteria and protozoa.",
   },
   {
     id: "cnoc-vecto-2l",
@@ -666,7 +666,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 2.9,
     priceUsd: 18,
-    description: "Wide-mouth soft flask. Pairs perfectly with Sawyer.",
+    description: "Collapsible 2-liter water container. Wide mouth for easy scooping. Pairs with Sawyer filter.",
   },
   {
     id: "smartwater-1l",
@@ -676,7 +676,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 1.3,
     priceUsd: 3,
-    description: "The UL water bottle. Sports cap fits Sawyer. Disposable.",
+    description: "Disposable 1-liter plastic bottle. Sports cap threads onto Sawyer filters. 1.3oz.",
   },
   {
     id: "sawyer-mini",
@@ -686,7 +686,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 2,
     priceUsd: 25,
-    description: "Smallest Sawyer filter. Slower flow than Squeeze but lighter and cheaper.",
+    description: "Compact hollow-fiber water filter. Slower flow rate than the Squeeze but lighter.",
   },
 
   // === ELECTRONICS ===
@@ -698,7 +698,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 5.3,
     priceUsd: 50,
-    description: "10,000mAh power bank. Best capacity-to-weight for UL.",
+    description: "10,000mAh portable battery. USB-C. Best capacity-to-weight for hiking.",
   },
   {
     id: "petzl-iko-core",
@@ -708,7 +708,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 2.4,
     priceUsd: 100,
-    description: "Ultralight rechargeable headlamp. 500 lumens.",
+    description: "Rechargeable USB-C headlamp. 500 lumens. 2.4oz. Ultralight design.",
   },
   {
     id: "garmin-inreach-mini2",
@@ -718,7 +718,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 3.5,
     priceUsd: 400,
-    description: "Satellite messenger + SOS. Essential for remote areas.",
+    description: "Satellite messenger with SOS button. Two-way texting. GPS tracking in remote areas.",
   },
   {
     id: "nitecore-nu20-classic",
@@ -728,7 +728,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 1.34,
     priceUsd: 25,
-    description: "Highest-rated PCT headlamp. 360 lumens. USB-C. Glow-in-dark band.",
+    description: "Rechargeable USB-C headlamp. 360 lumens. 1.34oz with glow-in-dark headband.",
   },
 
   // === HYGIENE ===
@@ -740,7 +740,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 0.6,
     priceUsd: 20,
-    description: "Aluminum cathole trowel. LNT essential.",
+    description: "Aluminum digging trowel. 0.6oz. Required for Leave No Trace waste burial.",
   },
   {
     id: "litesmith-hand-sani",
@@ -750,7 +750,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 1.2,
     priceUsd: 3,
-    description: "Small dropper bottle of hand sanitizer.",
+    description: "1oz dropper bottle of hand sanitizer. Trail hygiene essential.",
   },
 
   // === NAVIGATION ===
@@ -762,7 +762,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 0,
     priceUsd: 50,
-    description: "Offline topo maps + route planning. Yearly subscription.",
+    description: "Offline topographic maps and route planning app. Yearly subscription.",
   },
 
   // === SAFETY ===
@@ -774,7 +774,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 0.5,
     priceUsd: 5,
-    description: "Blister prevention/treatment tape. Wrapped around lighter.",
+    description: "Adhesive medical tape for blister prevention and treatment. Wrap around a lighter to save space.",
   },
   {
     id: "mini-first-aid",
@@ -784,7 +784,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 2.8,
     priceUsd: 25,
-    description: "Ibuprofen, antihistamine, gauze, tape, tweezers, Aquamira.",
+    description: "Lightweight first aid kit. Ibuprofen, antihistamine, gauze, tape, tweezers, and water treatment.",
   },
 
   // === ACCESSORIES ===
@@ -796,7 +796,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 3.1,
     priceUsd: 42,
-    description: "DCF food bag + rock sack + 50ft line.",
+    description: "Dyneema food bag with rock sack and 50ft throw line. For hanging food from bears.",
   },
   {
     id: "sea-to-summit-stuff-sack-6l",
@@ -806,7 +806,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 0.8,
     priceUsd: 18,
-    description: "Lightweight organization sack.",
+    description: "Nylon stuff sack. 6.5 liters. 0.8oz. Lightweight gear organization.",
   },
   {
     id: "gossamer-gear-thinlight-pad",
@@ -816,7 +816,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 2,
     priceUsd: 22,
-    description: "CCF sit pad / frame sheet / extra insulation. Multi-use.",
+    description: "Thin closed-cell foam pad. Use as sit pad, pack frame, or extra sleeping insulation.",
   },
   {
     id: "cascade-mtn-tech-cf",
@@ -826,7 +826,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 15.6,
     priceUsd: 65,
-    description: "Best budget carbon poles. Cork grips. Flip locks. Costco favorite.",
+    description: "Carbon fiber trekking poles. Cork grips. Flip-lock adjustable. 15.6oz per pair.",
   },
   {
     id: "cascade-mtn-tech-aluminum",
@@ -836,7 +836,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 20.8,
     priceUsd: 50,
-    description: "Cheapest decent brand-name poles. Cork grips. Heavy but durable.",
+    description: "Aluminum trekking poles. Cork grips. Heavier but very durable for the price.",
   },
 
   // === ULTRA-BUDGET: AliExpress / Amazon / DIY ===
@@ -850,7 +850,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 33,
     priceUsd: 70,
-    description: "AliExpress 1-person trekking pole tent. 15D silnylon. The $70 UL tent.",
+    description: "1-person trekking pole tent. 15D silicone-nylon. Under $70 from AliExpress.",
   },
   {
     id: "naturehike-vik-1",
@@ -860,7 +860,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 37,
     priceUsd: 75,
-    description: "Sub-2.5lb 1-person tent. 15D silnylon. Proven on thousands of trails.",
+    description: "1-person tent. 15D silicone-nylon. Under 2.5lb. Trail-proven budget option.",
   },
   {
     id: "naturehike-star-trail-ext",
@@ -870,7 +870,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 27.6,
     priceUsd: 118,
-    description: "Under 800g tent body. Silnylon. Reddit favorite for weight-to-price.",
+    description: "1-person tent. Silicone-nylon. Under 800g tent body. Great weight-to-price ratio.",
   },
   {
     id: "3ful-floating-cloud-tarp",
@@ -880,7 +880,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 16,
     priceUsd: 50,
-    description: "Silnylon flat tarp. Pair with bug net for sub-$80 shelter system.",
+    description: "Flat tarp shelter. Silicone-nylon. Pair with a bug net for a sub-$80 shelter system.",
   },
 
   // Sleep System
@@ -892,7 +892,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 15.5,
     priceUsd: 70,
-    description: "800fp goose down mummy bag. ~40°F comfort. Summer/warm 3-season.",
+    description: "Goose down mummy sleeping bag. 800-fill. Comfortable to ~40°F. Summer/warm 3-season.",
     tempRating: 40,
   },
   {
@@ -903,7 +903,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 15.5,
     priceUsd: 80,
-    description: "800fp wearable down bag. 10D fabric. Arms-out design. ~38°F comfort.",
+    description: "Wearable sleeping bag with arm openings. 800-fill goose down. Comfortable to ~38°F.",
     tempRating: 38,
   },
   {
@@ -914,7 +914,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 22,
     priceUsd: 95,
-    description: "800fp goose down mummy. YKK zip. ~25°F comfort. Real 3-season bag.",
+    description: "Goose down mummy sleeping bag. 800-fill. Comfortable to ~25°F. True 3-season bag.",
     tempRating: 25,
   },
   {
@@ -925,7 +925,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 17.6,
     priceUsd: 52,
-    description: "AliExpress 800fp down quilt. ~40°F. The $52 quilt from that viral LighterPack list.",
+    description: "Down quilt (open-bottom blanket). 800-fill. Comfortable to ~40°F. Under $55 from AliExpress.",
     tempRating: 40,
   },
   {
@@ -936,7 +936,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 18.3,
     priceUsd: 55,
-    description: "R-5.6 insulated air pad. 18.3oz mummy. Incredible value for the R-value.",
+    description: "Inflatable sleeping pad. R-value 5.6. Mummy shape. Incredible warmth for the price.",
     rValue: 5.6,
   },
   {
@@ -947,7 +947,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 14,
     priceUsd: 18,
-    description: "Basic closed-cell foam pad. R-1.5 to R-2. Can't pop. Cut to size.",
+    description: "Closed-cell foam sleeping pad. R-value ~1.8. Cannot puncture. Cut to your desired length.",
     rValue: 1.8,
   },
 
@@ -960,7 +960,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 30,
     priceUsd: 60,
-    description: "AliExpress frameless pack. Dyneema grid. The $60 UL pack from r/ultralight.",
+    description: "Frameless 40-liter backpack. Dyneema grid fabric. Under $60 from AliExpress.",
     volume: 40,
   },
 
@@ -973,7 +973,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 7,
     priceUsd: 17,
-    description: "Generic ultralight rain jacket. Waterproof enough for most conditions.",
+    description: "Lightweight rain jacket. Waterproof coating. Under $20 from AliExpress.",
     waterproof: true,
   },
   {
@@ -984,7 +984,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 10.5,
     priceUsd: 35,
-    description: "Generic 800fp down puffy. $35. Surprisingly warm. Not durable long-term.",
+    description: "Down insulated jacket. 800-fill. Under $35. Warm but not durable long-term.",
   },
   {
     id: "goodwill-fleece",
@@ -994,7 +994,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 12,
     priceUsd: 5,
-    description: "Any polyester fleece from Goodwill/thrift. $5. The original budget layer.",
+    description: "Polyester fleece jacket from a thrift store. ~$5. Works as well as brand-name fleece.",
   },
 
   // Cooking
@@ -1006,7 +1006,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 3.8,
     priceUsd: 22,
-    description: "Amazon/AliExpress titanium pot. Works fine. Half the price of TOAKS.",
+    description: "Titanium cooking pot. 750ml. Half the price of TOAKS. Works fine.",
   },
   {
     id: "amazon-titanium-spork",
@@ -1016,7 +1016,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 0.6,
     priceUsd: 8,
-    description: "Amazon titanium spork. Reaches the bottom of tall freeze-dried bags.",
+    description: "Titanium combination spoon-fork. Long handle reaches freeze-dried meal bags.",
   },
 
   // Electronics
@@ -1028,7 +1028,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 1.2,
     priceUsd: 12,
-    description: "Ultra-light 600 lumens headlamp. USB-C. Cheaper than Nitecore.",
+    description: "Rechargeable USB-C headlamp. 600 lumens. 1.2oz. Budget alternative to Nitecore.",
   },
   {
     id: "flextail-zero-power-10000",
@@ -1038,7 +1038,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 5.8,
     priceUsd: 30,
-    description: "World's thinnest 10,000mAh power bank. Budget Nitecore alternative.",
+    description: "10,000mAh portable battery. Ultra-thin design. Budget alternative to Nitecore.",
   },
 
   // Water
@@ -1050,7 +1050,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 2.6,
     priceUsd: 2,
-    description: "Any 1L disposable bottles. Free with purchase. Replace when worn.",
+    description: "Disposable 1-liter water bottles (2-pack). Free with purchase. Replace when worn out.",
   },
 
   // Accessories
@@ -1062,7 +1062,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 22,
     priceUsd: 28,
-    description: "Cheapest functional poles on Amazon. Foam grips. Flip lock. Surprisingly OK.",
+    description: "Aluminum trekking poles. Foam grips. Flip lock. Under $30 on Amazon.",
   },
   {
     id: "diy-stuff-sack",
@@ -1072,7 +1072,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 0.3,
     priceUsd: 0,
-    description: "Produce bag or bread bag as stuff sack. Free. The true UL way.",
+    description: "Produce bag or bread bag used as a stuff sack. Free. Weighs almost nothing.",
   },
   {
     id: "myog-tyvek-groundsheet",
@@ -1082,7 +1082,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 3,
     priceUsd: 5,
-    description: "Cut from Tyvek house wrap. Waterproof, ultralight footprint. Free from construction sites.",
+    description: "Waterproof ground cloth cut from house wrap material. 3oz. Protects tent floor.",
   },
 
   // === 2025 PCT HIKER SURVEY DATA (790 hikers) ===
@@ -1096,7 +1096,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 17.1,
     priceUsd: 599,
-    description: "Most common PCT shelter 2025. DCF trekking pole tent. 20 sq ft.",
+    description: "1-person trekking pole tent. Dyneema fabric. 20 sq ft floor. Most popular PCT shelter 2025.",
   },
   {
     id: "durston-xmid-1",
@@ -1106,7 +1106,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 25.4,
     priceUsd: 269,
-    description: "Silnylon version of the X-Mid Pro. Great value. 21.3 sq ft.",
+    description: "1-person trekking pole tent. Silicone-nylon fabric. 21.3 sq ft. Great value mid-range shelter.",
   },
   {
     id: "durston-xmid-pro-2",
@@ -1116,7 +1116,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 20,
     priceUsd: 679,
-    description: "DCF 2-person. 28.75 sq ft. Lighter than Zpacks Duplex.",
+    description: "2-person trekking pole tent. Dyneema fabric. 28.75 sq ft. Lighter than the Zpacks Duplex.",
   },
   {
     id: "durston-xmid-2",
@@ -1126,7 +1126,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 31,
     priceUsd: 319,
-    description: "Silnylon 2-person. Best value 2P shelter. 33.2 sq ft.",
+    description: "2-person trekking pole tent. Silicone-nylon. 33.2 sq ft. Best value 2-person shelter.",
   },
   {
     id: "big-agnes-copper-spur-ul2",
@@ -1136,7 +1136,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 42,
     priceUsd: 550,
-    description: "Freestanding 2P. 29 sq ft. 5th most common PCT tent.",
+    description: "Freestanding 2-person tent. 29 sq ft floor. No trekking poles needed.",
   },
   {
     id: "big-agnes-tiger-wall-ul2",
@@ -1146,7 +1146,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 35,
     priceUsd: 500,
-    description: "Semi-freestanding 2P. 28 sq ft. Lighter than Copper Spur.",
+    description: "Semi-freestanding 2-person tent. 28 sq ft floor. Lighter than the Copper Spur.",
   },
   {
     id: "nemo-hornet-osmo-2p",
@@ -1156,7 +1156,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 33,
     priceUsd: 450,
-    description: "Semi-freestanding 2P. 27.7 sq ft. 2nd highest rated PCT shelter.",
+    description: "Semi-freestanding 2-person tent. 27.7 sq ft floor. Highly rated for livability.",
   },
   {
     id: "nemo-hornet-osmo-1p",
@@ -1166,7 +1166,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 29,
     priceUsd: 420,
-    description: "Semi-freestanding 1P. 20.6 sq ft.",
+    description: "Semi-freestanding 1-person tent. 20.6 sq ft floor. Lightweight solo option.",
   },
   {
     id: "zpacks-plex-solo",
@@ -1176,7 +1176,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 11.7,
     priceUsd: 599,
-    description: "Lightest full tent. DCF 1P. 20.6 sq ft. For the truly weight-obsessed.",
+    description: "1-person tent. Dyneema fabric. 20.6 sq ft. Under 12oz — lightest full tent available.",
   },
   {
     id: "big-agnes-copper-spur-ul1",
@@ -1186,7 +1186,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 32,
     priceUsd: 500,
-    description: "Freestanding 1P. 20 sq ft.",
+    description: "Freestanding 1-person tent. 20 sq ft floor. No trekking poles needed.",
   },
 
   // === SLEEP SYSTEM (PCT 2025) ===
@@ -1198,7 +1198,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 24.6,
     priceUsd: 509,
-    description: "Highest-rated PCT quilt 2025. 900fp. Drafts-free collar.",
+    description: "Down quilt (open-bottom blanket). 900-fill goose. Comfortable to 15°F. Drafts-free collar.",
     tempRating: 15,
   },
   {
@@ -1209,7 +1209,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 22.7,
     priceUsd: 479,
-    description: "3rd most common PCT quilt. 900fp. Snap attachment system.",
+    description: "Down quilt (open-bottom blanket). 900-fill goose. Comfortable to 22°F. Snap pad attachment.",
     tempRating: 22,
   },
   {
@@ -1220,7 +1220,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 19.2,
     priceUsd: 370,
-    description: "2nd most common PCT quilt. Opens flat. 950fp duck.",
+    description: "Down quilt (open-bottom blanket). 950-fill duck down. Opens flat as blanket. Comfortable to 20°F.",
     tempRating: 20,
   },
   {
@@ -1231,7 +1231,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 25.4,
     priceUsd: 559,
-    description: "5th most common PCT. 950+ fp goose. Excellent quality.",
+    description: "Down quilt (open-bottom blanket). 950-fill goose. Comfortable to 20°F. Top-tier quality.",
     tempRating: 20,
   },
   {
@@ -1242,7 +1242,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 35.5,
     priceUsd: 399,
-    description: "4th most common PCT bag. 850fp goose. Traditional mummy.",
+    description: "Down mummy sleeping bag. 850-fill goose. Comfortable to 15°F. Traditional zippered design.",
     tempRating: 15,
   },
   {
@@ -1253,7 +1253,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 32,
     priceUsd: 720,
-    description: "3rd highest rated PCT. 850fp goose. Bombproof.",
+    description: "Down mummy sleeping bag. 850-fill goose. Comfortable to 10°F. Extremely durable construction.",
     tempRating: 10,
   },
   {
@@ -1264,7 +1264,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 25.8,
     priceUsd: 549,
-    description: "2nd highest rated. 850fp goose. YKK zip.",
+    description: "Down mummy sleeping bag. 850-fill goose. Comfortable to 15°F. Full-zip YKK zipper.",
     tempRating: 15,
   },
   {
@@ -1275,7 +1275,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 20.9,
     priceUsd: 415,
-    description: "Hammock or ground. 950fp goose. Great community rep.",
+    description: "Down quilt (open-bottom blanket). 950-fill goose. Comfortable to 20°F. Hammock or ground use.",
     tempRating: 20,
   },
   {
@@ -1286,7 +1286,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 16,
     priceUsd: 200,
-    description: "2nd most common PCT pad. R-5.4. 3.5in thick.",
+    description: "Inflatable sleeping pad. R-value 5.4. 3.5 inches thick. Good 3-season warmth.",
     rValue: 5.4,
   },
   {
@@ -1297,7 +1297,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 22,
     priceUsd: 250,
-    description: "Highest-rated PCT pad. R-8.5. 4-season beast.",
+    description: "Inflatable sleeping pad. R-value 8.5. 4-season warmth for cold-weather camping.",
     rValue: 8.5,
   },
   {
@@ -1308,7 +1308,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 15.5,
     priceUsd: 240,
-    description: "4th most common PCT pad. R-7.3. 4-season.",
+    description: "Inflatable sleeping pad. R-value 7.3. 4-season warmth. 15.5oz.",
     rValue: 7.3,
   },
   {
@@ -1319,7 +1319,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 16,
     priceUsd: 140,
-    description: "2nd highest rated pad. R-2.9. Budget 3-season pick.",
+    description: "Inflatable sleeping pad. R-value 2.9. Budget-friendly 3-season pick.",
     rValue: 2.9,
   },
 
@@ -1332,7 +1332,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 32.1,
     priceUsd: 332,
-    description: "Highest-rated PCT pack 2025. Highly customizable. UK-made.",
+    description: "50-liter backpack. Highly customizable fit. Made in the UK.",
     volume: 50,
   },
   {
@@ -1343,7 +1343,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 44.5,
     priceUsd: 320,
-    description: "2nd highest rated. 75L. Handles 40lb. For heavier loads.",
+    description: "75-liter framed backpack. Handles 40lb loads. For longer carries and heavier setups.",
     volume: 75,
   },
   {
@@ -1354,7 +1354,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 45,
     priceUsd: 285,
-    description: "4th most common PCT pack. Ventilated back. Comfortable.",
+    description: "58-liter framed backpack. Ventilated suspension. Comfortable for most hikers.",
     volume: 58,
   },
   {
@@ -1365,7 +1365,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 69,
     priceUsd: 350,
-    description: "Most comfortable pack made. Heavy but pillowy. For beginners.",
+    description: "50-liter framed backpack. Anti-gravity suspension. Very comfortable but heavier at 69oz.",
     volume: 50,
   },
   {
@@ -1376,7 +1376,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 22.7,
     priceUsd: 399,
-    description: "DCF framed pack. 60L. Lightest framed option.",
+    description: "60-liter framed backpack. Dyneema fabric. 22.7oz — lightest framed pack available.",
     volume: 60,
   },
   {
@@ -1387,7 +1387,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 29.6,
     priceUsd: 415,
-    description: "DCF 40L. For sub-10lb base weights. Waterproof.",
+    description: "40-liter backpack. Dyneema fabric, waterproof. For sub-10lb base weights.",
     volume: 40,
   },
 
@@ -1400,7 +1400,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 4.4,
     priceUsd: 115,
-    description: "Most common PCT fleece 2025. Polartec Alpha Direct 90.",
+    description: "Active fleece hoodie. Polartec Alpha Direct 90 gsm. Breathable while hiking.",
   },
   {
     id: "senchi-alpha-60-hoodie",
@@ -1410,7 +1410,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 3.7,
     priceUsd: 105,
-    description: "3rd most common PCT fleece. Even lighter. 60gsm.",
+    description: "Active fleece hoodie. Polartec Alpha Direct 60 gsm. Lighter weight for warm climates.",
   },
   {
     id: "farpointe-alpha-cruiser",
@@ -1420,7 +1420,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 4.9,
     priceUsd: 95,
-    description: "2nd most common PCT fleece. Alpha Direct 90. No hood.",
+    description: "Active fleece pullover (no hood). Polartec Alpha Direct 90 gsm. Breathable while hiking.",
   },
   {
     id: "lightheart-alpha-direct-90-hoodie",
@@ -1430,7 +1430,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 5.2,
     priceUsd: 130,
-    description: "Highest-rated PCT fleece. Made in USA.",
+    description: "Active fleece hoodie. Polartec Alpha Direct 90 gsm. Made in USA.",
   },
   {
     id: "mhw-ghost-whisperer-hoody",
@@ -1440,7 +1440,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 10.7,
     priceUsd: 380,
-    description: "2nd most common PCT puffy. 800fp down.",
+    description: "Hooded down insulated jacket. 800-fill goose down. Very packable.",
   },
   {
     id: "patagonia-micro-puff-hoody",
@@ -1450,7 +1450,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 10.5,
     priceUsd: 329,
-    description: "4th most common PCT puffy. Synthetic. Works when wet.",
+    description: "Hooded synthetic insulated jacket. Retains warmth when wet. 10.5oz.",
   },
   {
     id: "patagonia-nano-puff-jacket",
@@ -1460,7 +1460,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 11.9,
     priceUsd: 239,
-    description: "5th most common PCT puffy. Synthetic. Durable.",
+    description: "Synthetic insulated jacket. Retains warmth when wet. Durable outer fabric.",
   },
   {
     id: "arcteryx-beta-jacket",
@@ -1470,7 +1470,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 13.2,
     priceUsd: 400,
-    description: "2nd highest rated PCT shell. GORE-TEX. Pit zips.",
+    description: "Waterproof hardshell jacket. GORE-TEX membrane. Pit zips for ventilation.",
     waterproof: true,
   },
   {
@@ -1481,7 +1481,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 14.1,
     priceUsd: 179,
-    description: "3rd most common PCT rain jacket. Durable. Pit zips.",
+    description: "Waterproof rain jacket. 3-layer construction. Pit zips. Durable in tough conditions.",
     waterproof: true,
   },
   {
@@ -1492,7 +1492,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 7,
     priceUsd: 170,
-    description: "4th most common PCT shell. Light but no pit zips.",
+    description: "Waterproof rain jacket. Lightweight at 7oz. No pit zips but very packable.",
     waterproof: true,
   },
   {
@@ -1503,7 +1503,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 3.7,
     priceUsd: 129,
-    description: "Wind shell (not waterproof). Incredibly light. Essential above treeline.",
+    description: "Wind shell jacket (not waterproof). 3.7oz. Essential for exposed ridgelines and summits.",
   },
 
   // === SHOES (PCT 2025) ===
@@ -1515,7 +1515,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 22.3,
     priceUsd: 145,
-    description: "Most common + highest rated PCT shoe. 0mm drop. Wide toe box.",
+    description: "Trail running shoe. Zero-drop (flat sole). Wide toe box. Most popular with thru-hikers.",
   },
   {
     id: "altra-olympus-6",
@@ -1525,7 +1525,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 24.4,
     priceUsd: 185,
-    description: "2nd most common PCT shoe. Max cushion. 0mm drop.",
+    description: "Trail running shoe. Zero-drop (flat sole). Maximum cushioning for long days.",
   },
   {
     id: "hoka-speedgoat-6",
@@ -1535,7 +1535,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 20.6,
     priceUsd: 155,
-    description: "3rd most common PCT shoe. 4mm drop. Great traction.",
+    description: "Trail running shoe. 4mm heel-to-toe drop. Excellent traction on rocky terrain.",
   },
   {
     id: "topo-athletic-traverse",
@@ -1545,7 +1545,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 21.2,
     priceUsd: 155,
-    description: "4th most common PCT shoe. 5mm drop. Wide toe box.",
+    description: "Trail running shoe. 5mm heel-to-toe drop. Wide toe box for foot splay.",
   },
   {
     id: "brooks-cascadia",
@@ -1555,7 +1555,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 21.4,
     priceUsd: 150,
-    description: "5th highest rated. 6mm drop. Reliable all-rounder.",
+    description: "Trail running shoe. 6mm heel-to-toe drop. Reliable all-around performer.",
   },
   {
     id: "salomon-speedcross-6",
@@ -1565,7 +1565,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 22,
     priceUsd: 150,
-    description: "2nd highest rated. 10mm drop. Aggressive tread. Mud king.",
+    description: "Trail running shoe. 10mm heel-to-toe drop. Aggressive tread for muddy conditions.",
   },
 
   // === STOVES (PCT 2025) ===
@@ -1577,7 +1577,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 2.6,
     priceUsd: 60,
-    description: "Most common PCT stove. 5 years running. No igniter — carry a lighter.",
+    description: "Canister stove. 2.6oz. No built-in igniter — carry a lighter. Reliable and popular.",
   },
   {
     id: "soto-windmaster",
@@ -1587,7 +1587,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 3.1,
     priceUsd: 70,
-    description: "3rd most common PCT stove. Excellent in wind. Micro-regulator.",
+    description: "Canister stove with micro-regulator. Performs well in windy conditions.",
   },
   {
     id: "soto-amicus",
@@ -1597,7 +1597,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 2.5,
     priceUsd: 45,
-    description: "5th most common. Cheap, light, reliable. No igniter.",
+    description: "Canister stove. 2.5oz. Reliable and affordable. No built-in igniter.",
   },
   {
     id: "msr-pocketrocket-deluxe",
@@ -1607,7 +1607,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 2.9,
     priceUsd: 85,
-    description: "4th most common. Push-button igniter. Pressure regulator.",
+    description: "Canister stove with push-button igniter. Pressure regulator for consistent flame.",
   },
   {
     id: "jetboil-stash",
@@ -1617,7 +1617,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 7.1,
     priceUsd: 165,
-    description: "Highest-rated PCT stove. All-in-one system with pot. Fast boil.",
+    description: "All-in-one stove and pot system. Fast boil time. 7.1oz total for the set.",
   },
 
   // === WATER (PCT 2025) ===
@@ -1629,7 +1629,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 2.7,
     priceUsd: 53,
-    description: "3rd most common. Fast flow. Soft flask included. Clogs faster than Sawyer.",
+    description: "Hollow-fiber squeeze filter with soft flask. Fast flow rate but clogs faster than Sawyer.",
   },
   {
     id: "platypus-quickdraw",
@@ -1639,7 +1639,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 2.4,
     priceUsd: 55,
-    description: "2nd highest rated filter. Lightest hollow fiber option.",
+    description: "Hollow-fiber squeeze water filter. 2.4oz — lightest hollow-fiber option available.",
   },
   {
     id: "platypus-gravityworks",
@@ -1649,7 +1649,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 11.5,
     priceUsd: 135,
-    description: "Highest-rated PCT filter. Gravity-fed. Hands-free. Heavy but luxurious.",
+    description: "Gravity-fed hollow-fiber water filter system. Hands-free filtering. Heavy but convenient.",
   },
 
   // === HEADLAMPS (PCT 2025) ===
@@ -1661,7 +1661,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 1.66,
     priceUsd: 37,
-    description: "Most common PCT headlamp (37.7% of hikers). 400 lumens. USB-C. Red light.",
+    description: "Rechargeable USB-C headlamp. 400 lumens. 1.66oz. Red light mode included.",
   },
   {
     id: "nitecore-nu27",
@@ -1671,7 +1671,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 1.98,
     priceUsd: 41,
-    description: "4th highest rated. 600 lumens. USB-C. Quad LED.",
+    description: "Rechargeable USB-C headlamp. 600 lumens. Quad LED array for wide beam.",
   },
   {
     id: "black-diamond-spot-400",
@@ -1681,7 +1681,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 3,
     priceUsd: 55,
-    description: "3rd most common. 400 lumens. AAA batteries. Classic.",
+    description: "Headlamp. 400 lumens. Uses AAA batteries. Classic reliable design.",
   },
   {
     id: "petzl-actik-core",
@@ -1691,7 +1691,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 3.1,
     priceUsd: 88,
-    description: "4th most common. 625 lumens. USB-C rechargeable.",
+    description: "Rechargeable USB-C headlamp. 625 lumens. Includes rechargeable battery pack.",
   },
   {
     id: "petzl-tikka",
@@ -1701,7 +1701,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 3.3,
     priceUsd: 35,
-    description: "5th most common. 350 lumens. AAA. Cheapest Petzl.",
+    description: "Headlamp. 350 lumens. Uses AAA batteries. Simple and affordable.",
   },
 
   // === TREKKING POLES (PCT 2025) ===
@@ -1713,7 +1713,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 17.1,
     priceUsd: 230,
-    description: "Most common PCT poles. Carbon fiber. FlickLock. Cork grips.",
+    description: "Carbon fiber trekking poles. Cork grips. FlickLock adjustable.",
   },
   {
     id: "bd-trail",
@@ -1723,7 +1723,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 16.9,
     priceUsd: 120,
-    description: "2nd most common. Aluminum. Foam grips. Budget BD.",
+    description: "Aluminum trekking poles. Foam grips. Budget Black Diamond option.",
   },
   {
     id: "bd-trail-cork",
@@ -1733,7 +1733,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 17.4,
     priceUsd: 130,
-    description: "3rd most common. Aluminum. Cork grips.",
+    description: "Aluminum trekking poles. Cork grips for moisture wicking.",
   },
   {
     id: "bd-distance-carbon-z",
@@ -1743,7 +1743,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 9.6,
     priceUsd: 200,
-    description: "5th most common. Folding. Ultra-light. Fixed length.",
+    description: "Carbon fiber folding trekking poles. 9.6oz. Fixed length — not adjustable.",
   },
   {
     id: "leki-makalu-cork-lite",
@@ -1753,7 +1753,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 18.2,
     priceUsd: 160,
-    description: "Highest-rated PCT poles. Aluminum. Speed Lock plus.",
+    description: "Aluminum trekking poles. Speed lock adjustment. Cork grip. Highly rated.",
   },
   {
     id: "gossamer-gear-lt5",
@@ -1763,7 +1763,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 9.8,
     priceUsd: 275,
-    description: "Ultra-light carbon. 5th in popularity. Fixed-length.",
+    description: "Carbon fiber fixed-length trekking poles. 9.8oz. Ultralight for thru-hikers.",
   },
   {
     id: "rei-flash-carbon-poles",
@@ -1773,7 +1773,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 13.6,
     priceUsd: 189,
-    description: "Good value carbon poles. Foam grips.",
+    description: "Carbon fiber trekking poles. Foam grips. Good value at $189.",
   },
 
   // === BEAR CANISTERS (PCT 2025) ===
@@ -1785,7 +1785,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 40,
     priceUsd: 100,
-    description: "Most common PCT canister (60%+ of hikers). 11.5L. Polycarbonate.",
+    description: "Bear-proof food canister. Polycarbonate. 11.5 liters. Required in many wilderness areas.",
   },
   {
     id: "bearvault-bv450-jaunt",
@@ -1795,7 +1795,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 33.6,
     priceUsd: 90,
-    description: "Smaller option. 7.2L. Shorter trips.",
+    description: "Bear-proof food canister. Polycarbonate. 7.2 liters. Good for shorter trips.",
   },
   {
     id: "bearvault-bv475-trek",
@@ -1805,7 +1805,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 36,
     priceUsd: 95,
-    description: "Mid-size. 9.3L. Good balance of weight and capacity.",
+    description: "Bear-proof food canister. Polycarbonate. 9.3 liters. Good balance of weight and capacity.",
   },
   {
     id: "bearikade-weekender",
@@ -1815,7 +1815,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 32,
     priceUsd: 359,
-    description: "Highest-rated canister. Carbon fiber. 10.6L. Expensive but light.",
+    description: "Bear-proof food canister. Carbon fiber shell. 10.6 liters. Light but expensive.",
   },
   {
     id: "bearikade-expedition",
@@ -1825,7 +1825,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 37,
     priceUsd: 424,
-    description: "Largest carbon fiber canister. 14.7L. Multi-day Sierra carries.",
+    description: "Bear-proof food canister. Carbon fiber shell. 14.7 liters. For multi-day Sierra carries.",
   },
 
   // === SATELLITE MESSENGERS (PCT 2025) ===
@@ -1837,7 +1837,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 4,
     priceUsd: 300,
-    description: "4th most common. Two-way messaging. USB-C. No screen.",
+    description: "Satellite messenger with two-way texting. USB-C. No screen — phone app required.",
   },
   {
     id: "zoleo-satellite-communicator",
@@ -1847,7 +1847,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 5.3,
     priceUsd: 149,
-    description: "Highest-rated PCT messenger. Iridium network. 200hr battery.",
+    description: "Satellite messenger with SOS. Iridium network. 200-hour battery life.",
   },
   {
     id: "garmin-inreach-mini-3",
@@ -1857,7 +1857,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 3.5,
     priceUsd: 400,
-    description: "Replacement for Mini 2. Two-way. SOS. GPS tracking.",
+    description: "Satellite messenger with SOS. Two-way texting. GPS tracking. 3.5oz.",
   },
 
   // === SOCKS (PCT 2025) ===
@@ -1869,7 +1869,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 3.2,
     priceUsd: 26,
-    description: "Most common PCT sock. Merino wool. Lifetime guarantee.",
+    description: "Merino wool hiking sock. Midweight cushion. Lifetime warranty replacement.",
   },
   {
     id: "darn-tough-light-hiker-micro-crew",
@@ -1879,7 +1879,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 2.8,
     priceUsd: 25,
-    description: "2nd most common. Lighter weight. Still merino.",
+    description: "Merino wool hiking sock. Lightweight cushion. Thinner for warm weather.",
   },
   {
     id: "injinji-trail-midweight-mini-crew",
@@ -1889,7 +1889,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 2.5,
     priceUsd: 17,
-    description: "Toe socks. Prevent blisters between toes. 5th most common.",
+    description: "Individual toe socks for hiking. Prevents blisters between toes.",
   },
 
   // === MISC ACCESSORIES (PCT 2025) ===
@@ -1901,7 +1901,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 6.8,
     priceUsd: 85,
-    description: "Most common PCT umbrella. Silver reflects sun. Carbon frame.",
+    description: "Hiking umbrella. Silver-coated to reflect sun. Carbon fiber frame. 6.8oz.",
   },
   {
     id: "nitecore-nb10000-gen3",
@@ -1911,7 +1911,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 5.3,
     priceUsd: 55,
-    description: "Fast-charging 10,000mAh bank. USB-C. Best watt-hours per oz.",
+    description: "10,000mAh portable battery. USB-C fast charging. Best watt-hours per ounce.",
   },
 
   // === HAMMOCK CAMPING ===
@@ -1925,7 +1925,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 26,
     priceUsd: 250,
-    description: "Premium gathered-end hammock. Integrated bug net. Shelf + foot box.",
+    description: "Gathered-end camping hammock. Built-in bug net and foot box. 11ft length.",
   },
   {
     id: "dutchware-chameleon",
@@ -1935,7 +1935,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 22,
     priceUsd: 220,
-    description: "Modular hammock system. Zip-on bug net. 11ft. Top-entry or side.",
+    description: "Modular camping hammock. Zip-on bug net option. 11ft. Top or side entry.",
   },
   {
     id: "hummingbird-long",
@@ -1945,7 +1945,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 7.4,
     priceUsd: 75,
-    description: "Lightest full-size hammock. Single-layer. No bug net. 11ft.",
+    description: "Single-layer camping hammock. 7.4oz — lightest full-size option. No bug net included.",
   },
   {
     id: "hennessy-explorer-ultralight",
@@ -1955,7 +1955,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 31,
     priceUsd: 270,
-    description: "Asymmetric hammock with integrated tarp + bug net. All-in-one system.",
+    description: "Asymmetric camping hammock with tarp and bug net included. Complete sleep system.",
   },
   {
     id: "dream-hammock-darien",
@@ -1965,7 +1965,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 18,
     priceUsd: 200,
-    description: "Custom cottage hammock. 11ft gathered-end. Integrated bug net options.",
+    description: "Custom-made gathered-end hammock. 11ft. Optional integrated bug net. 18oz.",
   },
 
   // Hammock tarps (shelter category)
@@ -1977,7 +1977,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 22,
     priceUsd: 195,
-    description: "Full-coverage hammock tarp. Silpoly. Doors for weather protection.",
+    description: "Full-coverage rain tarp for hammocks. Silicone-polyester. Doors for wind protection.",
   },
   {
     id: "hammock-gear-dyneema-hex-tarp",
@@ -1987,7 +1987,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 8.5,
     priceUsd: 400,
-    description: "Ultralight DCF hammock tarp. Hex shape. Full coverage. Sub-9oz.",
+    description: "Hex-shaped rain tarp for hammocks. Dyneema fabric. Full coverage at under 9oz.",
   },
   {
     id: "dutchware-hex-tarp-silpoly",
@@ -1997,7 +1997,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 16,
     priceUsd: 130,
-    description: "Budget hammock tarp. Silpoly hex. Good coverage. Durable.",
+    description: "Hex-shaped rain tarp for hammocks. Silicone-polyester. Good coverage at a budget price.",
   },
 
   // Underquilts (insulation category)
@@ -2009,7 +2009,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 24,
     priceUsd: 175,
-    description: "Budget full-length underquilt. 800fp down. Drafts-free for hammock camping.",
+    description: "Hammock underquilt (insulation that hangs below). 800-fill down. Comfortable to 20°F.",
     tempRating: 20,
     fillPower: 800,
     fillType: "duck-down",
@@ -2022,7 +2022,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 20,
     priceUsd: 280,
-    description: "Premium underquilt. 900fp goose. Full-length. Excellent warmth-to-weight.",
+    description: "Hammock underquilt (insulation that hangs below). 900-fill goose. Comfortable to 20°F.",
     tempRating: 20,
     fillPower: 900,
     fillType: "goose-down",
@@ -2035,7 +2035,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 22,
     priceUsd: 300,
-    description: "Premium underquilt. 850fp down. Full-length. Integrated attachment.",
+    description: "Hammock underquilt (insulation that hangs below). 850-fill goose. Comfortable to 20°F.",
     tempRating: 20,
     fillPower: 850,
     fillType: "goose-down",
@@ -2048,7 +2048,7 @@ export const gearDatabase: GearItem[] = [
     tier: "mid",
     weightOz: 21,
     priceUsd: 260,
-    description: "Full-length underquilt. 950fp goose. Can also be used as ground quilt.",
+    description: "Hammock underquilt (insulation that hangs below). 950-fill goose. Also works as a ground quilt.",
     tempRating: 20,
     fillPower: 950,
     fillType: "goose-down",
@@ -2061,7 +2061,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 14,
     priceUsd: 55,
-    description: "Budget AliExpress underquilt. 800fp. Summer/warm 3-season hammock use.",
+    description: "Hammock underquilt (insulation that hangs below). 800-fill down. Summer/warm 3-season use.",
     tempRating: 40,
     fillPower: 800,
     fillType: "duck-down",
@@ -2076,7 +2076,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 5,
     priceUsd: 40,
-    description: "Tree-friendly hammock straps + buckles. Quick setup. No knots needed.",
+    description: "Hammock suspension straps with buckle system. Quick setup, no knots needed.",
   },
   {
     id: "whoopie-slings-set",
@@ -2086,7 +2086,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 1.5,
     priceUsd: 20,
-    description: "Adjustable Amsteel suspension. Lightest option. Pair with tree straps.",
+    description: "Adjustable rope hammock suspension. 1.5oz per pair. Lightest hanging option.",
   },
   {
     id: "hammock-tree-straps-1inch",
@@ -2096,7 +2096,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 3.5,
     priceUsd: 15,
-    description: "Tree-friendly straps. Required with whoopie slings. Protects bark.",
+    description: "Wide polyester straps that wrap around trees. Protects bark. Needed with whoopie slings.",
   },
 
   // === MISSING ITEMS FROM V0 AUDIT (verified) ===
@@ -2109,7 +2109,7 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 9.5,
     priceUsd: 155,
-    description: "Classic A-frame silnylon tarp. 9.5oz. Catenary cut ridgeline. Pair with bug net.",
+    description: "A-frame tarp shelter. Silicone-nylon. 9.5oz. Pair with a separate bug net.",
     setupType: "tarp",
     capacity: 1,
     poleType: "trekking",
@@ -2126,7 +2126,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 1.6,
     priceUsd: 12,
-    description: "Ultralight window-film footprint. 1.6oz. Cheap and disposable.",
+    description: "Window-film ground cloth. 1.6oz. Cheap and disposable tent floor protector.",
   },
   {
     id: "sea-to-summit-aeros-ul-pillow",
@@ -2136,7 +2136,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 2,
     priceUsd: 50,
-    description: "Ultralight inflatable pillow. 2oz regular. Brushed face fabric. Mini valve.",
+    description: "Inflatable camping pillow. 2oz. Brushed face fabric. Compact mini valve.",
   },
   {
     id: "sea-to-summit-alpha-light-spoon",
@@ -2146,7 +2146,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 0.4,
     priceUsd: 13,
-    description: "Ultra-light long-handled spoon. Anodized aluminum. Reaches freeze-dried bags.",
+    description: "Long-handled anodized aluminum spoon. 0.4oz. Reaches bottom of freeze-dried bags.",
   },
   {
     id: "katabatic-alsek-22",
@@ -2156,7 +2156,7 @@ export const gearDatabase: GearItem[] = [
     tier: "premium",
     weightOz: 22.2,
     priceUsd: 499,
-    description: "3-season quilt. 900fp goose down. ExpeDRY treated. Pad attachment system.",
+    description: "Down quilt (open-bottom blanket). 900-fill goose. Comfortable to 22°F. Pad attachment system.",
     tempRating: 22,
     fillPower: 900,
     fillWeight: 14.1,
@@ -2173,7 +2173,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 1.3,
     priceUsd: 45,
-    description: "Waterproof breathable mitts. eVent fabric. Keeps hands dry on wet days.",
+    description: "Waterproof breathable rain mittens. Keeps hands dry on wet trail days.",
     waterproof: true,
   },
   {
@@ -2184,7 +2184,7 @@ export const gearDatabase: GearItem[] = [
     tier: "ultra-budget",
     weightOz: 7.4,
     priceUsd: 6,
-    description: "Standard isobutane/propane fuel. Fits all canister stoves. ~60min boil time.",
+    description: "Isobutane/propane fuel canister. 110g. Fits all canister stoves. ~60 min of boil time.",
     fuelType: "canister",
   },
   {
@@ -2195,6 +2195,6 @@ export const gearDatabase: GearItem[] = [
     tier: "budget",
     weightOz: 3.2,
     priceUsd: 50,
-    description: "Premium UL pillow. Foam + air hybrid. 62% of PCT hikers carried a pillow.",
+    description: "Camping pillow with foam and air hybrid. 3.2oz. Comfortable and supportive.",
   },
 ];
