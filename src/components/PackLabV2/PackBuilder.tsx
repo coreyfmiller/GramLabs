@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { BarChart3, Layers, Mountain, Search } from "lucide-react";
+import Link from "next/link";
 import { usePackStore } from "@/store/pack-store";
 import { formatWeight } from "@/utils/format";
 import { GearSearch } from "./GearSearch";
@@ -28,16 +29,23 @@ export function PackBuilder() {
     <div className="flex h-dvh flex-col overflow-hidden bg-background">
       {/* Top bar */}
       <header className="flex shrink-0 items-center justify-between gap-4 border-b border-white/10 px-4 py-3 md:px-6">
-        <div className="flex items-center gap-2.5">
-          <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <Mountain className="size-5" aria-hidden="true" />
-          </span>
-          <div className="leading-tight">
-            <p className="text-base font-semibold tracking-tight">HikeMind</p>
-            <p className="hidden text-xs uppercase tracking-[0.16em] text-muted-foreground sm:block">
-              Pack Builder
-            </p>
-          </div>
+        <div className="flex items-center gap-4">
+          <Link href="/" className="flex items-center gap-2.5">
+            <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <Mountain className="size-5" aria-hidden="true" />
+            </span>
+            <div className="leading-tight">
+              <p className="text-base font-semibold tracking-tight">HikeMind</p>
+              <p className="hidden text-xs uppercase tracking-[0.16em] text-muted-foreground sm:block">
+                Pack Builder
+              </p>
+            </div>
+          </Link>
+          <nav className="hidden md:flex items-center gap-5 ml-4">
+            <Link href="/pack-lab" className="text-xs font-bold tracking-[0.15em] text-primary">PACK LAB</Link>
+            <Link href="/build" className="text-xs font-medium tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors">BUILD MY KIT</Link>
+            <Link href="/chat" className="text-xs font-medium tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors">GEAR ADVISOR</Link>
+          </nav>
         </div>
 
         <div className="flex items-center gap-4">

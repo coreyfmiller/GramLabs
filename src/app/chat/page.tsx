@@ -86,6 +86,12 @@ export default function ChatPage() {
               PACK LAB
             </Link>
             <Link
+              href="/build"
+              className="text-[12px] font-medium tracking-[0.15em] text-white/60 hover:text-white transition-colors"
+            >
+              BUILD MY KIT
+            </Link>
+            <Link
               href="/chat"
               className="text-[12px] font-bold tracking-[0.15em] text-lime-400"
             >
