@@ -76,7 +76,7 @@ export default function ChatPage() {
             href="/"
             className="text-[16px] md:text-[18px] font-bold tracking-[0.2em] text-white hover:text-white/80 transition-colors"
           >
-            GRAMLAB.AI
+            HIKEMIND
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             <Link
@@ -175,7 +175,7 @@ export default function ChatPage() {
           </button>
         </form>
         <p className="max-w-3xl mx-auto mt-2 text-[10px] text-white/20 text-center">
-          GramLab AI uses community data from 790+ PCT thru-hikers and a database of 70+ verified gear items.
+          HikeMind AI uses community data from 790+ PCT thru-hikers and a database of 70+ verified gear items.
         </p>
       </div>
     </div>
@@ -189,7 +189,7 @@ function EmptyState() {
         <Bot className="w-7 h-7 text-lime-400" />
       </div>
       <h2 className="text-[20px] font-bold text-white mb-2">
-        GramLab Gear Advisor
+        HikeMind Gear Advisor
       </h2>
       <p className="text-[14px] text-white/40 max-w-md mb-8">
         Ask me anything about ultralight gear, pack builds, trail conditions, or budget optimization.

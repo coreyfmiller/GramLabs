@@ -15,8 +15,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GramLab",
-  description: "Premium ultralight outdoor intelligence",
+  title: "HikeMind",
+  description: "Ultralight intelligence for every trail",
 };
 
 export default function RootLayout({

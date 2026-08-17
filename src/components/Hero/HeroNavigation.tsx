@@ -22,7 +22,7 @@ export default function HeroNavigation({ visible }: HeroNavigationProps) {
     >
       {/* Logo */}
       <span className="text-[16px] md:text-[20px] font-bold tracking-[0.2em] text-white">
-        GRAMLAB.AI
+        HIKEMIND
       </span>
 
       {/* Desktop nav links */}

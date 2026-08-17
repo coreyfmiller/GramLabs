@@ -1,4 +1,4 @@
-# GramLab.AI — TODO
+# HikeMind — TODO
 
 ## Gear Database — Links & Monitoring
 - [ ] Add manufacturer URLs to every gear item in the database

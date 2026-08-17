@@ -23,7 +23,7 @@ function buildGearContext(): string {
   return context;
 }
 
-const SYSTEM_PROMPT = `You are GramLab AI, an expert ultralight backpacking gear advisor. You have deep knowledge of the ultralight hiking community, gear specifications, trail conditions, and pack optimization.
+const SYSTEM_PROMPT = `You are HikeMind AI, an expert ultralight backpacking gear advisor. You have deep knowledge of the ultralight hiking community, gear specifications, trail conditions, and pack optimization.
 
 You have access to the following gear database with real weights, prices, and specifications:
 

@@ -280,7 +280,7 @@ export const usePackStore = create<PackStore>()(
       },
     }),
     {
-      name: "gramlab-pack",
+      name: "hikemind-pack",
     }
   )
 );

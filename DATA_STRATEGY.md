@@ -1,8 +1,8 @@
-# GramLab.AI — Data Strategy
+# HikeMind — Data Strategy
 
 ## Overview
 
-GramLab's competitive advantage is a living gear intelligence layer built from the entire ultralight community's collective knowledge. This document maps every data source, what to extract from each, and the pipeline architecture.
+HikeMind's competitive advantage is a living gear intelligence layer built from the entire ultralight community's collective knowledge. This document maps every data source, what to extract from each, and the pipeline architecture.
 
 ---
 
@@ -158,7 +158,7 @@ GramLab's competitive advantage is a living gear intelligence layer built from t
 ┌──────────────────────────────────────────────────┐
 │              APPLICATION LAYER                     │
 │                                                   │
-│  GramLab Features Powered by Data:                │
+│  HikeMind Features Powered by Data:                │
 │                                                   │
 │  • Gear Database — enriched with community data   │
 │  • AI Suggestions — "87% of PCT hikers use X"    │
@@ -232,6 +232,6 @@ Once this data layer is running:
 - AllTrails has trails but no gear intelligence
 - No one connects community knowledge + gear data + trail conditions
 
-GramLab becomes the only tool that says: "Based on 4,200 PCT shakedown posts, your shelter choice is heavier than 89% of thru-hikers, and 73% of people who switched away from it went to the Durston X-Mid Pro 1."
+HikeMind becomes the only tool that says: "Based on 4,200 PCT shakedown posts, your shelter choice is heavier than 89% of thru-hikers, and 73% of people who switched away from it went to the Durston X-Mid Pro 1."
 
 That's the moat.

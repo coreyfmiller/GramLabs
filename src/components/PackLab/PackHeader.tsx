@@ -79,7 +79,7 @@ export default function PackHeader() {
             href="/"
             className="text-[16px] md:text-[18px] font-bold tracking-[0.2em] text-white hover:text-white/80 transition-colors"
           >
-            GRAMLAB.AI
+            HIKEMIND
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             <Link
