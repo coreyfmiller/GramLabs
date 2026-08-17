@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Plus, PackagePlus } from "lucide-react";
+import { Search, Plus, PackagePlus, Upload } from "lucide-react";
 import {
   gearDatabase,
   GearItem,
@@ -9,6 +9,7 @@ import {
   GearCategory,
 } from "@/data/gear-database";
 import { usePackStore, formatWeight } from "@/store/pack-store";
+import ImportModal from "./ImportModal";
 
 export default function GearSearch() {
   const [query, setQuery] = useState("");
@@ -16,6 +17,7 @@ export default function GearSearch() {
     GearCategory | "all"
   >("all");
   const [showCustomForm, setShowCustomForm] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
   const { addItem, items, weightUnit } = usePackStore();
 
   const filteredGear = gearDatabase.filter((item) => {
@@ -44,17 +46,26 @@ export default function GearSearch() {
         <h3 className="text-[13px] font-bold tracking-[0.2em] text-white/60 uppercase">
           Gear Database
         </h3>
-        <button
-          onClick={() => setShowCustomForm(!showCustomForm)}
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-medium tracking-wide uppercase transition-colors ${
-            showCustomForm
-              ? "bg-lime-400/20 text-lime-400"
-              : "bg-white/[0.05] text-white/50 hover:text-white/80"
-          }`}
-        >
-          <PackagePlus className="w-3.5 h-3.5" />
-          Custom
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setShowImportModal(true)}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-medium tracking-wide uppercase transition-colors bg-white/[0.05] text-white/50 hover:text-white/80"
+          >
+            <Upload className="w-3.5 h-3.5" />
+            Import
+          </button>
+          <button
+            onClick={() => setShowCustomForm(!showCustomForm)}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-medium tracking-wide uppercase transition-colors ${
+              showCustomForm
+                ? "bg-lime-400/20 text-lime-400"
+                : "bg-white/[0.05] text-white/50 hover:text-white/80"
+            }`}
+          >
+            <PackagePlus className="w-3.5 h-3.5" />
+            Custom
+          </button>
+        </div>
       </div>
 
       {/* Custom Item Form */}
@@ -124,6 +135,12 @@ export default function GearSearch() {
           </p>
         )}
       </div>
+
+      {/* Import Modal */}
+      <ImportModal
+        isOpen={showImportModal}
+        onClose={() => setShowImportModal(false)}
+      />
     </div>
   );
 }
