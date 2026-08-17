@@ -19,7 +19,6 @@ const CATEGORY_ORDER: GearCategory[] = [
   "pack",
   "kitchen",
   "electronics",
-  "clothing",
   "safety",
   "accessories",
 ];
@@ -28,6 +27,7 @@ export function GearSearch() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<GearCategory | "all">("all");
   const [subFilter, setSubFilter] = useState<string | "all">("all");
+  const [showCustomForm, setShowCustomForm] = useState(false);
 
   const addItem = usePackStore((s) => s.addItem);
   const loadouts = usePackStore((s) => s.loadouts);
@@ -146,6 +146,19 @@ export function GearSearch() {
               />
             ))}
           </div>
+          <button
+            type="button"
+            onClick={() => setShowCustomForm(!showCustomForm)}
+            className={cn(
+              "flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-xs font-medium transition-colors",
+              showCustomForm
+                ? "border-primary/50 bg-primary/15 text-primary"
+                : "border-white/10 bg-white/[0.02] text-muted-foreground hover:border-white/20 hover:bg-white/[0.05] hover:text-foreground"
+            )}
+          >
+            <Plus className="size-3.5" />
+            Custom Item
+          </button>
         </div>
 
         {/* Subcategory pills — appear when a category is selected */}
@@ -171,7 +184,15 @@ export function GearSearch() {
       </div>
 
       <div className="scroll-thin min-h-0 flex-1 overflow-y-auto p-3">
-        {results.length === 0 ? (
+        {showCustomForm ? (
+          <CustomItemForm
+            onAdd={(item) => {
+              addItem(item);
+              setShowCustomForm(false);
+            }}
+            onCancel={() => setShowCustomForm(false)}
+          />
+        ) : results.length === 0 ? (
           <p className="px-2 py-8 text-center text-sm text-muted-foreground">
             No gear matches that search.
           </p>
@@ -274,6 +295,155 @@ function FilterChip({
         {count}
       </span>
     </button>
+  );
+}
+
+function CustomItemForm({
+  onAdd,
+  onCancel,
+}: {
+  onAdd: (item: GearItem) => void;
+  onCancel: () => void;
+}) {
+  const [name, setName] = useState("");
+  const [brand, setBrand] = useState("");
+  const [category, setCategory] = useState<GearCategory>("accessories");
+  const [weightOz, setWeightOz] = useState("");
+  const [priceUsd, setPriceUsd] = useState("");
+  const [description, setDescription] = useState("");
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name || !weightOz) return;
+
+    const item: GearItem = {
+      id: `custom-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      name,
+      brand: brand || "Custom",
+      category,
+      tier: "mid",
+      weightOz: parseFloat(weightOz) || 0,
+      priceUsd: parseFloat(priceUsd) || 0,
+      description: description || `Custom item: ${name}`,
+    };
+    onAdd(item);
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3 p-1">
+      <h3 className="text-sm font-semibold text-foreground">Add Custom Item</h3>
+      <p className="text-xs text-muted-foreground leading-relaxed">
+        Add clothing, shoes, or any gear not in the library.
+      </p>
+
+      <FormField label="Name *" required>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="e.g. Patagonia Nano Puff"
+          className="form-input"
+          required
+        />
+      </FormField>
+
+      <FormField label="Brand">
+        <input
+          type="text"
+          value={brand}
+          onChange={(e) => setBrand(e.target.value)}
+          placeholder="e.g. Patagonia"
+          className="form-input"
+        />
+      </FormField>
+
+      <div className="grid grid-cols-2 gap-2">
+        <FormField label="Weight (oz) *" required>
+          <input
+            type="number"
+            step="0.1"
+            min="0"
+            value={weightOz}
+            onChange={(e) => setWeightOz(e.target.value)}
+            placeholder="12.5"
+            className="form-input"
+            required
+          />
+        </FormField>
+        <FormField label="Price ($)">
+          <input
+            type="number"
+            step="1"
+            min="0"
+            value={priceUsd}
+            onChange={(e) => setPriceUsd(e.target.value)}
+            placeholder="150"
+            className="form-input"
+          />
+        </FormField>
+      </div>
+
+      <FormField label="Category">
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value as GearCategory)}
+          className="form-input"
+        >
+          {CATEGORY_ORDER.map((cat) => (
+            <option key={cat} value={cat}>
+              {CATEGORY_LABELS[cat]}
+            </option>
+          ))}
+          <option value="clothing">Clothing</option>
+        </select>
+      </FormField>
+
+      <FormField label="Description">
+        <input
+          type="text"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Brief description (optional)"
+          className="form-input"
+        />
+      </FormField>
+
+      <div className="flex gap-2 pt-2">
+        <button
+          type="submit"
+          disabled={!name || !weightOz}
+          className="flex-1 rounded-lg bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          + Add to Pack
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="rounded-lg border border-white/10 px-4 py-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-white/[0.05] hover:text-foreground"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function FormField({
+  label,
+  required,
+  children,
+}: {
+  label: string;
+  required?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="flex flex-col gap-1">
+      <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+        {label}
+      </span>
+      {children}
+    </label>
   );
 }
 

@@ -125,6 +125,28 @@
   :root.light .scroll-thin {
     scrollbar-color: oklch(0 0 0 / 14%) transparent;
   }
+  .form-input {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid oklch(1 0 0 / 10%);
+    background: oklch(1 0 0 / 3%);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--foreground);
+    transition: border-color 0.15s;
+  }
+  .form-input::placeholder {
+    color: oklch(1 0 0 / 40%);
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: oklch(0.7 0.2 145 / 60%);
+    background: oklch(1 0 0 / 5%);
+  }
+  .form-input option {
+    background: oklch(0.15 0 0);
+    color: var(--foreground);
+  }
 }
 
 /* Prose styles for AI chat responses */
