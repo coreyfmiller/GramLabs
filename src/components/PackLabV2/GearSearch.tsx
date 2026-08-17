@@ -32,8 +32,9 @@ export function GearSearch() {
   const [filter, setFilter] = useState<GearCategory | "all">("all");
 
   const addItem = usePackStore((s) => s.addItem);
-  const getItems = usePackStore((s) => s.getItems);
-  const packItems = getItems();
+  const loadouts = usePackStore((s) => s.loadouts);
+  const activeLoadoutId = usePackStore((s) => s.activeLoadoutId);
+  const packItems = loadouts.find((l) => l.id === activeLoadoutId)?.items ?? [];
   const packIds = useMemo(
     () => packItems.map((i) => i.gearId),
     [packItems]

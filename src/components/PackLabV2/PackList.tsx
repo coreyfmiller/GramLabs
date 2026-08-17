@@ -28,14 +28,15 @@ const CATEGORY_ORDER: GearCategory[] = [
 ];
 
 export function PackList() {
-  const getItems = usePackStore((s) => s.getItems);
+  const loadouts = usePackStore((s) => s.loadouts);
+  const activeLoadoutId = usePackStore((s) => s.activeLoadoutId);
   const getPackName = usePackStore((s) => s.getPackName);
   const getBaseWeight = usePackStore((s) => s.getBaseWeight);
   const removeItem = usePackStore((s) => s.removeItem);
   const updateItemStatus = usePackStore((s) => s.updateItemStatus);
   const updateItemQuantity = usePackStore((s) => s.updateItemQuantity);
 
-  const items = getItems();
+  const items = loadouts.find((l) => l.id === activeLoadoutId)?.items ?? [];
   const packName = getPackName();
   const baseWeight = getBaseWeight();
 

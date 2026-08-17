@@ -12,9 +12,9 @@
 - [ ] Fallback: if manufacturer link dies, auto-search for product on Google Shopping / REI / Amazon
 - [ ] Consider using a link management service (e.g., Linkly, or self-hosted redirect layer) for easier updates
 
-## Pack Lab — Current
-- [ ] Expand gear database to 150+ items (use real PCT/AT/CDT survey data)
-- [ ] Drag to reorder items in pack list
+## Pack Lab — Polish
+- [ ] Priority matrix for cost (quadrant chart: cost vs weight savings per item/upgrade)
+- [ ] Drag to reorder items in pack list (persist to store)
 - [ ] Export to CSV
 - [ ] Price total display
 - [ ] Item count display

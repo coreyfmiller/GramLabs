@@ -17,10 +17,12 @@ export function PackBuilder() {
   const getBaseWeight = usePackStore((s) => s.getBaseWeight);
   const getTotalWeight = usePackStore((s) => s.getTotalWeight);
   const getItemCount = usePackStore((s) => s.getItemCount);
+  const loadouts = usePackStore((s) => s.loadouts);
+  const activeLoadoutId = usePackStore((s) => s.activeLoadoutId);
 
   const baseWeight = getBaseWeight();
   const totalWeight = getTotalWeight();
-  const itemCount = getItemCount();
+  const itemCount = (loadouts.find((l) => l.id === activeLoadoutId)?.items ?? []).reduce((s, i) => s + i.quantity, 0);
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-background">
