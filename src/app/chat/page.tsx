@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, Bot, User, Loader2 } from "lucide-react";
 import Link from "next/link";
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   role: "user" | "assistant";
@@ -129,9 +130,15 @@ export default function ChatPage() {
                     : "bg-white/[0.03] border border-white/10 text-white/90"
                 }`}
               >
-                <div className="text-[14px] leading-relaxed whitespace-pre-wrap">
-                  {msg.content}
-                </div>
+                {msg.role === "user" ? (
+                  <div className="text-[14px] leading-relaxed whitespace-pre-wrap">
+                    {msg.content}
+                  </div>
+                ) : (
+                  <div className="text-[14px] leading-relaxed prose-invert">
+                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  </div>
+                )}
               </div>
               {msg.role === "user" && (
                 <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-1">

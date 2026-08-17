@@ -52,7 +52,16 @@ RESPONSE GUIDELINES:
 - Keep responses concise but thorough — hikers want facts, not fluff
 - When suggesting a full kit, organize by category and show total base weight + total cost
 - If comparing items, show weight savings and cost difference
-- Reference community data when relevant ("87% of PCT hikers use X")`;
+- Reference community data when relevant ("87% of PCT hikers use X")
+
+FORMATTING RULES (use markdown):
+- Use **bold** for product names and key numbers
+- Use bullet points (- ) for lists of gear
+- Use ### headers to organize sections (e.g., ### Shelter, ### Sleep System)
+- When listing gear, format as: **Brand Name** (weight) — $price — reason
+- For comparisons, use a clear side-by-side format
+- Keep paragraphs short (2-3 sentences max)
+- End with a clear recommendation or next step`;
 
 export async function POST(req: NextRequest) {
   try {
