@@ -254,29 +254,39 @@ function ChatResponse({ content }: { content: string }) {
         </div>
       )}
       {gearItems.length > 0 && (
-        <div className="space-y-2 mt-3">
-          <p className="text-xs uppercase tracking-wider text-primary font-medium mb-2">
-            Recommended Gear
-          </p>
-          {gearItems.map((item, j) => (
-            <div
-              key={j}
-              className="flex items-start gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-3 hover:border-primary/30 transition-colors"
-            >
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                  {item.category}
-                </p>
-                <p className="text-sm font-medium text-foreground">
-                  {item.brand} {item.name}
-                </p>
-                <p className="text-xs text-muted-foreground/70 mt-1">
-                  {item.reason}
-                </p>
-              </div>
-              <div className="text-right shrink-0">
-                <p className="num text-sm font-medium text-primary">{item.weight}</p>
-                <p className="num text-xs text-muted-foreground">{item.price}</p>
+        <div className="space-y-4 mt-3">
+          {Object.entries(
+            gearItems.reduce<Record<string, GearCard[]>>((groups, item) => {
+              const cat = item.category || "Other";
+              if (!groups[cat]) groups[cat] = [];
+              groups[cat].push(item);
+              return groups;
+            }, {})
+          ).map(([category, items]) => (
+            <div key={category}>
+              <p className="text-xs uppercase tracking-wider text-primary font-medium mb-2">
+                {category}
+              </p>
+              <div className="space-y-2">
+                {items.map((item, j) => (
+                  <div
+                    key={j}
+                    className="flex items-start gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-3 hover:border-primary/30 transition-colors"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground">
+                        {item.brand} {item.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground/70 mt-1">
+                        {item.reason}
+                      </p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="num text-sm font-medium text-primary">{item.weight}</p>
+                      <p className="num text-xs text-muted-foreground">{item.price}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
