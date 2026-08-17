@@ -3046,16 +3046,6 @@ export const gearDatabase: GearItem[] = [
     description: "Chlorine dioxide water purification tablets. 1 tab per liter. Backup water treatment.",
   },
   {
-    id: "sawyer-permethrin-spray",
-    name: "Permethrin Spray (24oz)",
-    brand: "Sawyer",
-    category: "safety",
-    tier: "ultra-budget",
-    weightOz: 0,
-    priceUsd: 18,
-    description: "Insect repellent for clothing and gear (apply at home). Lasts 6 washes. Kills ticks on contact.",
-  },
-  {
     id: "ben-deet-spray",
     name: "100% DEET Spray (3.4oz)",
     brand: "Ben's",
@@ -3283,26 +3273,6 @@ export const gearDatabase: GearItem[] = [
     weightOz: 8.2,
     priceUsd: 50,
     description: "5W portable solar panel. No built-in battery. Lightweight panel for sunny day charging.",
-  },
-  {
-    id: "farout-app-sub",
-    name: "FarOut (Guthook) App",
-    brand: "FarOut",
-    category: "electronics",
-    tier: "mid",
-    weightOz: 0,
-    priceUsd: 30,
-    description: "Trail navigation app with water sources, campsites, and community comments. Used by 95% of thru-hikers.",
-  },
-  {
-    id: "gaia-gps-premium",
-    name: "Gaia GPS (Premium)",
-    brand: "Gaia GPS",
-    category: "electronics",
-    tier: "mid",
-    weightOz: 0,
-    priceUsd: 40,
-    description: "Offline topo maps and route planning app. USGS quads, satellite imagery, slope angle shading.",
   },
 
   // ============================================================
