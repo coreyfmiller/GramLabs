@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Mountain } from "lucide-react";
+import { Mountain, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -14,7 +14,23 @@ const NAV_LINKS = [
 
 export function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
   const pathname = usePathname();
+
+  useEffect(() => {
+    const saved = localStorage.getItem("hikemind-theme") as "dark" | "light" | null;
+    if (saved) {
+      setTheme(saved);
+      document.documentElement.classList.toggle("light", saved === "light");
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    localStorage.setItem("hikemind-theme", next);
+    document.documentElement.classList.toggle("light", next === "light");
+  };
 
   return (
     <>
@@ -47,25 +63,39 @@ export function Nav() {
             </nav>
           </div>
 
-          {/* Mobile hamburger */}
-          <button
-            className="md:hidden flex flex-col gap-[5px] p-2"
-            aria-label="Menu"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            <span
-              className={cn(
-                "block w-5 h-[1.5px] bg-foreground transition-transform duration-300",
-                mobileOpen && "rotate-45 translate-y-[3.5px]"
+          {/* Theme toggle + Mobile hamburger */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className="size-9 flex items-center justify-center rounded-lg border border-border bg-white/[0.03] hover:bg-white/[0.08] transition-colors"
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? (
+                <Sun className="size-4 text-muted-foreground" />
+              ) : (
+                <Moon className="size-4 text-muted-foreground" />
               )}
-            />
-            <span
-              className={cn(
-                "block w-5 h-[1.5px] bg-foreground transition-transform duration-300",
-                mobileOpen && "-rotate-45 -translate-y-[3.5px]"
-              )}
-            />
-          </button>
+            </button>
+
+            <button
+              className="md:hidden flex flex-col gap-[5px] p-2"
+              aria-label="Menu"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              <span
+                className={cn(
+                  "block w-5 h-[1.5px] bg-foreground transition-transform duration-300",
+                  mobileOpen && "rotate-45 translate-y-[3.5px]"
+                )}
+              />
+              <span
+                className={cn(
+                  "block w-5 h-[1.5px] bg-foreground transition-transform duration-300",
+                  mobileOpen && "-rotate-45 -translate-y-[3.5px]"
+                )}
+              />
+            </button>
+          </div>
         </div>
       </header>
 

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, Loader2 } from "lucide-react";
-import Link from "next/link";
+import { Send, Bot, User, Loader2, Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Nav } from "@/components/Nav";
+import { cn } from "@/lib/utils";
 
 interface Message {
   role: "user" | "assistant";
@@ -16,7 +16,6 @@ export default function ChatPage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -42,21 +41,12 @@ export default function ChatPage() {
       const data = await res.json();
 
       if (data.error) {
-        setMessages([
-          ...newMessages,
-          { role: "assistant", content: `Error: ${data.error}` },
-        ]);
+        setMessages([...newMessages, { role: "assistant", content: `Error: ${data.error}` }]);
       } else {
-        setMessages([
-          ...newMessages,
-          { role: "assistant", content: data.message },
-        ]);
+        setMessages([...newMessages, { role: "assistant", content: data.message }]);
       }
     } catch {
-      setMessages([
-        ...newMessages,
-        { role: "assistant", content: "Sorry, something went wrong. Please try again." },
-      ]);
+      setMessages([...newMessages, { role: "assistant", content: "Something went wrong. Please try again." }]);
     } finally {
       setLoading(false);
     }
@@ -69,43 +59,46 @@ export default function ChatPage() {
     }
   };
 
+  const handlePromptClick = (prompt: string) => {
+    setInput(prompt);
+  };
+
   return (
-    <div className="h-dvh flex flex-col bg-[#0a0a0a] text-white">
+    <div className="h-dvh flex flex-col bg-background text-foreground">
       <Nav />
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6">
-        <div className="max-w-3xl mx-auto space-y-6">
-          {messages.length === 0 && <EmptyState />}
+      {/* Messages area */}
+      <div className="flex-1 overflow-y-auto scroll-thin">
+        <div className="max-w-3xl mx-auto px-4 md:px-6 py-6 space-y-6">
+          {messages.length === 0 && <EmptyState onPromptClick={handlePromptClick} />}
 
           {messages.map((msg, i) => (
             <div
               key={i}
-              className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+              className={cn("flex gap-3", msg.role === "user" ? "justify-end" : "justify-start")}
             >
               {msg.role === "assistant" && (
-                <div className="w-7 h-7 rounded-full bg-lime-400/10 flex items-center justify-center shrink-0 mt-1">
-                  <Bot className="w-4 h-4 text-lime-400" />
+                <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-1">
+                  <Sparkles className="size-4 text-primary" />
                 </div>
               )}
               <div
-                className={`max-w-[85%] md:max-w-[75%] rounded-2xl px-4 py-3 ${
+                className={cn(
+                  "max-w-[88%] md:max-w-[78%] rounded-xl px-4 py-3",
                   msg.role === "user"
-                    ? "bg-white/10 text-white"
-                    : "bg-white/[0.03] border border-white/10 text-white/90"
-                }`}
+                    ? "glass border border-white/10"
+                    : "bg-transparent"
+                )}
               >
                 {msg.role === "user" ? (
-                  <div className="text-[14px] leading-relaxed whitespace-pre-wrap">
-                    {msg.content}
-                  </div>
+                  <p className="text-sm leading-relaxed">{msg.content}</p>
                 ) : (
                   <ChatResponse content={msg.content} />
                 )}
               </div>
               {msg.role === "user" && (
-                <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-1">
-                  <User className="w-4 h-4 text-white/60" />
+                <div className="size-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0 mt-1">
+                  <User className="size-4 text-muted-foreground" />
                 </div>
               )}
             </div>
@@ -113,11 +106,11 @@ export default function ChatPage() {
 
           {loading && (
             <div className="flex gap-3">
-              <div className="w-7 h-7 rounded-full bg-lime-400/10 flex items-center justify-center shrink-0">
-                <Bot className="w-4 h-4 text-lime-400" />
+              <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <Sparkles className="size-4 text-primary" />
               </div>
-              <div className="bg-white/[0.03] border border-white/10 rounded-2xl px-4 py-3">
-                <Loader2 className="w-4 h-4 text-lime-400 animate-spin" />
+              <div className="glass rounded-xl border border-white/10 px-4 py-3">
+                <Loader2 className="size-4 text-primary animate-spin" />
               </div>
             </div>
           )}
@@ -126,67 +119,50 @@ export default function ChatPage() {
         </div>
       </div>
 
-      {/* Input */}
-      <div className="border-t border-white/10 px-4 md:px-8 py-4 shrink-0">
-        <form
-          onSubmit={handleSubmit}
-          className="max-w-3xl mx-auto flex items-end gap-3"
-        >
+      {/* Input area */}
+      <div className="border-t border-border px-4 md:px-6 py-4 shrink-0">
+        <form onSubmit={handleSubmit} className="max-w-3xl mx-auto flex items-end gap-3">
           <textarea
-            ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask about gear, build a kit, compare items..."
             rows={1}
-            className="flex-1 bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-[14px] text-white placeholder:text-white/30 outline-none focus:border-lime-400/50 transition-colors resize-none max-h-[120px]"
+            className="flex-1 bg-white/[0.03] border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/60 transition-colors resize-none max-h-[120px]"
             style={{ minHeight: "48px" }}
           />
           <button
             type="submit"
             disabled={!input.trim() || loading}
-            className="p-3 rounded-xl bg-lime-400/20 text-lime-400 hover:bg-lime-400/30 transition-colors disabled:opacity-30 disabled:cursor-not-allowed shrink-0"
+            className="size-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed shrink-0 active:scale-95"
           >
-            <Send className="w-4 h-4" />
+            <Send className="size-4" />
           </button>
         </form>
-        <p className="max-w-3xl mx-auto mt-2 text-[10px] text-white/20 text-center">
-          HikeMind AI uses community data from 790+ PCT thru-hikers and a database of 70+ verified gear items.
+        <p className="max-w-3xl mx-auto mt-2 text-xs text-muted-foreground/50 text-center">
+          Powered by 250+ verified gear items and PCT thru-hiker survey data
         </p>
       </div>
     </div>
   );
 }
 
-function EmptyState() {
+function EmptyState({ onPromptClick }: { onPromptClick: (prompt: string) => void }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="w-14 h-14 rounded-2xl bg-lime-400/10 flex items-center justify-center mb-6">
-        <Bot className="w-7 h-7 text-lime-400" />
+    <div className="flex flex-col items-center justify-center py-20 text-center">
+      <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
+        <Sparkles className="size-8 text-primary" />
       </div>
-      <h2 className="text-[20px] font-bold text-white mb-2">
-        HikeMind Gear Advisor
-      </h2>
-      <p className="text-[14px] text-white/40 max-w-md mb-8">
-        Ask me anything about ultralight gear, pack builds, trail conditions, or budget optimization.
+      <h2 className="text-2xl font-bold tracking-tight mb-2">Gear Advisor</h2>
+      <p className="text-sm text-muted-foreground max-w-md mb-10">
+        Get personalized gear recommendations, kit builds, and comparisons backed by real trail data.
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-lg">
         {SUGGESTED_PROMPTS.map((prompt, i) => (
           <button
             key={i}
-            className="text-left px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-[13px] text-white/60 hover:text-white hover:border-white/20 transition-colors"
-            onClick={() => {
-              const textarea = document.querySelector("textarea");
-              if (textarea) {
-                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-                  window.HTMLTextAreaElement.prototype,
-                  "value"
-                )?.set;
-                nativeInputValueSetter?.call(textarea, prompt);
-                textarea.dispatchEvent(new Event("input", { bubbles: true }));
-                textarea.focus();
-              }
-            }}
+            onClick={() => onPromptClick(prompt)}
+            className="glass text-left px-4 py-3 rounded-xl border border-white/10 text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all"
           >
             {prompt}
           </button>
@@ -200,7 +176,7 @@ const SUGGESTED_PROMPTS = [
   "Build me a complete 3-season kit for $500",
   "What's the best budget shelter under $150?",
   "I have $300 total — what can I actually get?",
-  "Compare budget vs premium quilt options for the PCT",
+  "Compare budget vs premium quilt options",
 ];
 
 interface GearCard {
@@ -213,7 +189,6 @@ interface GearCard {
 }
 
 function ChatResponse({ content }: { content: string }) {
-  // Try to parse ```gear blocks first
   const gearRegex = /```gear\s*\n([\s\S]*?)```/g;
   const jsonRegex = /```json\s*\n([\s\S]*?)```/g;
 
@@ -229,7 +204,7 @@ function ChatResponse({ content }: { content: string }) {
     } catch { /* ignore */ }
   }
 
-  // Try ```json format as fallback
+  // Try ```json fallback
   if (gearItems.length === 0) {
     match = jsonRegex.exec(content);
     if (match) {
@@ -243,18 +218,18 @@ function ChatResponse({ content }: { content: string }) {
     }
   }
 
-  // Clean up any remaining code fences from textContent
+  // Clean remaining code fences
   textContent = textContent.replace(/```[\s\S]*?```/g, "").trim();
 
   return (
-    <div className="text-[14px] leading-relaxed space-y-4">
+    <div className="text-sm leading-relaxed space-y-4">
       {textContent && (
         <div className="prose-invert">
           <ReactMarkdown>{textContent}</ReactMarkdown>
         </div>
       )}
       {gearItems.length > 0 && (
-        <div className="space-y-4 mt-3">
+        <div className="space-y-4 mt-2">
           {Object.entries(
             gearItems.reduce<Record<string, GearCard[]>>((groups, item) => {
               const cat = item.category || "Other";
@@ -264,22 +239,18 @@ function ChatResponse({ content }: { content: string }) {
             }, {})
           ).map(([category, items]) => (
             <div key={category}>
-              <p className="text-xs uppercase tracking-wider text-primary font-medium mb-2">
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-primary mb-2">
                 {category}
               </p>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {items.map((item, j) => (
                   <div
                     key={j}
-                    className="flex items-start gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-3 hover:border-primary/30 transition-colors"
+                    className="glass flex items-start gap-3 rounded-lg border border-white/10 p-3 hover:border-primary/30 transition-colors"
                   >
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground">
-                        {item.brand} {item.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground/70 mt-1">
-                        {item.reason}
-                      </p>
+                      <p className="text-sm font-medium">{item.brand} {item.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{item.reason}</p>
                     </div>
                     <div className="text-right shrink-0">
                       <p className="num text-sm font-medium text-primary">{item.weight}</p>
