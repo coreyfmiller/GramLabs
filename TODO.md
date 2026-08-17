@@ -1,5 +1,17 @@
 # GramLab.AI — TODO
 
+## Gear Database — Links & Monitoring
+- [ ] Add manufacturer URLs to every gear item in the database
+- [ ] Add affiliate links where applicable (REI, Amazon, brand sites)
+- [ ] Build a daily link checker script (cron job or serverless function)
+  - Ping each URL, check for 200 status
+  - Flag 404s, redirects, and timeouts
+  - Email/Slack alert when links break
+  - Auto-disable broken links in the UI (show "link unavailable" instead of dead link)
+- [ ] Admin dashboard showing link health (% working, recently broken)
+- [ ] Fallback: if manufacturer link dies, auto-search for product on Google Shopping / REI / Amazon
+- [ ] Consider using a link management service (e.g., Linkly, or self-hosted redirect layer) for easier updates
+
 ## Pack Lab — Current
 - [ ] Expand gear database to 150+ items (use real PCT/AT/CDT survey data)
 - [ ] Drag to reorder items in pack list
