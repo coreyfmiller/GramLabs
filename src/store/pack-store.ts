@@ -48,6 +48,9 @@ export interface PackStore {
   getWornWeight: () => number;
   getConsumableWeight: () => number;
   getCategoryBreakdown: () => { category: GearCategory; weightOz: number; percentage: number }[];
+  getBig3Weight: () => number;
+  getTotalCost: () => number;
+  getItemCount: () => number;
 
   // Share
   hydrateFromShareData: (items: PackItem[], name: string) => void;
@@ -251,6 +254,32 @@ export const usePackStore = create<PackStore>()(
             percentage: baseWeight > 0 ? (weightOz / baseWeight) * 100 : 0,
           }))
           .sort((a, b) => b.weightOz - a.weightOz);
+      },
+
+      getBig3Weight: () => {
+        const state = get();
+        const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
+        if (!loadout) return 0;
+        const big3Categories = ["shelter", "insulation", "sleeping-pad", "sleep-system", "pack"];
+        return loadout.items
+          .filter((i) => i.status === "packed" && big3Categories.includes(i.item.category))
+          .reduce((sum, i) => sum + i.item.weightOz * i.quantity, 0);
+      },
+
+      getTotalCost: () => {
+        const state = get();
+        const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
+        if (!loadout) return 0;
+        return loadout.items.reduce(
+          (sum, i) => sum + i.item.priceUsd * i.quantity, 0
+        );
+      },
+
+      getItemCount: () => {
+        const state = get();
+        const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
+        if (!loadout) return 0;
+        return loadout.items.reduce((sum, i) => sum + i.quantity, 0);
       },
 
       hydrateFromShareData: (items, name) => {
