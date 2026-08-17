@@ -251,37 +251,37 @@ export const usePackStore = create<PackStore>()(
       getBaseWeight: () => {
         const state = get();
         const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
-        if (!loadout) return 0;
+        if (!loadout || loadout.items.length === 0) return 0;
         return loadout.items
           .filter((i) => i.status === "packed")
-          .reduce((sum, i) => sum + i.item.weightOz * i.quantity, 0);
+          .reduce((sum, i) => sum + (i.item?.weightOz ?? 0) * i.quantity, 0);
       },
 
       getTotalWeight: () => {
         const state = get();
         const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
-        if (!loadout) return 0;
+        if (!loadout || loadout.items.length === 0) return 0;
         return loadout.items.reduce(
-          (sum, i) => sum + i.item.weightOz * i.quantity, 0
+          (sum, i) => sum + (i.item?.weightOz ?? 0) * i.quantity, 0
         );
       },
 
       getWornWeight: () => {
         const state = get();
         const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
-        if (!loadout) return 0;
+        if (!loadout || loadout.items.length === 0) return 0;
         return loadout.items
           .filter((i) => i.status === "worn")
-          .reduce((sum, i) => sum + i.item.weightOz * i.quantity, 0);
+          .reduce((sum, i) => sum + (i.item?.weightOz ?? 0) * i.quantity, 0);
       },
 
       getConsumableWeight: () => {
         const state = get();
         const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
-        if (!loadout) return 0;
+        if (!loadout || loadout.items.length === 0) return 0;
         return loadout.items
           .filter((i) => i.status === "consumable")
-          .reduce((sum, i) => sum + i.item.weightOz * i.quantity, 0);
+          .reduce((sum, i) => sum + (i.item?.weightOz ?? 0) * i.quantity, 0);
       },
 
       getCategoryBreakdown: () => {
@@ -345,7 +345,7 @@ export const usePackStore = create<PackStore>()(
       },
     }),
     {
-      name: "hikemind-pack",
+      name: "hikemind-pack-v2",
     }
   )
 );
