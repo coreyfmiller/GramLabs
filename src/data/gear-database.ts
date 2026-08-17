@@ -1104,17 +1104,7 @@ export const gearDatabase: GearItem[] = [
     description: "Down quilt (open-bottom blanket). 900-fill goose. Comfortable to 22°F. Snap pad attachment.",
     tempRating: 22,
   },
-  {
-    id: "ee-revelation-20",
-    name: "Revelation 20F",
-    brand: "Enlightened Equipment",
-    category: "sleep",
-    tier: "mid",
-    weightOz: 19.2,
-    priceUsd: 370,
-    description: "Down quilt (open-bottom blanket). 950-fill duck down. Opens flat as blanket. Comfortable to 20°F.",
-    tempRating: 20,
-  },
+
   {
     id: "feathered-friends-flicker-ul-20",
     name: "Flicker UL 20F",
@@ -1126,17 +1116,7 @@ export const gearDatabase: GearItem[] = [
     description: "Down quilt (open-bottom blanket). 950-fill goose. Comfortable to 20°F. Top-tier quality.",
     tempRating: 20,
   },
-  {
-    id: "rei-magma-15",
-    name: "Magma 15F",
-    brand: "REI Co-op",
-    category: "sleep",
-    tier: "mid",
-    weightOz: 35.5,
-    priceUsd: 399,
-    description: "Down mummy sleeping bag. 850-fill goose. Comfortable to 15°F. Traditional zippered design.",
-    tempRating: 15,
-  },
+
   {
     id: "western-mountaineering-versalite-10",
     name: "VersaLite 10F",
@@ -1227,28 +1207,8 @@ export const gearDatabase: GearItem[] = [
     description: "50-liter backpack. Highly customizable fit. Made in the UK.",
     volume: 50,
   },
-  {
-    id: "ula-catalyst",
-    name: "Catalyst",
-    brand: "ULA",
-    category: "pack",
-    tier: "mid",
-    weightOz: 44.5,
-    priceUsd: 320,
-    description: "75-liter framed backpack. Handles 40lb loads. For longer carries and heavier setups.",
-    volume: 75,
-  },
-  {
-    id: "osprey-exos-58",
-    name: "Exos 58",
-    brand: "Osprey",
-    category: "pack",
-    tier: "mid",
-    weightOz: 45,
-    priceUsd: 285,
-    description: "58-liter framed backpack. Ventilated suspension. Comfortable for most hikers.",
-    volume: 58,
-  },
+
+
   {
     id: "osprey-atmos-ag-50",
     name: "Atmos AG 50",
@@ -1287,56 +1247,11 @@ export const gearDatabase: GearItem[] = [
 // === SHOES (PCT 2025) ===
 
   // === STOVES (PCT 2025) ===
-  {
-    id: "msr-pocketrocket-2",
-    name: "PocketRocket 2",
-    brand: "MSR",
-    category: "kitchen",
-    tier: "budget",
-    weightOz: 2.6,
-    priceUsd: 60,
-    description: "Canister stove. 2.6oz. No built-in igniter — carry a lighter. Reliable and popular.",
-  },
-  {
-    id: "soto-windmaster",
-    name: "WindMaster",
-    brand: "SOTO",
-    category: "kitchen",
-    tier: "budget",
-    weightOz: 3.1,
-    priceUsd: 70,
-    description: "Canister stove with micro-regulator. Performs well in windy conditions.",
-  },
-  {
-    id: "soto-amicus",
-    name: "Amicus",
-    brand: "SOTO",
-    category: "kitchen",
-    tier: "ultra-budget",
-    weightOz: 2.5,
-    priceUsd: 45,
-    description: "Canister stove. 2.5oz. Reliable and affordable. No built-in igniter.",
-  },
-  {
-    id: "msr-pocketrocket-deluxe",
-    name: "PocketRocket Deluxe",
-    brand: "MSR",
-    category: "kitchen",
-    tier: "budget",
-    weightOz: 2.9,
-    priceUsd: 85,
-    description: "Canister stove with push-button igniter. Pressure regulator for consistent flame.",
-  },
-  {
-    id: "jetboil-stash",
-    name: "Stash",
-    brand: "JetBoil",
-    category: "kitchen",
-    tier: "mid",
-    weightOz: 7.1,
-    priceUsd: 165,
-    description: "All-in-one stove and pot system. Fast boil time. 7.1oz total for the set.",
-  },
+
+
+
+
+
 
   // === WATER (PCT 2025) ===
   {
@@ -1381,36 +1296,9 @@ export const gearDatabase: GearItem[] = [
     priceUsd: 37,
     description: "Rechargeable USB-C headlamp. 400 lumens. 1.66oz. Red light mode included.",
   },
-  {
-    id: "nitecore-nu27",
-    name: "NU27",
-    brand: "Nitecore",
-    category: "electronics",
-    tier: "ultra-budget",
-    weightOz: 1.98,
-    priceUsd: 41,
-    description: "Rechargeable USB-C headlamp. 600 lumens. Quad LED array for wide beam.",
-  },
-  {
-    id: "black-diamond-spot-400",
-    name: "Spot 400",
-    brand: "Black Diamond",
-    category: "electronics",
-    tier: "budget",
-    weightOz: 3,
-    priceUsd: 55,
-    description: "Headlamp. 400 lumens. Uses AAA batteries. Classic reliable design.",
-  },
-  {
-    id: "petzl-actik-core",
-    name: "Actik Core",
-    brand: "Petzl",
-    category: "electronics",
-    tier: "budget",
-    weightOz: 3.1,
-    priceUsd: 88,
-    description: "Rechargeable USB-C headlamp. 625 lumens. Includes rechargeable battery pack.",
-  },
+
+
+
   {
     id: "petzl-tikka",
     name: "Tikka",
@@ -1525,16 +1413,7 @@ export const gearDatabase: GearItem[] = [
     priceUsd: 95,
     description: "Bear-proof food canister. Polycarbonate. 9.3 liters. Good balance of weight and capacity.",
   },
-  {
-    id: "bearikade-weekender",
-    name: "Weekender",
-    brand: "Bearikade",
-    category: "accessories",
-    tier: "premium",
-    weightOz: 32,
-    priceUsd: 359,
-    description: "Bear-proof food canister. Carbon fiber shell. 10.6 liters. Light but expensive.",
-  },
+
   {
     id: "bearikade-expedition",
     name: "Expedition",
@@ -1547,26 +1426,8 @@ export const gearDatabase: GearItem[] = [
   },
 
   // === SATELLITE MESSENGERS (PCT 2025) ===
-  {
-    id: "garmin-inreach-messenger",
-    name: "inReach Messenger",
-    brand: "Garmin",
-    category: "electronics",
-    tier: "mid",
-    weightOz: 4,
-    priceUsd: 300,
-    description: "Satellite messenger with two-way texting. USB-C. No screen — phone app required.",
-  },
-  {
-    id: "zoleo-satellite-communicator",
-    name: "Satellite Communicator",
-    brand: "ZOLEO",
-    category: "electronics",
-    tier: "mid",
-    weightOz: 5.3,
-    priceUsd: 149,
-    description: "Satellite messenger with SOS. Iridium network. 200-hour battery life.",
-  },
+
+
   {
     id: "garmin-inreach-mini-3",
     name: "inReach Mini 3",
@@ -1603,124 +1464,60 @@ export const gearDatabase: GearItem[] = [
 
   // === HAMMOCK CAMPING ===
 
-  // Hammocks (shelter category)
-  {
-    id: "warbonnet-blackbird-xlc",
-    name: "Blackbird XLC",
-    brand: "Warbonnet",
-    category: "shelter",
-
-    tier: "mid",
-    weightOz: 26,
-    priceUsd: 250,
-    description: "Gathered-end camping hammock. Built-in bug net and foot box. 11ft length.",
-  },
-  {
-    id: "dutchware-chameleon",
-    name: "Chameleon",
-    brand: "Dutchware",
-    category: "shelter",
-
-
-    tier: "mid",
-    weightOz: 22,
-    priceUsd: 220,
-    description: "Modular camping hammock. Zip-on bug net option. 11ft. Top or side entry.",
-  },
   {
     id: "hummingbird-long",
     name: "Long Hammock",
     brand: "Hummingbird",
     category: "shelter",
-
-
-
     tier: "budget",
     weightOz: 7.4,
     priceUsd: 75,
     description: "Single-layer camping hammock. 7.4oz — lightest full-size option. No bug net included.",
+    shelterType: "hammock",
   },
   {
     id: "hennessy-explorer-ultralight",
     name: "Explorer Ultralight",
     brand: "Hennessy",
     category: "shelter",
-
-
-
-
     tier: "mid",
     weightOz: 31,
     priceUsd: 270,
     description: "Asymmetric camping hammock with tarp and bug net included. Complete sleep system.",
+    shelterType: "hammock",
   },
-  {
-    id: "dream-hammock-darien",
-    name: "Darien",
-    brand: "Dream Hammock",
-    category: "shelter",
-
-
-
-
-
-    tier: "mid",
-    weightOz: 18,
-    priceUsd: 200,
-    description: "Custom-made gathered-end hammock. 11ft. Optional integrated bug net. 18oz.",
-  },
-
-  // Hammock tarps (shelter category)
   {
     id: "warbonnet-superfly",
     name: "Superfly Tarp",
     brand: "Warbonnet",
     category: "shelter",
-
-
-
-
-
-
     tier: "mid",
     weightOz: 22,
     priceUsd: 195,
     description: "Full-coverage rain tarp for hammocks. Silicone-polyester. Doors for wind protection.",
+    shelterType: "tarp",
   },
   {
     id: "hammock-gear-dyneema-hex-tarp",
     name: "DCF Hex Tarp",
     brand: "Hammock Gear",
     category: "shelter",
-
-
-
-
-
-
-
     tier: "premium",
     weightOz: 8.5,
     priceUsd: 400,
     description: "Hex-shaped rain tarp for hammocks. Dyneema fabric. Full coverage at under 9oz.",
+    shelterType: "tarp",
   },
   {
     id: "dutchware-hex-tarp-silpoly",
     name: "Hex Tarp (Silpoly)",
     brand: "Dutchware",
     category: "shelter",
-
-
-
-
-
-
-
-
     tier: "budget",
     weightOz: 16,
     priceUsd: 130,
     description: "Hex-shaped rain tarp for hammocks. Silicone-polyester. Good coverage at a budget price.",
+    shelterType: "tarp",
   },
 
   // Underquilts (insulation category)
@@ -1829,46 +1626,11 @@ export const gearDatabase: GearItem[] = [
     name: "Grace Tarp Solo",
     brand: "Mountain Laurel Designs",
     category: "shelter",
-
-
-
-
-
-
-
-
-
     tier: "budget",
     weightOz: 9.5,
     priceUsd: 155,
     description: "A-frame tarp shelter. Silicone-nylon. 9.5oz. Pair with a separate bug net.",
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    setupType: "tarp",
-    capacity: 1,
-    poleType: "trekking",
-    fabric: "Silnylon 20D",
-    fabricDenier: 20,
-    stakesNeeded: 6,
-    seasons: "3",
+    shelterType: "tarp",
   },
   {
     id: "gg-polycryo-groundsheet",
@@ -1880,16 +1642,7 @@ export const gearDatabase: GearItem[] = [
     priceUsd: 12,
     description: "Window-film ground cloth. 1.6oz. Cheap and disposable tent floor protector.",
   },
-  {
-    id: "sea-to-summit-aeros-ul-pillow",
-    name: "Aeros UL Pillow (Regular)",
-    brand: "Sea to Summit",
-    category: "accessories",
-    tier: "ultra-budget",
-    weightOz: 2,
-    priceUsd: 50,
-    description: "Inflatable camping pillow. 2oz. Brushed face fabric. Compact mini valve.",
-  },
+
   {
     id: "sea-to-summit-alpha-light-spoon",
     name: "Alpha Light Spoon",
@@ -1900,23 +1653,7 @@ export const gearDatabase: GearItem[] = [
     priceUsd: 13,
     description: "Long-handled anodized aluminum spoon. 0.4oz. Reaches bottom of freeze-dried bags.",
   },
-  {
-    id: "katabatic-alsek-22",
-    name: "Alsek 22°F",
-    brand: "Katabatic",
-    category: "sleep",
-    tier: "premium",
-    weightOz: 22.2,
-    priceUsd: 499,
-    description: "Down quilt (open-bottom blanket). 900-fill goose. Comfortable to 22°F. Pad attachment system.",
-    tempRating: 22,
-    fillPower: 900,
-    fillWeight: 14.1,
-    fillType: "goose-down",
-    sleepStyle: "quilt",
-    padAttachment: true,
-    communityRating: 8.33,
-  },
+
 {
     id: "msr-isopro-110g",
     name: "IsoPro 110g Fuel Canister",
@@ -1928,16 +1665,7 @@ export const gearDatabase: GearItem[] = [
     description: "Isobutane/propane fuel canister. 110g. Fits all canister stoves. ~60 min of boil time.",
     fuelType: "canister",
   },
-  {
-    id: "nemo-fillo-elite-pillow",
-    name: "Fillo Elite Pillow",
-    brand: "NEMO",
-    category: "accessories",
-    tier: "budget",
-    weightOz: 3.2,
-    priceUsd: 50,
-    description: "Camping pillow with foam and air hybrid. 3.2oz. Comfortable and supportive.",
-  },
+
 
   // === CLOTHING - Base Layers & Thermals ===
   // === CLOTHING - Gloves & Handwear ===
@@ -2067,26 +1795,8 @@ export const gearDatabase: GearItem[] = [
     priceUsd: 450,
     description: "Rugged GPS watch. Solar charging. Basic navigation. Storm alerts. 40hr GPS.",
   },
-  {
-    id: "coros-pace-3",
-    name: "PACE 3",
-    brand: "COROS",
-    category: "electronics",
-    tier: "mid",
-    weightOz: 1.3,
-    priceUsd: 249,
-    description: "Lightweight GPS running watch. Offline maps. 38hr GPS battery. 1.3oz.",
-  },
-  {
-    id: "suunto-vertical",
-    name: "Vertical",
-    brand: "Suunto",
-    category: "electronics",
-    tier: "premium",
-    weightOz: 2.7,
-    priceUsd: 629,
-    description: "GPS adventure watch. Offline maps. Solar charging. 85hr GPS battery.",
-  },
+
+
   {
     id: "farout-guides-app",
     name: "FarOut Guides App (subscription)",
@@ -2129,16 +1839,7 @@ export const gearDatabase: GearItem[] = [
   },
 
   // === SAFETY ===
-  {
-    id: "counter-assault-bear-spray",
-    name: "Bear Spray (8.1oz can)",
-    brand: "Counter Assault",
-    category: "safety",
-    tier: "budget",
-    weightOz: 13,
-    priceUsd: 50,
-    description: "Pressurized capsaicin bear spray. 32ft range. Required in grizzly country.",
-  },
+
   {
     id: "fox-labs-mean-green",
     name: "Mean Green (pocket size)",
@@ -2189,26 +1890,8 @@ export const gearDatabase: GearItem[] = [
     priceUsd: 20,
     description: "Tenacious Tape patches, needle, thread, safety pins, cord. Fix gear on trail.",
   },
-  {
-    id: "aquamira-water-treatment",
-    name: "Aquamira Water Treatment Drops",
-    brand: "Aquamira",
-    category: "safety",
-    tier: "ultra-budget",
-    weightOz: 3,
-    priceUsd: 15,
-    description: "Chemical water purification drops (chlorine dioxide). Backup to filter. Kills viruses.",
-  },
-  {
-    id: "sawyer-permethrin-spray",
-    name: "Permethrin Spray (for clothing)",
-    brand: "Sawyer",
-    category: "safety",
-    tier: "ultra-budget",
-    weightOz: 0,
-    priceUsd: 15,
-    description: "Insect repellent spray for clothing and gear. Apply before trip. Lasts 6 washes.",
-  },
+
+
 
   // === ACCESSORIES - Comfort & Organization ===
   {
@@ -2334,6 +2017,8 @@ export const gearDatabase: GearItem[] = [
     weightOz: 38,
     priceUsd: 450,
     description: "Freestanding 1-person tent with dedicated poles. Double-wall. 20 sq ft floor.",
+    shelterType: "freestanding-tent",
+    capacity: 1,
   },
   {
     id: "msr-hubba-hubba-lt-2",
@@ -2344,6 +2029,8 @@ export const gearDatabase: GearItem[] = [
     weightOz: 48,
     priceUsd: 500,
     description: "Freestanding 2-person tent with dedicated poles. Double-wall. 29 sq ft floor.",
+    shelterType: "freestanding-tent",
+    capacity: 2,
   },
   {
     id: "msr-freelite-2",
@@ -2354,6 +2041,8 @@ export const gearDatabase: GearItem[] = [
     weightOz: 40,
     priceUsd: 500,
     description: "Semi-freestanding 2-person tent. Ultralight for MSR. 29 sq ft floor.",
+    shelterType: "freestanding-tent",
+    capacity: 2,
   },
   {
     id: "tarptent-rainbow-li",
@@ -2364,6 +2053,8 @@ export const gearDatabase: GearItem[] = [
     weightOz: 21.8,
     priceUsd: 499,
     description: "1-person tent with dedicated carbon poles. Dyneema fabric. Wedge shape.",
+    shelterType: "trekking-pole-tent",
+    capacity: 1,
   },
   {
     id: "tarptent-double-rainbow-li",
@@ -2374,26 +2065,8 @@ export const gearDatabase: GearItem[] = [
     weightOz: 27,
     priceUsd: 599,
     description: "2-person tent with dedicated carbon poles. Dyneema fabric. 28 sq ft.",
-  },
-  {
-    id: "tarptent-stratospire-li",
-    name: "StratoSpire Li",
-    brand: "Tarptent",
-    category: "shelter",
-    tier: "premium",
-    weightOz: 26,
-    priceUsd: 649,
-    description: "2-person trekking pole tent. Dyneema fabric. Dual vestibules. Storm-worthy.",
-  },
-  {
-    id: "tarptent-aeon-li",
-    name: "Aeon Li",
-    brand: "Tarptent",
-    category: "shelter",
-    tier: "premium",
-    weightOz: 16,
-    priceUsd: 449,
-    description: "1-person trekking pole tent. Dyneema fabric. Single-wall. 16oz.",
+    shelterType: "trekking-pole-tent",
+    capacity: 2,
   },
   {
     id: "rei-flash-air-2",
@@ -2404,6 +2077,8 @@ export const gearDatabase: GearItem[] = [
     weightOz: 37,
     priceUsd: 349,
     description: "Semi-freestanding 2-person tent. Good ventilation. Budget-friendly.",
+    shelterType: "freestanding-tent",
+    capacity: 2,
   },
   {
     id: "borah-gear-5x9-tarp",
@@ -2414,6 +2089,7 @@ export const gearDatabase: GearItem[] = [
     weightOz: 5.5,
     priceUsd: 110,
     description: "Flat silnylon tarp. 5.5oz. Pair with bivy or bug net for full system.",
+    shelterType: "tarp",
   },
   {
     id: "borah-gear-side-zip-bivy",
@@ -2424,6 +2100,7 @@ export const gearDatabase: GearItem[] = [
     weightOz: 5.8,
     priceUsd: 120,
     description: "Breathable bivy sack with side zipper. eVent waterproof top. Minimalist shelter.",
+    shelterType: "bivy",
   },
   {
     id: "or-helium-bivy",
@@ -2434,16 +2111,7 @@ export const gearDatabase: GearItem[] = [
     weightOz: 15.5,
     priceUsd: 250,
     description: "Waterproof breathable bivy sack. Pertex Shield. For cowboy camping in rain.",
-  },
-  {
-    id: "yama-cirriform-1p",
-    name: "Cirriform 1P",
-    brand: "Yama Mountain Gear",
-    category: "shelter",
-    tier: "mid",
-    weightOz: 14,
-    priceUsd: 300,
-    description: "Tarp-tent hybrid. Silnylon. Bathtub floor + net. 14oz complete.",
+    shelterType: "bivy",
   },
   {
     id: "smd-deschutes-plus-tarp",
@@ -2454,27 +2122,10 @@ export const gearDatabase: GearItem[] = [
     weightOz: 14.5,
     priceUsd: 185,
     description: "Shaped silnylon tarp with beak. More coverage than a flat tarp. 14.5oz.",
+    shelterType: "tarp",
   },
-  {
-    id: "paria-sanctuary-siltarp",
-    name: "Sanctuary SilTarp",
-    brand: "Paria Outdoor Products",
-    category: "shelter",
-    tier: "budget",
-    weightOz: 12,
-    priceUsd: 100,
-    description: "Flat silnylon tarp. 8x10ft. 12oz. Budget entry into tarp camping.",
-  },
-  {
-    id: "rei-trailmade-2",
-    name: "Trailmade 2",
-    brand: "REI Co-op",
-    category: "shelter",
-    tier: "budget",
-    weightOz: 58,
-    priceUsd: 199,
-    description: "Freestanding 2-person tent. Heavier but durable and affordable for beginners.",
-  },
+
+
 
   // === SLEEP (New) ===
   {
@@ -2576,28 +2227,8 @@ export const gearDatabase: GearItem[] = [
     description: "Inflatable sleeping pad. R-4.4. V-chamber design. Budget insulated option.",
     rValue: 4.4,
   },
-  {
-    id: "rei-magma-trail-quilt-30",
-    name: "Magma Trail Quilt 30F",
-    brand: "REI Co-op",
-    category: "sleep",
-    tier: "mid",
-    weightOz: 19,
-    priceUsd: 279,
-    description: "Down quilt. 850-fill. Comfortable to 30°F. Pad attachment straps.",
-    tempRating: 30,
-  },
-  {
-    id: "nemo-disco-15",
-    name: "Disco 15F",
-    brand: "NEMO",
-    category: "sleep",
-    tier: "mid",
-    weightOz: 44,
-    priceUsd: 400,
-    description: "Spoon-shaped sleeping bag. 650-fill. Comfortable to 15°F. Roomy for side sleepers.",
-    tempRating: 15,
-  },
+
+
   {
     id: "thermarest-xlite-nxt-max",
     name: "NeoAir XLite NXT MAX",
@@ -2622,17 +2253,7 @@ export const gearDatabase: GearItem[] = [
     description: "55-liter framed backpack. Ventilated suspension. 33oz — lighter than the Exos 58.",
     volume: 55,
   },
-  {
-    id: "gregory-focal-48",
-    name: "Focal 48",
-    brand: "Gregory",
-    category: "pack",
-    tier: "mid",
-    weightOz: 42,
-    priceUsd: 250,
-    description: "48-liter framed backpack. FreeFloat hipbelt. Ventilated back panel.",
-    volume: 48,
-  },
+
   {
     id: "gregory-stout-45",
     name: "Stout 45",
@@ -2644,17 +2265,7 @@ export const gearDatabase: GearItem[] = [
     description: "45-liter framed backpack. Comfortable and durable. Good for beginners.",
     volume: 45,
   },
-  {
-    id: "osprey-levity-45",
-    name: "Levity 45",
-    brand: "Osprey",
-    category: "pack",
-    tier: "mid",
-    weightOz: 28,
-    priceUsd: 300,
-    description: "45-liter framed backpack. 28oz. Ultralight Osprey option.",
-    volume: 45,
-  },
+
   {
     id: "mystery-ranch-scree-32",
     name: "Scree 32",
@@ -2677,17 +2288,7 @@ export const gearDatabase: GearItem[] = [
     description: "30-liter frameless daypack. Good for weekend trips with ultralight setups.",
     volume: 30,
   },
-  {
-    id: "gossamer-gear-gorilla-50",
-    name: "Gorilla 50",
-    brand: "Gossamer Gear",
-    category: "pack",
-    tier: "mid",
-    weightOz: 32,
-    priceUsd: 275,
-    description: "50-liter framed backpack. Internal frame stays. Comfortable to 30lb.",
-    volume: 50,
-  },
+
   {
     id: "rei-trailmade-60",
     name: "Trailmade 60",
@@ -2731,39 +2332,11 @@ export const gearDatabase: GearItem[] = [
     priceUsd: 14,
     description: "Collapsible 1-liter water bottle. 0.9oz. Rolls up when empty.",
   },
-  {
-    id: "msr-trailshot",
-    name: "TrailShot",
-    brand: "MSR",
-    category: "kitchen",
-    tier: "ultra-budget",
-    weightOz: 5.2,
-    priceUsd: 50,
-    description: "Squeeze water filter with straw. Drink directly from source. Backup filter.",
-  },
-  {
-    id: "jetboil-minimo",
-    name: "MiniMo",
-    brand: "Jetboil",
-    category: "kitchen",
-    tier: "mid",
-    weightOz: 14.6,
-    priceUsd: 155,
-    description: "All-in-one stove and pot system. 1L pot. Simmer control. Regulated flame.",
-  },
+
+
 
   // === PACK (Cottage + Mainstream) ===
-  {
-    id: "swd-long-haul-50",
-    name: "Long Haul 50",
-    brand: "SWD",
-    category: "pack",
-    tier: "mid",
-    weightOz: 31,
-    priceUsd: 310,
-    description: "50-liter framed backpack. Handmade in Minnesota. Comfortable to 35lb.",
-    volume: 50,
-  },
+
   {
     id: "swd-superior-35",
     name: "Superior 35",
