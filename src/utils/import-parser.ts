@@ -14,8 +14,10 @@ export interface ParsedItem {
 export function mapCategory(raw: string): GearCategory {
   const s = raw.toLowerCase().trim();
 
-  if (/\b(big\s*3|shelter|tent|tarp|hammock)\b/.test(s)) return "shelter";
-  if (/\b(sleep|sleeping|insulation|pad|quilt|bag)\b/.test(s)) return "sleep-system";
+  if (/\b(big\s*3|shelter|tent|tarp|hammock|bivy)\b/.test(s)) return "shelter";
+  if (/\b(insulation|quilt|sleeping\s*bag|down\s*bag|underquilt|top\s*quilt)\b/.test(s)) return "insulation";
+  if (/\b(pad|mattress|foam|sleeping\s*pad|mat)\b/.test(s)) return "sleeping-pad";
+  if (/\b(sleep|sleeping)\b/.test(s)) return "insulation"; // fallback for generic "sleep system"
   if (/\b(pack|backpack|rucksack)\b/.test(s)) return "pack";
   if (/\b(clothing|clothes|worn|apparel|layers?)\b/.test(s)) return "clothing";
   if (/\b(cook|stove|food|eating|kitchen|pot)\b/.test(s)) return "cooking";
