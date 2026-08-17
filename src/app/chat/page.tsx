@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Send, Bot, User, Loader2 } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
+import { Nav } from "@/components/Nav";
 
 interface Message {
   role: "user" | "assistant";
@@ -70,43 +71,7 @@ export default function ChatPage() {
 
   return (
     <div className="h-dvh flex flex-col bg-[#0a0a0a] text-white">
-      {/* Header */}
-      <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-6">
-          <Link
-            href="/"
-            className="text-[16px] md:text-[18px] font-bold tracking-[0.2em] text-white hover:text-white/80 transition-colors"
-          >
-            HIKEMIND
-          </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link
-              href="/pack-lab"
-              className="text-[12px] font-medium tracking-[0.15em] text-white/60 hover:text-white transition-colors"
-            >
-              PACK LAB
-            </Link>
-            <Link
-              href="/build"
-              className="text-[12px] font-medium tracking-[0.15em] text-white/60 hover:text-white transition-colors"
-            >
-              BUILD MY KIT
-            </Link>
-            <Link
-              href="/chat"
-              className="text-[12px] font-bold tracking-[0.15em] text-lime-400"
-            >
-              GEAR ADVISOR
-            </Link>
-          </nav>
-        </div>
-        <div className="flex items-center gap-2">
-          <Bot className="w-4 h-4 text-lime-400" />
-          <span className="text-[11px] font-medium tracking-wider text-lime-400 uppercase">
-            AI Powered
-          </span>
-        </div>
-      </header>
+      <Nav />
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6">

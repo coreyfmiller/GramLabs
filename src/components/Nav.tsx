@@ -1,0 +1,94 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Mountain } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const NAV_LINKS = [
+  { label: "PACK LAB", href: "/pack-lab" },
+  { label: "BUILD MY KIT", href: "/build" },
+  { label: "GEAR ADVISOR", href: "/chat" },
+];
+
+export function Nav() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+
+  return (
+    <>
+      <header className="shrink-0 border-b border-white/10 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="flex items-center justify-between gap-4 px-4 py-3 md:px-6">
+          {/* Left: Logo + nav */}
+          <div className="flex items-center gap-4">
+            <Link href="/" className="flex items-center gap-2.5">
+              <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+                <Mountain className="size-5" aria-hidden="true" />
+              </span>
+              <span className="text-base font-semibold tracking-tight">HikeMind</span>
+            </Link>
+
+            <nav className="hidden md:flex items-center gap-5 ml-4">
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    "text-xs font-medium tracking-[0.15em] transition-colors",
+                    pathname === link.href
+                      ? "text-primary font-bold"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden flex flex-col gap-[5px] p-2"
+            aria-label="Menu"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            <span
+              className={cn(
+                "block w-5 h-[1.5px] bg-foreground transition-transform duration-300",
+                mobileOpen && "rotate-45 translate-y-[3.5px]"
+              )}
+            />
+            <span
+              className={cn(
+                "block w-5 h-[1.5px] bg-foreground transition-transform duration-300",
+                mobileOpen && "-rotate-45 -translate-y-[3.5px]"
+              )}
+            />
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div className="fixed inset-x-0 top-[57px] z-50 bg-background/95 backdrop-blur-md border-b border-white/10 px-6 py-6 flex flex-col gap-4 md:hidden">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={cn(
+                "text-sm font-medium tracking-[0.15em] transition-colors",
+                pathname === link.href
+                  ? "text-primary font-bold"
+                  : "text-foreground hover:text-primary"
+              )}
+              onClick={() => setMobileOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}

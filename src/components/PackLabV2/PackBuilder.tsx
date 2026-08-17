@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { BarChart3, Layers, Mountain, Search } from "lucide-react";
-import Link from "next/link";
+import { BarChart3, Layers, Search } from "lucide-react";
 import { usePackStore } from "@/store/pack-store";
 import { formatWeight } from "@/utils/format";
+import { Nav } from "@/components/Nav";
 import { GearSearch } from "./GearSearch";
 import { PackList } from "./PackList";
 import { StatsPanel } from "./StatsPanel";
@@ -27,48 +27,19 @@ export function PackBuilder() {
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-background">
-      {/* Top bar */}
-      <header className="flex shrink-0 items-center justify-between gap-4 border-b border-white/10 px-4 py-3 md:px-6">
-        <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2.5">
-            <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <Mountain className="size-5" aria-hidden="true" />
-            </span>
-            <div className="leading-tight">
-              <p className="text-base font-semibold tracking-tight">HikeMind</p>
-              <p className="hidden text-xs uppercase tracking-[0.16em] text-muted-foreground sm:block">
-                Pack Builder
-              </p>
-            </div>
-          </Link>
-          <nav className="hidden md:flex items-center gap-5 ml-4">
-            <Link href="/pack-lab" className="text-xs font-bold tracking-[0.15em] text-primary">PACK LAB</Link>
-            <Link href="/build" className="text-xs font-medium tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors">BUILD MY KIT</Link>
-            <Link href="/chat" className="text-xs font-medium tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors">GEAR ADVISOR</Link>
-          </nav>
-        </div>
+      <Nav />
 
-        <div className="flex items-center gap-4">
-          <div className="hidden items-center gap-4 sm:flex">
-            <HeaderStat
-              label="Base"
-              value={formatWeight(baseWeight)}
-              accent
-            />
-            <span
-              aria-hidden="true"
-              className="h-7 w-px bg-white/10"
-            />
-            <HeaderStat
-              label="Skin-out"
-              value={formatWeight(totalWeight)}
-            />
-          </div>
-          <div className="num rounded-lg border border-primary/25 bg-primary/10 px-3 py-2 text-sm font-semibold text-primary sm:hidden">
-            {(baseWeight / 16).toFixed(1)} lb
-          </div>
+      {/* Stats bar */}
+      <div className="flex shrink-0 items-center justify-end gap-4 border-b border-white/10 px-4 py-2 md:px-6">
+        <div className="hidden items-center gap-4 sm:flex">
+          <HeaderStat label="Base" value={formatWeight(baseWeight)} accent />
+          <span aria-hidden="true" className="h-7 w-px bg-white/10" />
+          <HeaderStat label="Skin-out" value={formatWeight(totalWeight)} />
         </div>
-      </header>
+        <div className="num rounded-lg border border-primary/25 bg-primary/10 px-3 py-2 text-sm font-semibold text-primary sm:hidden">
+          {(baseWeight / 16).toFixed(1)} lb
+        </div>
+      </div>
 
       {/* Mobile tabs */}
       <nav

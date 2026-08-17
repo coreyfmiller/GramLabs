@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Mountain, Loader2, Package, ArrowRight } from "lucide-react";
+import { Loader2, Package, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { Nav } from "@/components/Nav";
 import { cn } from "@/lib/utils";
 
 type TripType = "3-season" | "winter" | "thru-hike" | "weekend";
@@ -65,22 +66,7 @@ export default function BuildPage() {
 
   return (
     <div className="min-h-dvh bg-background text-foreground">
-      {/* Header */}
-      <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2.5">
-            <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <Mountain className="size-5" />
-            </span>
-            <span className="text-base font-semibold tracking-tight">HikeMind</span>
-          </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link href="/pack-lab" className="text-xs font-medium tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors">PACK LAB</Link>
-            <Link href="/build" className="text-xs font-bold tracking-[0.15em] text-primary">BUILD MY KIT</Link>
-            <Link href="/chat" className="text-xs font-medium tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors">GEAR ADVISOR</Link>
-          </nav>
-        </div>
-      </header>
+      <Nav />
 
       <div className="max-w-4xl mx-auto px-4 md:px-8 py-10">
         {!result ? (
