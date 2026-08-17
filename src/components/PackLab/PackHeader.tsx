@@ -7,12 +7,12 @@ import { usePackStore, formatWeight } from "@/store/pack-store";
 
 export default function PackHeader() {
   const {
-    packName,
+    getPackName,
     setPackName,
     getBaseWeight,
     getTotalWeight,
     getWornWeight,
-    items,
+    getItems,
     loadouts,
     activeLoadoutId,
     createLoadout,
@@ -21,6 +21,9 @@ export default function PackHeader() {
     weightUnit,
     setWeightUnit,
   } = usePackStore();
+
+  const packName = getPackName();
+  const items = getItems();
 
   const [showLoadoutMenu, setShowLoadoutMenu] = useState(false);
   const [shareMessage, setShareMessage] = useState("");

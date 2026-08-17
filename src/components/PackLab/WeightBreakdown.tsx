@@ -4,8 +4,9 @@ import { usePackStore, formatWeight } from "@/store/pack-store";
 import { CATEGORY_LABELS, CATEGORY_COLORS, GearCategory } from "@/data/gear-database";
 
 export default function WeightBreakdown() {
-  const { getBaseWeight, getCategoryBreakdown, items, weightUnit } =
+  const { getBaseWeight, getCategoryBreakdown, getItems, weightUnit } =
     usePackStore();
+  const items = getItems();
 
   const baseWeightOz = getBaseWeight();
   const baseWeightLb = baseWeightOz / 16;

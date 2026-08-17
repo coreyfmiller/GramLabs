@@ -140,7 +140,8 @@ function getSuggestionAccent(type: Suggestion["type"]) {
 }
 
 export default function AiSuggestions() {
-  const { items } = usePackStore();
+  const { getItems } = usePackStore();
+  const items = getItems();
   const suggestions = generateSuggestions(items);
 
   if (items.length < 3) {

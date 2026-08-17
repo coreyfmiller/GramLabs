@@ -20,34 +20,36 @@ export interface Loadout {
 }
 
 export interface PackStore {
-  // Multiple loadouts
   loadouts: Loadout[];
   activeLoadoutId: string;
+  weightUnit: WeightUnit;
+
+  // Loadout management
   createLoadout: (name: string) => void;
   deleteLoadout: (id: string) => void;
   switchLoadout: (id: string) => void;
   renameLoadout: (id: string, name: string) => void;
-
-  // Weight unit
-  weightUnit: WeightUnit;
   setWeightUnit: (unit: WeightUnit) => void;
 
-  // Current loadout helpers (proxied)
-  packName: string;
-  items: PackItem[];
+  // Item management (operates on active loadout)
   setPackName: (name: string) => void;
   addItem: (item: GearItem, status?: ItemStatus) => void;
   removeItem: (gearId: string) => void;
   updateItemStatus: (gearId: string, status: ItemStatus) => void;
   updateItemQuantity: (gearId: string, quantity: number) => void;
   clearPack: () => void;
+
+  // Computed helpers
+  getActiveLoadout: () => Loadout | undefined;
+  getPackName: () => string;
+  getItems: () => PackItem[];
   getBaseWeight: () => number;
   getTotalWeight: () => number;
   getWornWeight: () => number;
   getConsumableWeight: () => number;
   getCategoryBreakdown: () => { category: GearCategory; weightOz: number; percentage: number }[];
 
-  // Share URL
+  // Share
   hydrateFromShareData: (items: PackItem[], name: string) => void;
 }
 
@@ -94,20 +96,20 @@ export const usePackStore = create<PackStore>()(
           ),
         })),
 
-      // Proxied getters for active loadout
-      get packName() {
+      getActiveLoadout: () => {
         const state = get();
-        const loadout = state.loadouts.find(
-          (l) => l.id === state.activeLoadoutId
-        );
+        return state.loadouts.find((l) => l.id === state.activeLoadoutId);
+      },
+
+      getPackName: () => {
+        const state = get();
+        const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
         return loadout?.name ?? "My Pack";
       },
 
-      get items() {
+      getItems: () => {
         const state = get();
-        const loadout = state.loadouts.find(
-          (l) => l.id === state.activeLoadoutId
-        );
+        const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
         return loadout?.items ?? [];
       },
 
@@ -122,9 +124,7 @@ export const usePackStore = create<PackStore>()(
 
       addItem: (item, status = "packed") => {
         const state = get();
-        const loadout = state.loadouts.find(
-          (l) => l.id === state.activeLoadoutId
-        );
+        const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
         if (!loadout) return;
         const existing = loadout.items.find((i) => i.gearId === item.id);
         if (existing) return;
@@ -197,9 +197,7 @@ export const usePackStore = create<PackStore>()(
 
       getBaseWeight: () => {
         const state = get();
-        const loadout = state.loadouts.find(
-          (l) => l.id === state.activeLoadoutId
-        );
+        const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
         if (!loadout) return 0;
         return loadout.items
           .filter((i) => i.status === "packed")
@@ -208,21 +206,16 @@ export const usePackStore = create<PackStore>()(
 
       getTotalWeight: () => {
         const state = get();
-        const loadout = state.loadouts.find(
-          (l) => l.id === state.activeLoadoutId
-        );
+        const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
         if (!loadout) return 0;
         return loadout.items.reduce(
-          (sum, i) => sum + i.item.weightOz * i.quantity,
-          0
+          (sum, i) => sum + i.item.weightOz * i.quantity, 0
         );
       },
 
       getWornWeight: () => {
         const state = get();
-        const loadout = state.loadouts.find(
-          (l) => l.id === state.activeLoadoutId
-        );
+        const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
         if (!loadout) return 0;
         return loadout.items
           .filter((i) => i.status === "worn")
@@ -231,9 +224,7 @@ export const usePackStore = create<PackStore>()(
 
       getConsumableWeight: () => {
         const state = get();
-        const loadout = state.loadouts.find(
-          (l) => l.id === state.activeLoadoutId
-        );
+        const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
         if (!loadout) return 0;
         return loadout.items
           .filter((i) => i.status === "consumable")
@@ -242,22 +233,17 @@ export const usePackStore = create<PackStore>()(
 
       getCategoryBreakdown: () => {
         const state = get();
-        const loadout = state.loadouts.find(
-          (l) => l.id === state.activeLoadoutId
-        );
+        const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
         if (!loadout) return [];
         const items = loadout.items.filter((i) => i.status === "packed");
         const baseWeight = items.reduce(
-          (sum, i) => sum + i.item.weightOz * i.quantity,
-          0
+          (sum, i) => sum + i.item.weightOz * i.quantity, 0
         );
         const map = new Map<GearCategory, number>();
-
         items.forEach((i) => {
           const current = map.get(i.item.category) || 0;
           map.set(i.item.category, current + i.item.weightOz * i.quantity);
         });
-
         return Array.from(map.entries())
           .map(([category, weightOz]) => ({
             category,
@@ -285,7 +271,7 @@ export const usePackStore = create<PackStore>()(
   )
 );
 
-// Re-export formatting utilities from the canonical location
+// Re-export formatting utilities
 export {
   formatWeight as formatWeightLbOz,
   formatWeightWithUnit as formatWeight,

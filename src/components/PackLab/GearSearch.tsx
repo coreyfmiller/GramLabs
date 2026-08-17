@@ -22,7 +22,8 @@ export default function GearSearch() {
   const [selectedTier, setSelectedTier] = useState<GearTier | "all">("all");
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
-  const { addItem, items, weightUnit } = usePackStore();
+  const { addItem, getItems, weightUnit } = usePackStore();
+  const items = getItems();
 
   const filteredGear = gearDatabase.filter((item) => {
     const matchesQuery =

@@ -6,7 +6,8 @@ import { formatWeight } from "@/store/pack-store";
 import { CATEGORY_LABELS, CATEGORY_COLORS } from "@/data/gear-database";
 
 export default function PackList() {
-  const { items, removeItem, updateItemStatus, weightUnit } = usePackStore();
+  const { getItems, removeItem, updateItemStatus, weightUnit } = usePackStore();
+  const items = getItems();
 
   const packedItems = items.filter((i) => i.status === "packed");
   const wornItems = items.filter((i) => i.status === "worn");
