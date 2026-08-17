@@ -100,8 +100,8 @@ export default function BuildPage() {
                 <label className="block text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground mb-3">
                   Total Budget
                 </label>
-                <div className="grid grid-cols-4 gap-2 mb-3">
-                  {[300, 500, 1000, 2000].map((b) => (
+                <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mb-3">
+                  {[300, 500, 750, 1000, 1500, 2000].map((b) => (
                     <button
                       key={b}
                       onClick={() => setInputs({ ...inputs, budget: b })}
@@ -118,9 +118,9 @@ export default function BuildPage() {
                 </div>
                 <input
                   type="range"
-                  min={200}
-                  max={4000}
-                  step={50}
+                  min={150}
+                  max={5000}
+                  step={25}
                   value={inputs.budget}
                   onChange={(e) => setInputs({ ...inputs, budget: parseInt(e.target.value) })}
                   className="w-full accent-primary"
