@@ -123,7 +123,7 @@ function PackSection({
               {/* Remove */}
               <button
                 onClick={() => onRemove(packItem.gearId)}
-                className="p-1 text-white/20 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+                className="p-1 text-white/20 hover:text-red-400 transition-colors md:opacity-0 md:group-hover:opacity-100"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>

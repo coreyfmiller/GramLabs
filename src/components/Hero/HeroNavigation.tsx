@@ -1,6 +1,12 @@
 "use client";
 
-const NAV_LINKS = ["TOOLS", "PACK LAB", "TRIP PLANNER", "GEAR COMPARE", "TRAILS"];
+import Link from "next/link";
+
+const NAV_LINKS = [
+  { label: "PACK LAB", href: "/pack-lab" },
+  { label: "TRIP ENGINE", href: "/trip-engine" },
+  { label: "GEAR INTEL", href: "/gear-intel" },
+];
 
 interface HeroNavigationProps {
   visible: boolean;
@@ -22,20 +28,20 @@ export default function HeroNavigation({ visible }: HeroNavigationProps) {
       {/* Desktop nav links */}
       <div className="hidden md:flex items-center gap-8">
         {NAV_LINKS.map((link) => (
-          <a
-            key={link}
-            href="#"
+          <Link
+            key={link.label}
+            href={link.href}
             className="text-[13px] font-medium tracking-[0.15em] text-white hover:text-white/80 transition-colors duration-300"
           >
-            {link}
-          </a>
+            {link.label}
+          </Link>
         ))}
-        <a
-          href="#"
+        <Link
+          href="/pack-lab"
           className="text-[13px] font-bold tracking-[0.15em] text-white hover:text-white/80 transition-colors duration-300 ml-4"
         >
           BUILD MY PACK →
-        </a>
+        </Link>
       </div>
 
       {/* Mobile hamburger */}
