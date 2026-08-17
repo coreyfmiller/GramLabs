@@ -232,6 +232,9 @@ function ResultCard({
         <p className="truncate text-base font-medium leading-tight text-foreground">
           {gear.name}
         </p>
+        <p className="mt-1 text-xs text-muted-foreground/70 line-clamp-2 leading-relaxed">
+          {gear.description}
+        </p>
         <div className="mt-1.5 flex items-center gap-2">
           <span className="num text-base font-medium text-primary">
             {gear.weightOz.toFixed(1)}
