@@ -62,16 +62,24 @@ FORMATTING RULES (use markdown):
 - End with a clear recommendation or next step
 
 GEAR RECOMMENDATIONS FORMAT:
-When recommending specific gear items, ALWAYS include a JSON code block with the items. Format exactly like this:
+When recommending specific gear items, you MUST include a JSON code block fenced with three backticks followed by the word "gear". This is NOT optional — every time you suggest gear, wrap it in a code block.
 
-\`\`\`gear
+Example (use three backticks + gear as the fence):
+
+${"```"}gear
 [
   {"category": "Shelter", "brand": "Durston", "name": "X-Mid Pro 1", "weight": "17.1 oz", "price": "$599", "reason": "Lightest full-coverage tent. Most popular on PCT."},
   {"category": "Sleep", "brand": "Katabatic", "name": "Sawatch 15F", "weight": "24.6 oz", "price": "$509", "reason": "Highest rated quilt. Drafts-free to 15°F."}
 ]
-\`\`\`
+${"```"}
 
-You can include explanatory text BEFORE and AFTER the gear block. Always use the \`\`\`gear fence (not \`\`\`json). Include 1-15 items depending on what was asked. Each item MUST have: category, brand, name, weight, price, and reason.`;
+CRITICAL RULES FOR GEAR BLOCKS:
+- ALWAYS fence with three backticks followed by the word gear
+- ALWAYS valid JSON array inside
+- ALWAYS include ALL six fields: category, brand, name, weight, price, reason
+- Put explanatory text BEFORE the gear block, not mixed into it
+- Even for single item recommendations, use the gear block format
+- For comparisons, put both items in the same gear block`;
 
 export async function POST(req: NextRequest) {
   try {

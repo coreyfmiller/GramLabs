@@ -213,74 +213,74 @@ interface GearCard {
 }
 
 function ChatResponse({ content }: { content: string }) {
-  // Parse gear blocks from the response
-  const parts: Array<{ type: "text"; content: string } | { type: "gear"; items: GearCard[] }> = [];
-
+  // Try to parse ```gear blocks first
   const gearRegex = /```gear\s*\n([\s\S]*?)```/g;
-  let lastIndex = 0;
-  let match;
+  const jsonRegex = /```json\s*\n([\s\S]*?)```/g;
 
-  while ((match = gearRegex.exec(content)) !== null) {
-    // Text before the gear block
-    if (match.index > lastIndex) {
-      const text = content.slice(lastIndex, match.index).trim();
-      if (text) parts.push({ type: "text", content: text });
-    }
+  let gearItems: GearCard[] = [];
+  let textContent = content;
 
-    // Parse the gear JSON
+  // Try ```gear format
+  let match = gearRegex.exec(content);
+  if (match) {
     try {
-      const items = JSON.parse(match[1]) as GearCard[];
-      parts.push({ type: "gear", items });
-    } catch {
-      // If JSON parsing fails, treat as text
-      parts.push({ type: "text", content: match[0] });
+      gearItems = JSON.parse(match[1]);
+      textContent = content.slice(0, match.index).trim() + "\n" + content.slice(match.index + match[0].length).trim();
+    } catch { /* ignore */ }
+  }
+
+  // Try ```json format as fallback
+  if (gearItems.length === 0) {
+    match = jsonRegex.exec(content);
+    if (match) {
+      try {
+        const parsed = JSON.parse(match[1]);
+        if (Array.isArray(parsed) && parsed[0]?.brand && parsed[0]?.name) {
+          gearItems = parsed;
+          textContent = content.slice(0, match.index).trim() + "\n" + content.slice(match.index + match[0].length).trim();
+        }
+      } catch { /* ignore */ }
     }
-
-    lastIndex = match.index + match[0].length;
   }
 
-  // Remaining text after last gear block
-  const remaining = content.slice(lastIndex).trim();
-  if (remaining) parts.push({ type: "text", content: remaining });
-
-  // If no gear blocks found, just render as markdown
-  if (parts.length === 0) {
-    parts.push({ type: "text", content });
-  }
+  // Clean up any remaining code fences from textContent
+  textContent = textContent.replace(/```[\s\S]*?```/g, "").trim();
 
   return (
     <div className="text-[14px] leading-relaxed space-y-4">
-      {parts.map((part, i) =>
-        part.type === "text" ? (
-          <div key={i} className="prose-invert">
-            <ReactMarkdown>{part.content}</ReactMarkdown>
-          </div>
-        ) : (
-          <div key={i} className="space-y-2">
-            {part.items.map((item, j) => (
-              <div
-                key={j}
-                className="flex items-start gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-3 hover:border-primary/30 transition-colors"
-              >
-                <div className="flex-1 min-w-0">
-                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                    {item.category}
-                  </p>
-                  <p className="text-sm font-medium text-foreground">
-                    {item.brand} {item.name}
-                  </p>
-                  <p className="text-xs text-muted-foreground/70 mt-1">
-                    {item.reason}
-                  </p>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="num text-sm font-medium text-primary">{item.weight}</p>
-                  <p className="num text-xs text-muted-foreground">{item.price}</p>
-                </div>
+      {textContent && (
+        <div className="prose-invert">
+          <ReactMarkdown>{textContent}</ReactMarkdown>
+        </div>
+      )}
+      {gearItems.length > 0 && (
+        <div className="space-y-2 mt-3">
+          <p className="text-xs uppercase tracking-wider text-primary font-medium mb-2">
+            Recommended Gear
+          </p>
+          {gearItems.map((item, j) => (
+            <div
+              key={j}
+              className="flex items-start gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-3 hover:border-primary/30 transition-colors"
+            >
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  {item.category}
+                </p>
+                <p className="text-sm font-medium text-foreground">
+                  {item.brand} {item.name}
+                </p>
+                <p className="text-xs text-muted-foreground/70 mt-1">
+                  {item.reason}
+                </p>
               </div>
-            ))}
-          </div>
-        )
+              <div className="text-right shrink-0">
+                <p className="num text-sm font-medium text-primary">{item.weight}</p>
+                <p className="num text-xs text-muted-foreground">{item.price}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
