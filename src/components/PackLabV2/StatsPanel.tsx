@@ -46,10 +46,10 @@ export function StatsPanel() {
         {/* Donut */}
         <section className="glass rounded-xl border border-white/10 p-4">
           <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+            <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
               Distribution
             </h2>
-            <span className="num text-[11px] text-muted-foreground">
+            <span className="num text-xs text-muted-foreground">
               {itemCount} items
             </span>
           </div>
@@ -57,12 +57,12 @@ export function StatsPanel() {
 
           <div className="mt-4 border-t border-white/10 pt-3">
             <div className="mb-1.5 flex items-baseline justify-between gap-2">
-              <span className="min-w-0 truncate text-[11px] text-muted-foreground">
+              <span className="min-w-0 truncate text-xs text-muted-foreground">
                 Ultralight target
               </span>
               <span
                 className={cn(
-                  "num shrink-0 whitespace-nowrap text-[11px] font-medium",
+                  "num shrink-0 whitespace-nowrap text-xs font-medium",
                   underTarget ? "text-primary" : "text-destructive"
                 )}
               >
@@ -78,7 +78,7 @@ export function StatsPanel() {
                 style={{ width: `${Math.min(pct, 1) * 100}%` }}
               />
             </div>
-            <p className="mt-1.5 text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+            <p className="mt-1.5 text-xs uppercase tracking-[0.14em] text-muted-foreground">
               10 lb base weight threshold
             </p>
           </div>
@@ -87,19 +87,19 @@ export function StatsPanel() {
         {/* Big 3 */}
         <section className="glass rounded-xl border border-white/10 p-4">
           <div className="mb-3 flex items-baseline justify-between gap-2">
-            <h2 className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+            <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
               The Big 3
             </h2>
-            <span className="num text-[11px] text-muted-foreground">
+            <span className="num text-xs text-muted-foreground">
               {baseWeight > 0
                 ? `${((big3Weight / baseWeight) * 100).toFixed(0)}% of base`
                 : "—"}
             </span>
           </div>
 
-          <p className="num text-[32px] font-semibold leading-none tracking-tight text-primary">
+          <p className="num text-[36px] font-semibold leading-none tracking-tight text-primary">
             {(big3Weight / 16).toFixed(2)}
-            <span className="ml-1.5 text-sm font-normal text-muted-foreground">
+            <span className="ml-1.5 text-base font-normal text-muted-foreground">
               lb
             </span>
           </p>
@@ -119,14 +119,14 @@ export function StatsPanel() {
                   }}
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[12px] font-medium leading-tight">
+                  <p className="text-sm font-medium leading-tight">
                     {CATEGORY_LABELS[packItem.item.category]}
                   </p>
-                  <p className="truncate text-[11px] text-muted-foreground">
+                  <p className="truncate text-xs text-muted-foreground">
                     {packItem.item.brand} {packItem.item.name}
                   </p>
                 </div>
-                <span className="num shrink-0 text-[13px] font-medium">
+                <span className="num shrink-0 text-sm font-medium">
                   {(packItem.item.weightOz * packItem.quantity).toFixed(1)}
                   <span className="ml-0.5 text-[10px] text-muted-foreground">
                     oz
@@ -165,12 +165,12 @@ export function StatsPanel() {
               className="size-3.5 text-primary"
               aria-hidden="true"
             />
-            <h2 className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+            <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
               HikeMind Suggestions
             </h2>
           </div>
 
-          <p className="p-4 text-[12px] leading-relaxed text-muted-foreground">
+          <p className="p-4 text-sm leading-relaxed text-muted-foreground">
             Your kit is dialed in. No high-impact swaps left to recommend.
           </p>
         </section>
@@ -190,12 +190,12 @@ function SummaryTile({
 }) {
   return (
     <div className="glass rounded-xl border border-white/10 p-3 transition-colors hover:border-white/20">
-      <p className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+      <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
         {label}
       </p>
       <p
         className={cn(
-          "num mt-1 text-[15px] font-semibold tracking-tight",
+          "num mt-1 text-base font-semibold tracking-tight",
           accent ? "text-primary" : "text-foreground"
         )}
       >

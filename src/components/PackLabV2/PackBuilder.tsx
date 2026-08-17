@@ -27,12 +27,12 @@ export function PackBuilder() {
       {/* Top bar */}
       <header className="flex shrink-0 items-center justify-between gap-4 border-b border-white/10 px-4 py-3 md:px-6">
         <div className="flex items-center gap-2.5">
-          <span className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <Mountain className="size-4" aria-hidden="true" />
+          <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <Mountain className="size-5" aria-hidden="true" />
           </span>
           <div className="leading-tight">
-            <p className="text-sm font-semibold tracking-tight">HikeMind</p>
-            <p className="hidden text-[10px] uppercase tracking-[0.16em] text-muted-foreground sm:block">
+            <p className="text-base font-semibold tracking-tight">HikeMind</p>
+            <p className="hidden text-xs uppercase tracking-[0.16em] text-muted-foreground sm:block">
               Pack Builder
             </p>
           </div>
@@ -54,7 +54,7 @@ export function PackBuilder() {
               value={formatWeight(totalWeight)}
             />
           </div>
-          <div className="num rounded-lg border border-primary/25 bg-primary/10 px-2.5 py-1.5 text-[12px] font-semibold text-primary sm:hidden">
+          <div className="num rounded-lg border border-primary/25 bg-primary/10 px-3 py-2 text-sm font-semibold text-primary sm:hidden">
             {(baseWeight / 16).toFixed(1)} lb
           </div>
         </div>
@@ -130,12 +130,12 @@ function HeaderStat({
 }) {
   return (
     <div className="text-right leading-tight">
-      <p className="text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
+      <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
         {label}
       </p>
       <p
         className={cn(
-          "num text-[13px] font-semibold",
+          "num text-sm font-semibold",
           accent ? "text-primary" : "text-foreground"
         )}
       >

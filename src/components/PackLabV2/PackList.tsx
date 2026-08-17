@@ -105,25 +105,25 @@ export function PackList() {
                   <div className="mb-2 flex items-center gap-3">
                     <span
                       aria-hidden="true"
-                      className="size-2 rounded-full"
+                      className="size-2.5 rounded-full"
                       style={{
                         backgroundColor: CATEGORY_COLORS[category],
                       }}
                     />
-                    <h3 className="text-[11px] font-semibold uppercase tracking-[0.16em]">
+                    <h3 className="text-xs font-semibold uppercase tracking-[0.16em]">
                       {CATEGORY_LABELS[category]}
                     </h3>
-                    <span className="num text-[11px] text-muted-foreground">
+                    <span className="num text-xs text-muted-foreground">
                       {groupItems.reduce((s, i) => s + i.quantity, 0)}
                     </span>
                     <span
                       aria-hidden="true"
                       className="h-px flex-1 bg-white/[0.07]"
                     />
-                    <span className="num text-[11px] text-muted-foreground">
+                    <span className="num text-xs text-muted-foreground">
                       {(share * 100).toFixed(0)}%
                     </span>
-                    <span className="num text-sm font-medium">
+                    <span className="num text-base font-medium">
                       {groupWeight.toFixed(1)} oz
                     </span>
                   </div>
@@ -259,16 +259,16 @@ function PackRow({
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <p className="text-pretty text-sm font-medium leading-tight">
+          <p className="text-pretty text-base font-medium leading-tight">
             {packItem.item.name}
           </p>
           {isWorn && (
-            <span className="shrink-0 rounded border border-primary/30 bg-primary/10 px-1.5 py-px text-[9px] font-semibold uppercase tracking-wider text-primary">
+            <span className="shrink-0 rounded border border-primary/30 bg-primary/10 px-1.5 py-px text-[10px] font-semibold uppercase tracking-wider text-primary">
               Worn
             </span>
           )}
         </div>
-        <p className="truncate text-[11px] uppercase tracking-wider text-muted-foreground">
+        <p className="truncate text-xs uppercase tracking-wider text-muted-foreground">
           {packItem.item.brand}
         </p>
       </div>
@@ -290,10 +290,10 @@ function PackRow({
       </div>
 
       <div className="shrink-0 text-right">
-        <span className="num text-sm font-medium">
+        <span className="num text-base font-medium">
           {(packItem.item.weightOz * packItem.quantity).toFixed(1)}
         </span>
-        <span className="ml-1 text-[10px] text-muted-foreground">oz</span>
+        <span className="ml-1 text-xs text-muted-foreground">oz</span>
       </div>
 
       <div className="flex shrink-0 items-center gap-0.5">

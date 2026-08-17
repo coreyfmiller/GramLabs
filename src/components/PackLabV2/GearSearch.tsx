@@ -73,10 +73,10 @@ export function GearSearch() {
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex flex-col gap-3 border-b border-white/10 p-4">
         <div className="flex items-baseline justify-between gap-2">
-          <h2 className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
             Gear Library
           </h2>
-          <span className="num text-[11px] text-muted-foreground">
+          <span className="num text-xs text-muted-foreground">
             {results.length}/{gearDatabase.length}
           </span>
         </div>
@@ -173,7 +173,7 @@ function FilterChip({
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        "flex items-center gap-2 rounded-lg border px-2.5 py-2 text-left text-[11px] font-medium transition-colors",
+        "flex items-center gap-2 rounded-lg border px-3 py-2.5 text-left text-xs font-medium transition-colors",
         full && "justify-center",
         active
           ? "border-primary/50 bg-primary/15 text-primary"
@@ -225,19 +225,19 @@ function ResultCard({
       />
 
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[11px] uppercase tracking-wider text-muted-foreground">
+        <p className="truncate text-xs uppercase tracking-wider text-muted-foreground">
           {gear.brand}
         </p>
-        <p className="truncate text-sm font-medium leading-tight text-foreground">
+        <p className="truncate text-base font-medium leading-tight text-foreground">
           {gear.name}
         </p>
         <div className="mt-1.5 flex items-center gap-2">
-          <span className="num text-sm font-medium text-primary">
+          <span className="num text-base font-medium text-primary">
             {gear.weightOz.toFixed(1)}
           </span>
-          <span className="text-[11px] text-muted-foreground">oz</span>
+          <span className="text-xs text-muted-foreground">oz</span>
           <span aria-hidden="true" className="h-3 w-px bg-white/10" />
-          <span className="num text-[11px] text-muted-foreground">
+          <span className="num text-xs text-muted-foreground">
             ${gear.priceUsd}
           </span>
         </div>
