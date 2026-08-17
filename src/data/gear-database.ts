@@ -30,6 +30,7 @@ export interface GearItem {
   peakHeight?: number; // inches
   packedSize?: string; // e.g. "4x16 in"
   setupType?: "freestanding" | "semi-freestanding" | "non-freestanding" | "tarp";
+  shelterType?: "trekking-pole-tent" | "freestanding-tent" | "tarp" | "tarp-system" | "hammock" | "bivy" | "pyramid";
   capacity?: number; // persons
   poleType?: "trekking" | "dedicated" | "both" | "none";
   fabric?: string; // e.g. "DCF", "15D Silnylon", "20D Silpoly"
@@ -470,111 +471,6 @@ export const gearDatabase: GearItem[] = [
   },
 
   // === CLOTHING ===
-  {
-    id: "patagonia-houdini",
-    name: "Houdini Air",
-    brand: "Patagonia",
-    category: "clothing",
-    tier: "mid",
-    weightOz: 3.7,
-    priceUsd: 129,
-    description: "Lightweight wind shell jacket. Not waterproof. Essential for exposed ridgelines.",
-    waterproof: false,
-  },
-  {
-    id: "frogg-toggs-ul2",
-    name: "Ultra-Lite2 Rain Suit",
-    brand: "Frogg Toggs",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 5.5,
-    priceUsd: 20,
-    description: "Disposable rain jacket and pants. Very light but tears easily. Replace as needed.",
-    waterproof: true,
-  },
-  {
-    id: "enlightened-torrid-apex",
-    name: "Torrid APEX",
-    brand: "Enlightened Equipment",
-    category: "clothing",
-    tier: "mid",
-    weightOz: 8.5,
-    priceUsd: 220,
-    description: "Synthetic insulated jacket. Retains warmth when wet. Good for camp and cold evenings.",
-  },
-  {
-    id: "katabatic-tarn",
-    name: "Tarn 800fp",
-    brand: "Katabatic",
-    category: "clothing",
-    tier: "premium",
-    weightOz: 7.8,
-    priceUsd: 340,
-    description: "Down insulated jacket. 800-fill goose. 7.8oz. Exceptional warmth-to-weight.",
-  },
-  {
-    id: "montbell-versalite",
-    name: "Versalite Rain Jacket",
-    brand: "Montbell",
-    category: "clothing",
-    tier: "mid",
-    weightOz: 6.4,
-    priceUsd: 249,
-    description: "Waterproof rain jacket. GORE-TEX membrane. Lightweight and breathable.",
-    waterproof: true,
-  },
-  {
-    id: "melanzana-microgrid",
-    name: "Micro Grid Hoodie",
-    brand: "Melanzana",
-    category: "clothing",
-    tier: "mid",
-    weightOz: 8.2,
-    priceUsd: 72,
-    description: "Fleece hoodie. Grid-pattern polyester. Breathable and fast-wicking while active.",
-  },
-  {
-    id: "decathlon-simond-mt100",
-    name: "Simond MT100 Hooded",
-    brand: "Decathlon",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 11.3,
-    priceUsd: 120,
-    description: "Hooded down insulated jacket. 700-fill duck down. Great warmth for the price.",
-  },
-  {
-    id: "decathlon-quechua-mh500-rain",
-    name: "Quechua MH500 Rain Jacket",
-    brand: "Decathlon",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 20,
-    priceUsd: 70,
-    description: "Waterproof rain jacket. Heavy but very durable and affordable for rough conditions.",
-    waterproof: true,
-  },
-  {
-    id: "decathlon-quechua-mh100-fleece",
-    name: "Quechua MH100 Fleece",
-    brand: "Decathlon",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 9.5,
-    priceUsd: 25,
-    description: "Quarter-zip fleece pullover. Recycled polyester. Hard to beat for $25.",
-  },
-  {
-    id: "rei-650-down-jacket",
-    name: "650 Down Jacket",
-    brand: "REI Co-op",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 10.9,
-    priceUsd: 129,
-    description: "Hooded down insulated jacket. 650-fill. Solid camp warmth at a budget price.",
-  },
-
   // === COOKING ===
   {
     id: "brs-3000t",
@@ -965,39 +861,7 @@ export const gearDatabase: GearItem[] = [
   },
 
   // Clothing
-  {
-    id: "aliexpress-generic-rain",
-    name: "UL Rain Jacket (Generic)",
-    brand: "AliExpress",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 7,
-    priceUsd: 17,
-    description: "Lightweight rain jacket. Waterproof coating. Under $20 from AliExpress.",
-    waterproof: true,
-  },
-  {
-    id: "aliexpress-generic-down",
-    name: "800FP Down Jacket",
-    brand: "AliExpress",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 10.5,
-    priceUsd: 35,
-    description: "Down insulated jacket. 800-fill. Under $35. Warm but not durable long-term.",
-  },
-  {
-    id: "goodwill-fleece",
-    name: "Thrift Store Fleece",
-    brand: "DIY/Thrift",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 12,
-    priceUsd: 5,
-    description: "Polyester fleece jacket from a thrift store. ~$5. Works as well as brand-name fleece.",
-  },
-
-  // Cooking
+// Cooking
   {
     id: "lixada-titanium-pot",
     name: "750ml Titanium Pot",
@@ -1392,181 +1256,7 @@ export const gearDatabase: GearItem[] = [
   },
 
   // === CLOTHING (PCT 2025) ===
-  {
-    id: "senchi-alpha-90-hoodie",
-    name: "Alpha 90 Hoodie",
-    brand: "Senchi Designs",
-    category: "clothing",
-    tier: "budget",
-    weightOz: 4.4,
-    priceUsd: 115,
-    description: "Active fleece hoodie. Polartec Alpha Direct 90 gsm. Breathable while hiking.",
-  },
-  {
-    id: "senchi-alpha-60-hoodie",
-    name: "Alpha 60 Hoodie",
-    brand: "Senchi Designs",
-    category: "clothing",
-    tier: "budget",
-    weightOz: 3.7,
-    priceUsd: 105,
-    description: "Active fleece hoodie. Polartec Alpha Direct 60 gsm. Lighter weight for warm climates.",
-  },
-  {
-    id: "farpointe-alpha-cruiser",
-    name: "Alpha Cruiser",
-    brand: "FarPointe",
-    category: "clothing",
-    tier: "budget",
-    weightOz: 4.9,
-    priceUsd: 95,
-    description: "Active fleece pullover (no hood). Polartec Alpha Direct 90 gsm. Breathable while hiking.",
-  },
-  {
-    id: "lightheart-alpha-direct-90-hoodie",
-    name: "Alpha Direct 90 Hoodie",
-    brand: "LightHeart Gear",
-    category: "clothing",
-    tier: "budget",
-    weightOz: 5.2,
-    priceUsd: 130,
-    description: "Active fleece hoodie. Polartec Alpha Direct 90 gsm. Made in USA.",
-  },
-  {
-    id: "mhw-ghost-whisperer-hoody",
-    name: "Ghost Whisperer Hoody",
-    brand: "Mountain Hardwear",
-    category: "clothing",
-    tier: "premium",
-    weightOz: 10.7,
-    priceUsd: 380,
-    description: "Hooded down insulated jacket. 800-fill goose down. Very packable.",
-  },
-  {
-    id: "patagonia-micro-puff-hoody",
-    name: "Micro Puff Hoody",
-    brand: "Patagonia",
-    category: "clothing",
-    tier: "mid",
-    weightOz: 10.5,
-    priceUsd: 329,
-    description: "Hooded synthetic insulated jacket. Retains warmth when wet. 10.5oz.",
-  },
-  {
-    id: "patagonia-nano-puff-jacket",
-    name: "Nano Puff Jacket",
-    brand: "Patagonia",
-    category: "clothing",
-    tier: "mid",
-    weightOz: 11.9,
-    priceUsd: 239,
-    description: "Synthetic insulated jacket. Retains warmth when wet. Durable outer fabric.",
-  },
-  {
-    id: "arcteryx-beta-jacket",
-    name: "Beta Jacket",
-    brand: "Arc'teryx",
-    category: "clothing",
-    tier: "premium",
-    weightOz: 13.2,
-    priceUsd: 400,
-    description: "Waterproof hardshell jacket. GORE-TEX membrane. Pit zips for ventilation.",
-    waterproof: true,
-  },
-  {
-    id: "patagonia-torrentshell-3l",
-    name: "Torrentshell 3L",
-    brand: "Patagonia",
-    category: "clothing",
-    tier: "mid",
-    weightOz: 14.1,
-    priceUsd: 179,
-    description: "Waterproof rain jacket. 3-layer construction. Pit zips. Durable in tough conditions.",
-    waterproof: true,
-  },
-  {
-    id: "outdoor-research-helium",
-    name: "Helium",
-    brand: "Outdoor Research",
-    category: "clothing",
-    tier: "mid",
-    weightOz: 7,
-    priceUsd: 170,
-    description: "Waterproof rain jacket. Lightweight at 7oz. No pit zips but very packable.",
-    waterproof: true,
-  },
-  {
-    id: "patagonia-houdini-jacket",
-    name: "Houdini Jacket",
-    brand: "Patagonia",
-    category: "clothing",
-    tier: "mid",
-    weightOz: 3.7,
-    priceUsd: 129,
-    description: "Wind shell jacket (not waterproof). 3.7oz. Essential for exposed ridgelines and summits.",
-  },
-
-  // === SHOES (PCT 2025) ===
-  {
-    id: "altra-lone-peak-9",
-    name: "Lone Peak 9",
-    brand: "Altra",
-    category: "accessories",
-    tier: "mid",
-    weightOz: 22.3,
-    priceUsd: 145,
-    description: "Trail running shoe. Zero-drop (flat sole). Wide toe box. Most popular with thru-hikers.",
-  },
-  {
-    id: "altra-olympus-6",
-    name: "Olympus 6",
-    brand: "Altra",
-    category: "accessories",
-    tier: "mid",
-    weightOz: 24.4,
-    priceUsd: 185,
-    description: "Trail running shoe. Zero-drop (flat sole). Maximum cushioning for long days.",
-  },
-  {
-    id: "hoka-speedgoat-6",
-    name: "Speedgoat 6",
-    brand: "HOKA",
-    category: "accessories",
-    tier: "mid",
-    weightOz: 20.6,
-    priceUsd: 155,
-    description: "Trail running shoe. 4mm heel-to-toe drop. Excellent traction on rocky terrain.",
-  },
-  {
-    id: "topo-athletic-traverse",
-    name: "Traverse",
-    brand: "Topo Athletic",
-    category: "accessories",
-    tier: "mid",
-    weightOz: 21.2,
-    priceUsd: 155,
-    description: "Trail running shoe. 5mm heel-to-toe drop. Wide toe box for foot splay.",
-  },
-  {
-    id: "brooks-cascadia",
-    name: "Cascadia",
-    brand: "Brooks",
-    category: "accessories",
-    tier: "mid",
-    weightOz: 21.4,
-    priceUsd: 150,
-    description: "Trail running shoe. 6mm heel-to-toe drop. Reliable all-around performer.",
-  },
-  {
-    id: "salomon-speedcross-6",
-    name: "Speedcross 6",
-    brand: "Salomon",
-    category: "accessories",
-    tier: "mid",
-    weightOz: 22,
-    priceUsd: 150,
-    description: "Trail running shoe. 10mm heel-to-toe drop. Aggressive tread for muddy conditions.",
-  },
+// === SHOES (PCT 2025) ===
 
   // === STOVES (PCT 2025) ===
   {
@@ -1861,38 +1551,7 @@ export const gearDatabase: GearItem[] = [
   },
 
   // === SOCKS (PCT 2025) ===
-  {
-    id: "darn-tough-hiker-micro-crew-midweight",
-    name: "Hiker Micro Crew Midweight",
-    brand: "Darn Tough",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 3.2,
-    priceUsd: 26,
-    description: "Merino wool hiking sock. Midweight cushion. Lifetime warranty replacement.",
-  },
-  {
-    id: "darn-tough-light-hiker-micro-crew",
-    name: "Light Hiker Micro Crew",
-    brand: "Darn Tough",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 2.8,
-    priceUsd: 25,
-    description: "Merino wool hiking sock. Lightweight cushion. Thinner for warm weather.",
-  },
-  {
-    id: "injinji-trail-midweight-mini-crew",
-    name: "Trail Midweight Mini-Crew",
-    brand: "Injinji",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 2.5,
-    priceUsd: 17,
-    description: "Individual toe socks for hiking. Prevents blisters between toes.",
-  },
-
-  // === MISC ACCESSORIES (PCT 2025) ===
+// === MISC ACCESSORIES (PCT 2025) ===
   {
     id: "sixmoon-silver-shadow-carbon-umbrella",
     name: "Silver Shadow Carbon Umbrella",
@@ -1922,6 +1581,7 @@ export const gearDatabase: GearItem[] = [
     name: "Blackbird XLC",
     brand: "Warbonnet",
     category: "shelter",
+
     tier: "mid",
     weightOz: 26,
     priceUsd: 250,
@@ -1932,6 +1592,8 @@ export const gearDatabase: GearItem[] = [
     name: "Chameleon",
     brand: "Dutchware",
     category: "shelter",
+
+
     tier: "mid",
     weightOz: 22,
     priceUsd: 220,
@@ -1942,6 +1604,9 @@ export const gearDatabase: GearItem[] = [
     name: "Long Hammock",
     brand: "Hummingbird",
     category: "shelter",
+
+
+
     tier: "budget",
     weightOz: 7.4,
     priceUsd: 75,
@@ -1952,6 +1617,10 @@ export const gearDatabase: GearItem[] = [
     name: "Explorer Ultralight",
     brand: "Hennessy",
     category: "shelter",
+
+
+
+
     tier: "mid",
     weightOz: 31,
     priceUsd: 270,
@@ -1962,6 +1631,11 @@ export const gearDatabase: GearItem[] = [
     name: "Darien",
     brand: "Dream Hammock",
     category: "shelter",
+
+
+
+
+
     tier: "mid",
     weightOz: 18,
     priceUsd: 200,
@@ -1974,6 +1648,12 @@ export const gearDatabase: GearItem[] = [
     name: "Superfly Tarp",
     brand: "Warbonnet",
     category: "shelter",
+
+
+
+
+
+
     tier: "mid",
     weightOz: 22,
     priceUsd: 195,
@@ -1984,6 +1664,13 @@ export const gearDatabase: GearItem[] = [
     name: "DCF Hex Tarp",
     brand: "Hammock Gear",
     category: "shelter",
+
+
+
+
+
+
+
     tier: "premium",
     weightOz: 8.5,
     priceUsd: 400,
@@ -1994,6 +1681,14 @@ export const gearDatabase: GearItem[] = [
     name: "Hex Tarp (Silpoly)",
     brand: "Dutchware",
     category: "shelter",
+
+
+
+
+
+
+
+
     tier: "budget",
     weightOz: 16,
     priceUsd: 130,
@@ -2106,10 +1801,39 @@ export const gearDatabase: GearItem[] = [
     name: "Grace Tarp Solo",
     brand: "Mountain Laurel Designs",
     category: "shelter",
+
+
+
+
+
+
+
+
+
     tier: "budget",
     weightOz: 9.5,
     priceUsd: 155,
     description: "A-frame tarp shelter. Silicone-nylon. 9.5oz. Pair with a separate bug net.",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     setupType: "tarp",
     capacity: 1,
     poleType: "trekking",
@@ -2165,18 +1889,7 @@ export const gearDatabase: GearItem[] = [
     padAttachment: true,
     communityRating: 8.33,
   },
-  {
-    id: "mld-event-rain-mitts",
-    name: "eVent Rain Mitts",
-    brand: "Mountain Laurel Designs",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 1.3,
-    priceUsd: 45,
-    description: "Waterproof breathable rain mittens. Keeps hands dry on wet trail days.",
-    waterproof: true,
-  },
-  {
+{
     id: "msr-isopro-110g",
     name: "IsoPro 110g Fuel Canister",
     brand: "MSR",
@@ -2199,230 +1912,11 @@ export const gearDatabase: GearItem[] = [
   },
 
   // === CLOTHING - Base Layers & Thermals ===
-  {
-    id: "smartwool-classic-250-crew",
-    name: "Classic Thermal 250 Crew",
-    brand: "Smartwool",
-    category: "clothing",
-    tier: "mid",
-    weightOz: 7.8,
-    priceUsd: 125,
-    description: "Merino wool long-sleeve base layer top. 250-weight warmth. Anti-odor for multi-day wear.",
-  },
-  {
-    id: "smartwool-classic-250-bottom",
-    name: "Classic Thermal 250 Bottom",
-    brand: "Smartwool",
-    category: "clothing",
-    tier: "mid",
-    weightOz: 6.5,
-    priceUsd: 100,
-    description: "Merino wool base layer pants. 250-weight warmth. Comfortable for sleeping and hiking.",
-  },
-  {
-    id: "ridge-merino-solstice-crew",
-    name: "Solstice Midweight Crew",
-    brand: "Ridge Merino",
-    category: "clothing",
-    tier: "budget",
-    weightOz: 6.3,
-    priceUsd: 89,
-    description: "Merino wool long-sleeve base layer top. Midweight. Affordable merino alternative.",
-  },
-  {
-    id: "ridge-merino-solstice-bottom",
-    name: "Solstice Midweight Bottom",
-    brand: "Ridge Merino",
-    category: "clothing",
-    tier: "budget",
-    weightOz: 5.8,
-    priceUsd: 79,
-    description: "Merino wool base layer pants. Midweight. Comfortable next-to-skin.",
-  },
-  {
-    id: "patagonia-capilene-mw-crew",
-    name: "Capilene Midweight Crew",
-    brand: "Patagonia",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 6.2,
-    priceUsd: 69,
-    description: "Synthetic long-sleeve base layer top. Recycled polyester. Fast-drying.",
-  },
-  {
-    id: "patagonia-capilene-mw-bottom",
-    name: "Capilene Midweight Bottom",
-    brand: "Patagonia",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 5.5,
-    priceUsd: 59,
-    description: "Synthetic base layer pants. Recycled polyester. Quick-dry for active use.",
-  },
-
   // === CLOTHING - Gloves & Handwear ===
-  {
-    id: "or-merino-150-liner-gloves",
-    name: "Merino 150 Liner Gloves",
-    brand: "Outdoor Research",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 1.2,
-    priceUsd: 32,
-    description: "Thin merino wool liner gloves. Touchscreen-compatible. Layer under rain mitts in cold.",
-  },
-  {
-    id: "showa-281-temres",
-    name: "281 Temres Gloves",
-    brand: "Showa",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 3.5,
-    priceUsd: 25,
-    description: "Waterproof breathable work gloves. Latex-coated. Popular thru-hiker cold/wet solution.",
-    waterproof: true,
-  },
-  {
-    id: "or-vigor-heavyweight-gloves",
-    name: "Vigor Heavyweight Sensor Gloves",
-    brand: "Outdoor Research",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 2.8,
-    priceUsd: 45,
-    description: "Fleece-lined gloves with touchscreen fingertips. Good for camp and cold mornings.",
-  },
-
-  // === CLOTHING - Headwear & Sun Protection ===
-  {
-    id: "buff-coolnet-uv",
-    name: "CoolNet UV+",
-    brand: "Buff",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 1.1,
-    priceUsd: 25,
-    description: "Multifunctional tube of stretch fabric. Sun protection, dust mask, headband, or beanie.",
-  },
-  {
-    id: "sunday-afternoons-ultra-adventure",
-    name: "Ultra Adventure Hat",
-    brand: "Sunday Afternoons",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 3.5,
-    priceUsd: 55,
-    description: "Wide-brim sun hat with cape. UPF 50+. Full face and neck sun protection.",
-  },
-  {
-    id: "or-sun-runner-cap",
-    name: "Sun Runner Cap",
-    brand: "Outdoor Research",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 2.3,
-    priceUsd: 38,
-    description: "Running cap with removable sun cape. UPF 50+. Lightweight sun protection.",
-  },
-  {
-    id: "smartwool-250-cuffed-beanie",
-    name: "Merino 250 Cuffed Beanie",
-    brand: "Smartwool",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 1.8,
-    priceUsd: 35,
-    description: "Merino wool beanie. Warm for camp and cold mornings. Anti-odor.",
-  },
-  {
-    id: "generic-fleece-beanie",
-    name: "Fleece Beanie",
-    brand: "Generic",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 1.5,
-    priceUsd: 10,
-    description: "Polyester fleece beanie. Warm and light. Sleeps well in for cold nights.",
-  },
-
-  // === CLOTHING - Rain Pants & Leg Protection ===
-  {
-    id: "frogg-toggs-ul2-rain-pants",
-    name: "Ultra-Lite2 Rain Pants",
-    brand: "Frogg Toggs",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 5.5,
-    priceUsd: 15,
-    description: "Disposable waterproof rain pants. Very light but tears easily. Emergency use.",
-    waterproof: true,
-  },
-  {
-    id: "zpacks-vertice-rain-pants",
-    name: "Vertice Rain Pants",
-    brand: "Zpacks",
-    category: "clothing",
-    tier: "mid",
-    weightOz: 3.5,
-    priceUsd: 199,
-    description: "Ultralight waterproof rain pants. Proprietary breathable fabric. 3.5oz.",
-    waterproof: true,
-  },
-  {
-    id: "patagonia-torrentshell-3l-pants",
-    name: "Torrentshell 3L Pants",
-    brand: "Patagonia",
-    category: "clothing",
-    tier: "budget",
-    weightOz: 8.5,
-    priceUsd: 129,
-    description: "Waterproof 3-layer rain pants. Durable for repeated use. Side zips.",
-    waterproof: true,
-  },
-  {
-    id: "dirty-girl-gaiters",
-    name: "Dirty Girl Gaiters",
-    brand: "Dirty Girl",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 0.7,
-    priceUsd: 25,
-    description: "Short ankle gaiters. Prevent trail debris from entering shoes. 0.7oz per pair.",
-  },
-
+// === CLOTHING - Headwear & Sun Protection ===
+// === CLOTHING - Rain Pants & Leg Protection ===
   // === CLOTHING - Camp & Recovery ===
-  {
-    id: "zpacks-ul-camp-shoes",
-    name: "UL Camp Shoes",
-    brand: "Zpacks",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 2.3,
-    priceUsd: 65,
-    description: "Nylon slip-on camp shoes. 2.3oz per pair. Lets feet recover at camp.",
-  },
-  {
-    id: "xero-z-trail-ev-sandals",
-    name: "Z-Trail EV Sandals",
-    brand: "Xero Shoes",
-    category: "clothing",
-    tier: "budget",
-    weightOz: 10.8,
-    priceUsd: 80,
-    description: "Minimalist hiking sandals. Zero-drop. 10.8oz per pair. Camp or creek crossings.",
-  },
-  {
-    id: "generic-foam-slides",
-    name: "Foam Slide Sandals",
-    brand: "Generic",
-    category: "clothing",
-    tier: "ultra-budget",
-    weightOz: 5,
-    priceUsd: 10,
-    description: "Lightweight foam slides. Cheap camp shoes for letting feet air out.",
-  },
-
-  // === HYGIENE ===
+// === HYGIENE ===
   {
     id: "sts-wilderness-wipes-8pk",
     name: "Wilderness Wipes (8-pack)",
