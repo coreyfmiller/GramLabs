@@ -16,19 +16,19 @@ export function StatsPanel() {
   const getConsumableWeight = usePackStore((s) => s.getConsumableWeight);
   const getBig3Weight = usePackStore((s) => s.getBig3Weight);
   const getTotalCost = usePackStore((s) => s.getTotalCost);
-  const getItemCount = usePackStore((s) => s.getItemCount);
   const getCategoryBreakdown = usePackStore((s) => s.getCategoryBreakdown);
-  const getItems = usePackStore((s) => s.getItems);
+  const loadouts = usePackStore((s) => s.loadouts);
+  const activeLoadoutId = usePackStore((s) => s.activeLoadoutId);
 
+  const items = loadouts.find((l) => l.id === activeLoadoutId)?.items ?? [];
   const baseWeight = getBaseWeight();
   const totalWeight = getTotalWeight();
   const wornWeight = getWornWeight();
   const consumableWeight = getConsumableWeight();
   const big3Weight = getBig3Weight();
   const totalCost = getTotalCost();
-  const itemCount = getItemCount();
+  const itemCount = items.reduce((s, i) => s + i.quantity, 0);
   const breakdown = getCategoryBreakdown();
-  const items = getItems();
 
   const pct = Math.min(baseWeight / UL_THRESHOLD_OZ, 1.4);
   const underTarget = baseWeight <= UL_THRESHOLD_OZ;
