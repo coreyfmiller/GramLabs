@@ -15,7 +15,7 @@ export default function HeroNavigation({ visible }: HeroNavigationProps) {
       style={{ transitionDelay: "200ms" }}
     >
       {/* Logo */}
-      <span className="text-[14px] md:text-[16px] font-bold tracking-[0.2em] text-white">
+      <span className="text-[16px] md:text-[20px] font-bold tracking-[0.2em] text-white">
         GRAMLAB.AI
       </span>
 
@@ -25,14 +25,14 @@ export default function HeroNavigation({ visible }: HeroNavigationProps) {
           <a
             key={link}
             href="#"
-            className="text-[12px] font-medium tracking-[0.15em] text-white hover:text-white/80 transition-colors duration-300"
+            className="text-[13px] font-medium tracking-[0.15em] text-white hover:text-white/80 transition-colors duration-300"
           >
             {link}
           </a>
         ))}
         <a
           href="#"
-          className="text-[12px] font-bold tracking-[0.15em] text-white hover:text-white/80 transition-colors duration-300 ml-4"
+          className="text-[13px] font-bold tracking-[0.15em] text-white hover:text-white/80 transition-colors duration-300 ml-4"
         >
           BUILD MY PACK →
         </a>

@@ -29,7 +29,7 @@ export default function CinematicHero() {
       </div>
 
       {/* Cinematic video window */}
-      <div className="relative flex-1 flex items-center justify-center px-4 md:px-8 pb-6 md:pb-8">
+      <div className="relative flex-1 flex items-center justify-center px-4 md:px-8">
         <div className="relative w-full h-full max-h-[75vh] rounded-2xl overflow-hidden ring-1 ring-white/[0.06]">
           {/* Video layer */}
           <HeroVideoSequence onSceneChange={handleSceneChange} />
@@ -49,10 +49,12 @@ export default function CinematicHero() {
             <HeroContent sceneIndex={sceneIndex} visible={loaded} />
             <HeroPackWeight visible={loaded} />
             <HeroProgress sceneIndex={sceneIndex} visible={loaded} />
-            <HeroExplore visible={loaded} />
           </div>
         </div>
       </div>
+
+      {/* Explore below the video */}
+      <HeroExplore visible={loaded} />
     </section>
   );
 }

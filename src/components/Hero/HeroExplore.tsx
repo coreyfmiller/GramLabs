@@ -7,7 +7,7 @@ interface HeroExploreProps {
 export default function HeroExplore({ visible }: HeroExploreProps) {
   return (
     <div
-      className={`absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 transition-all duration-1000 ease-out ${
+      className={`relative z-20 flex flex-col items-center gap-2 py-4 transition-all duration-1000 ease-out ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
       }`}
       style={{ transitionDelay: "1600ms" }}
