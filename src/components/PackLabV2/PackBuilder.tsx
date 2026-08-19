@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { BarChart3, Layers, Search } from "lucide-react";
 import { usePackStore } from "@/store/pack-store";
-import { formatWeight } from "@/utils/format";
+import { formatWeightWithUnit } from "@/utils/format";
 import { Nav } from "@/components/Nav";
 import { GearSearch } from "./GearSearch";
 import { PackList } from "./PackList";
@@ -20,6 +20,7 @@ export function PackBuilder() {
   const getItemCount = usePackStore((s) => s.getItemCount);
   const loadouts = usePackStore((s) => s.loadouts);
   const activeLoadoutId = usePackStore((s) => s.activeLoadoutId);
+  const weightUnit = usePackStore((s) => s.weightUnit);
 
   const baseWeight = getBaseWeight();
   const totalWeight = getTotalWeight();
@@ -32,12 +33,12 @@ export function PackBuilder() {
       {/* Stats bar */}
       <div className="flex shrink-0 items-center justify-end gap-4 border-b border-white/10 px-4 py-2 md:px-6">
         <div className="hidden items-center gap-4 sm:flex">
-          <HeaderStat label="Base" value={formatWeight(baseWeight)} accent />
+          <HeaderStat label="Base" value={formatWeightWithUnit(baseWeight, weightUnit)} accent />
           <span aria-hidden="true" className="h-7 w-px bg-white/10" />
-          <HeaderStat label="Skin-out" value={formatWeight(totalWeight)} />
+          <HeaderStat label="Skin-out" value={formatWeightWithUnit(totalWeight, weightUnit)} />
         </div>
         <div className="num rounded-lg border border-primary/25 bg-primary/10 px-3 py-2 text-sm font-semibold text-primary sm:hidden">
-          {(baseWeight / 16).toFixed(1)} lb
+          {formatWeightWithUnit(baseWeight, weightUnit)}
         </div>
       </div>
 

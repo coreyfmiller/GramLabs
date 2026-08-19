@@ -1,11 +1,23 @@
 "use client";
 
-import { Sparkles, TrendingDown } from "lucide-react";
+import { useState } from "react";
+import { Sparkles, Loader2 } from "lucide-react";
 import { usePackStore } from "@/store/pack-store";
 import { CATEGORY_LABELS, CATEGORY_COLORS } from "@/data/gear-database";
-import { formatWeight } from "@/utils/format";
+import { formatWeightWithUnit } from "@/utils/format";
 import { WeightDonut } from "./WeightDonut";
 import { cn } from "@/lib/utils";
+
+interface PackAnalysis {
+  score: number;
+  classification: string;
+  summary: string;
+  redFlags?: string[];
+  redundancies?: string[];
+  missingEssentials?: string[];
+  weightOpportunities?: { item: string; currentOz: number; suggestion: string; savingsOz: number; estimatedCost: string }[];
+  systemNotes?: string[];
+}
 
 const UL_THRESHOLD_OZ = 160; // 10 lb
 
@@ -19,6 +31,8 @@ export function StatsPanel() {
   const getCategoryBreakdown = usePackStore((s) => s.getCategoryBreakdown);
   const loadouts = usePackStore((s) => s.loadouts);
   const activeLoadoutId = usePackStore((s) => s.activeLoadoutId);
+  const weightUnit = usePackStore((s) => s.weightUnit);
+  const customCategories = usePackStore((s) => s.customCategories);
 
   const items = loadouts.find((l) => l.id === activeLoadoutId)?.items ?? [];
   const baseWeight = getBaseWeight();
@@ -32,6 +46,14 @@ export function StatsPanel() {
 
   const pct = Math.min(baseWeight / UL_THRESHOLD_OZ, 1.4);
   const underTarget = baseWeight <= UL_THRESHOLD_OZ;
+
+  // Build color map including custom categories
+  const allColors: Record<string, string> = { ...CATEGORY_COLORS };
+  const allLabels: Record<string, string> = { ...CATEGORY_LABELS };
+  customCategories.forEach((c) => {
+    allColors[c.id] = c.color;
+    allLabels[c.id] = c.label;
+  });
 
   // Compute Big 3 items for display
   const big3Categories = ["shelter", "sleep", "pack"];
@@ -53,7 +75,7 @@ export function StatsPanel() {
               {itemCount} items
             </span>
           </div>
-          <WeightDonut breakdown={breakdown} baseWeight={baseWeight} />
+          <WeightDonut breakdown={breakdown} baseWeight={baseWeight} categoryColors={allColors} categoryLabels={allLabels} weightUnit={weightUnit} />
 
           <div className="mt-4 border-t border-white/10 pt-3">
             <div className="mb-1.5 flex items-baseline justify-between gap-2">
@@ -115,22 +137,19 @@ export function StatsPanel() {
                   className="size-2 shrink-0 rounded-full"
                   style={{
                     backgroundColor:
-                      CATEGORY_COLORS[packItem.item.category],
+                      allColors[packItem.item.category] || "#888",
                   }}
                 />
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium leading-tight">
-                    {CATEGORY_LABELS[packItem.item.category]}
+                    {allLabels[packItem.item.category] || packItem.item.category}
                   </p>
                   <p className="truncate text-xs text-muted-foreground">
                     {packItem.item.brand} {packItem.item.name}
                   </p>
                 </div>
                 <span className="num shrink-0 text-sm font-medium">
-                  {(packItem.item.weightOz * packItem.quantity).toFixed(1)}
-                  <span className="ml-0.5 text-[10px] text-muted-foreground">
-                    oz
-                  </span>
+                  {formatWeightWithUnit(packItem.item.weightOz * packItem.quantity, weightUnit)}
                 </span>
               </li>
             ))}
@@ -141,15 +160,15 @@ export function StatsPanel() {
         <section className="grid grid-cols-2 gap-3">
           <SummaryTile
             label="Worn"
-            value={`${wornWeight.toFixed(1)} oz`}
+            value={formatWeightWithUnit(wornWeight, weightUnit)}
           />
           <SummaryTile
             label="Consumables"
-            value={`${consumableWeight.toFixed(1)} oz`}
+            value={formatWeightWithUnit(consumableWeight, weightUnit)}
           />
           <SummaryTile
             label="Skin-out total"
-            value={formatWeight(totalWeight)}
+            value={formatWeightWithUnit(totalWeight, weightUnit)}
           />
           <SummaryTile
             label="Kit cost"
@@ -158,24 +177,199 @@ export function StatsPanel() {
           />
         </section>
 
-        {/* Suggestions placeholder */}
-        <section className="glass rounded-xl border border-white/10">
-          <div className="flex items-center gap-2 border-b border-white/10 p-4">
-            <Sparkles
-              className="size-3.5 text-primary"
-              aria-hidden="true"
-            />
-            <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-              HikeMind Suggestions
-            </h2>
-          </div>
-
-          <p className="p-4 text-sm leading-relaxed text-muted-foreground">
-            Your kit is dialed in. No high-impact swaps left to recommend.
-          </p>
-        </section>
+        {/* Pack Analyzer */}
+        <PackAnalyzer />
       </div>
     </div>
+  );
+}
+
+function PackAnalyzer() {
+  const loadouts = usePackStore((s) => s.loadouts);
+  const activeLoadoutId = usePackStore((s) => s.activeLoadoutId);
+  const items = loadouts.find((l) => l.id === activeLoadoutId)?.items ?? [];
+
+  const [loading, setLoading] = useState(false);
+  const [analysis, setAnalysis] = useState<PackAnalysis | null>(null);
+  const [error, setError] = useState("");
+  const [tripContext, setTripContext] = useState("3-season");
+
+  async function handleAnalyze() {
+    if (items.length === 0) return;
+    setLoading(true);
+    setError("");
+    setAnalysis(null);
+
+    const packItems = items.map((pi) => ({
+      name: pi.item.name,
+      brand: pi.item.brand,
+      category: pi.item.category,
+      subcategory: pi.item.subcategory,
+      weightOz: pi.item.weightOz,
+      priceUsd: pi.item.priceUsd,
+      status: pi.status,
+      quantity: pi.quantity,
+      tempRating: pi.item.tempRating,
+      rValue: pi.item.rValue,
+      fillType: pi.item.fillType,
+      waterproof: pi.item.waterproof,
+      volume: pi.item.volume,
+      shelterType: pi.item.shelterType,
+      capacity: pi.item.capacity,
+      seasons: pi.item.seasons,
+    }));
+
+    try {
+      const res = await fetch("/api/analyze-pack", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: packItems, tripContext }),
+      });
+      const data = await res.json();
+      if (data.error) setError(data.error);
+      else setAnalysis(data.analysis);
+    } catch {
+      setError("Analysis failed. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <section className="glass rounded-xl border border-white/10">
+      <div className="flex items-center gap-2 border-b border-white/10 p-4">
+        <Sparkles className="size-3.5 text-primary" aria-hidden="true" />
+        <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          Pack Analyzer
+        </h2>
+        <span className="ml-auto rounded border border-primary/30 bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-primary">
+          Pro
+        </span>
+      </div>
+
+      {!analysis ? (
+        <div className="p-4 space-y-3">
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Get expert-level system analysis of your pack. Identifies warmth gaps, redundancies, weight opportunities, and missing essentials.
+          </p>
+          <select
+            value={tripContext}
+            onChange={(e) => setTripContext(e.target.value)}
+            className="w-full form-input text-xs"
+          >
+            <option value="3-season">3-Season (25-40°F lows)</option>
+            <option value="Summer (lows above 45°F)">Summer (lows above 45°F)</option>
+            <option value="Shoulder season (15-30°F lows, possible snow)">Shoulder Season (15-30°F lows)</option>
+            <option value="Winter (below 15°F, snow)">Winter (below 15°F)</option>
+            <option value="PCT thru-hike (desert through Sierra)">PCT Thru-Hike</option>
+            <option value="AT thru-hike (humid east coast, rocky terrain)">AT Thru-Hike</option>
+            <option value="Weekend trip, mild conditions">Weekend (mild)</option>
+          </select>
+          <button
+            onClick={handleAnalyze}
+            disabled={loading || items.length === 0}
+            className="w-full py-2.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold transition-all hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="size-3.5 animate-spin" />
+                Analyzing...
+              </>
+            ) : (
+              <>
+                <Sparkles className="size-3.5" />
+                Analyze My Pack
+              </>
+            )}
+          </button>
+          {error && <p className="text-xs text-destructive">{error}</p>}
+          {items.length === 0 && (
+            <p className="text-xs text-muted-foreground/60 text-center">Add items to your pack first</p>
+          )}
+        </div>
+      ) : (
+        <div className="p-4 space-y-4">
+          {/* Score */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className={cn(
+                "num text-3xl font-bold",
+                analysis.score >= 8 ? "text-primary" : analysis.score >= 5 ? "text-yellow-400" : "text-destructive"
+              )}>
+                {analysis.score}<span className="text-sm text-muted-foreground">/10</span>
+              </p>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{analysis.classification}</p>
+            </div>
+            <button
+              onClick={() => setAnalysis(null)}
+              className="text-xs text-muted-foreground hover:text-foreground border border-white/10 rounded-md px-2 py-1"
+            >
+              Re-analyze
+            </button>
+          </div>
+
+          {/* Summary */}
+          <p className="text-xs leading-relaxed text-foreground/80">{analysis.summary}</p>
+
+          {/* Red Flags */}
+          {analysis.redFlags && analysis.redFlags.length > 0 && (
+            <div className="space-y-1.5">
+              <p className="text-[10px] uppercase tracking-wider text-destructive font-semibold">Red Flags</p>
+              {analysis.redFlags.map((flag: string, i: number) => (
+                <p key={i} className="text-xs text-destructive/90 bg-destructive/10 rounded px-2.5 py-1.5 border border-destructive/20">{flag}</p>
+              ))}
+            </div>
+          )}
+
+          {/* Missing Essentials */}
+          {analysis.missingEssentials && analysis.missingEssentials.length > 0 && (
+            <div className="space-y-1.5">
+              <p className="text-[10px] uppercase tracking-wider text-yellow-400 font-semibold">Missing Essentials</p>
+              {analysis.missingEssentials.map((item: string, i: number) => (
+                <p key={i} className="text-xs text-yellow-400/90 bg-yellow-400/10 rounded px-2.5 py-1.5 border border-yellow-400/20">{item}</p>
+              ))}
+            </div>
+          )}
+
+          {/* Redundancies */}
+          {analysis.redundancies && analysis.redundancies.length > 0 && (
+            <div className="space-y-1.5">
+              <p className="text-[10px] uppercase tracking-wider text-blue-400 font-semibold">Redundancies</p>
+              {analysis.redundancies.map((item: string, i: number) => (
+                <p key={i} className="text-xs text-muted-foreground bg-blue-400/5 rounded px-2.5 py-1.5 border border-blue-400/20">{item}</p>
+              ))}
+            </div>
+          )}
+
+          {/* Weight Opportunities */}
+          {analysis.weightOpportunities && analysis.weightOpportunities.length > 0 && (
+            <div className="space-y-1.5">
+              <p className="text-[10px] uppercase tracking-wider text-primary font-semibold">Weight Savings</p>
+              {analysis.weightOpportunities.map((opp: { item: string; currentOz: number; suggestion: string; savingsOz: number; estimatedCost: string }, i: number) => (
+                <div key={i} className="text-xs bg-primary/5 rounded px-2.5 py-2 border border-primary/20">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-medium">{opp.item}</span>
+                    <span className="num text-primary font-semibold">-{opp.savingsOz}oz</span>
+                  </div>
+                  <p className="text-muted-foreground">{opp.suggestion}</p>
+                  <p className="text-muted-foreground/60 mt-0.5">{opp.estimatedCost}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* System Notes */}
+          {analysis.systemNotes && analysis.systemNotes.length > 0 && (
+            <div className="space-y-1.5">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">System Notes</p>
+              {analysis.systemNotes.map((note: string, i: number) => (
+                <p key={i} className="text-xs text-muted-foreground leading-relaxed">• {note}</p>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </section>
   );
 }
 

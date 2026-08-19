@@ -10,6 +10,9 @@ const NAV_LINKS = [
   { label: "PACK LAB", href: "/pack-lab" },
   { label: "BUILD MY KIT", href: "/build" },
   { label: "GEAR ADVISOR", href: "/chat" },
+  { label: "TRIP ENGINE", href: "/trip", pro: true },
+  { label: "BRANDS", href: "/brands", admin: true },
+  { label: "TODO", href: "/admin/todo", admin: true },
 ];
 
 export function Nav() {
@@ -51,13 +54,23 @@ export function Nav() {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "text-xs font-medium tracking-[0.15em] transition-colors",
+                    "text-xs font-medium tracking-[0.15em] transition-colors inline-flex items-center gap-1.5",
                     pathname === link.href
                       ? "text-primary font-bold"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >
                   {link.label}
+                  {link.pro && (
+                    <span className="px-1 py-0.5 text-[8px] font-bold uppercase tracking-wider bg-primary/20 text-primary border border-primary/30 rounded leading-none">
+                      PRO
+                    </span>
+                  )}
+                  {link.admin && (
+                    <span className="px-1 py-0.5 text-[8px] font-bold uppercase tracking-wider bg-yellow-400/20 text-yellow-400 border border-yellow-400/30 rounded leading-none">
+                      ADMIN
+                    </span>
+                  )}
                 </Link>
               ))}
             </nav>
@@ -107,7 +120,7 @@ export function Nav() {
               key={link.href}
               href={link.href}
               className={cn(
-                "text-sm font-medium tracking-[0.15em] transition-colors",
+                "text-sm font-medium tracking-[0.15em] transition-colors inline-flex items-center gap-2",
                 pathname === link.href
                   ? "text-primary font-bold"
                   : "text-foreground hover:text-primary"
@@ -115,6 +128,16 @@ export function Nav() {
               onClick={() => setMobileOpen(false)}
             >
               {link.label}
+              {link.pro && (
+                <span className="px-1 py-0.5 text-[8px] font-bold uppercase tracking-wider bg-primary/20 text-primary border border-primary/30 rounded leading-none">
+                  PRO
+                </span>
+              )}
+              {link.admin && (
+                <span className="px-1 py-0.5 text-[8px] font-bold uppercase tracking-wider bg-yellow-400/20 text-yellow-400 border border-yellow-400/30 rounded leading-none">
+                  ADMIN
+                </span>
+              )}
             </Link>
           ))}
         </div>

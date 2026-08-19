@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { GearCategory, CATEGORY_LABELS, CATEGORY_COLORS } from "@/data/gear-database";
+import { CATEGORY_COLORS, CATEGORY_LABELS } from "@/data/gear-database";
+import { formatWeightWithUnit } from "@/utils/format";
 
 const SIZE = 180;
 const STROKE = 16;
@@ -38,7 +39,7 @@ function useAnimatedNumber(target: number, duration = 700) {
 }
 
 export interface CategoryBreakdown {
-  category: GearCategory;
+  category: string;
   weightOz: number;
   percentage: number;
 }
@@ -46,12 +47,18 @@ export interface CategoryBreakdown {
 type Props = {
   breakdown: CategoryBreakdown[];
   baseWeight: number;
+  categoryColors?: Record<string, string>;
+  categoryLabels?: Record<string, string>;
+  weightUnit?: "oz" | "g";
 };
 
-export function WeightDonut({ breakdown, baseWeight }: Props) {
-  const [active, setActive] = useState<GearCategory | null>(null);
+export function WeightDonut({ breakdown, baseWeight, categoryColors, categoryLabels, weightUnit = "oz" }: Props) {
+  const [active, setActive] = useState<string | null>(null);
   const progress = useAnimatedNumber(1, 900);
   const animatedLb = useAnimatedNumber(baseWeight / 16, 700);
+
+  const colors: Record<string, string> = categoryColors || (CATEGORY_COLORS as Record<string, string>);
+  const labels: Record<string, string> = categoryLabels || (CATEGORY_LABELS as Record<string, string>);
 
   const segments = breakdown.filter((b) => b.percentage > 0);
   const activeSeg = segments.find((s) => s.category === active);
@@ -65,18 +72,18 @@ export function WeightDonut({ breakdown, baseWeight }: Props) {
       share,
       rotation: offsetDeg,
       length: Math.max((sweep - GAP) / 360, 0) * CIRC,
-      color: CATEGORY_COLORS[seg.category],
-      label: CATEGORY_LABELS[seg.category],
+      color: colors[seg.category] || "#888",
+      label: labels[seg.category] || seg.category,
     };
     offsetDeg += sweep;
     return arc;
   });
 
   const centerLabel = activeSeg
-    ? `${(activeSeg.weightOz / 16).toFixed(2)}`
-    : animatedLb.toFixed(2);
+    ? formatWeightWithUnit(activeSeg.weightOz, weightUnit)
+    : `${animatedLb.toFixed(2)}`;
   const centerSub = activeSeg
-    ? CATEGORY_LABELS[activeSeg.category]
+    ? (labels[activeSeg.category] || activeSeg.category)
     : "lb base weight";
 
   return (
@@ -90,7 +97,7 @@ export function WeightDonut({ breakdown, baseWeight }: Props) {
           aria-label={`Base weight distribution: ${segments
             .map(
               (s) =>
-                `${CATEGORY_LABELS[s.category]} ${s.percentage.toFixed(0)}%`
+                `${labels[s.category] || s.category} ${s.percentage.toFixed(0)}%`
             )
             .join(", ")}`}
         >
@@ -153,13 +160,13 @@ export function WeightDonut({ breakdown, baseWeight }: Props) {
               <span
                 aria-hidden="true"
                 className="size-2 shrink-0 rounded-full"
-                style={{ backgroundColor: CATEGORY_COLORS[seg.category] }}
+                style={{ backgroundColor: colors[seg.category] || "#888" }}
               />
               <span className="flex-1 truncate text-[12px] text-muted-foreground">
-                {CATEGORY_LABELS[seg.category]}
+                {labels[seg.category] || seg.category}
               </span>
               <span className="num text-[12px] font-medium">
-                {seg.weightOz.toFixed(1)}
+                {formatWeightWithUnit(seg.weightOz, weightUnit)}
               </span>
               <span className="num w-9 text-right text-[11px] text-muted-foreground">
                 {seg.percentage.toFixed(0)}%

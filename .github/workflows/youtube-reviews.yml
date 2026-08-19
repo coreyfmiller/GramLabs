@@ -1,0 +1,27 @@
+name: Fetch YouTube Reviews
+
+on:
+  schedule:
+    # Run daily at 6am UTC (2am EST) on the 1st through 10th of each month
+    - cron: '0 6 1-10 * *'
+  workflow_dispatch: # Allow manual trigger anytime
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch YouTube reviews
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: node scripts/fetch-youtube-reviews.mjs

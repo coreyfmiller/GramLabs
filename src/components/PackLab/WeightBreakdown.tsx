@@ -1,7 +1,7 @@
 "use client";
 
 import { usePackStore, formatWeight } from "@/store/pack-store";
-import { CATEGORY_LABELS, CATEGORY_COLORS, GearCategory } from "@/data/gear-database";
+import { CATEGORY_LABELS, CATEGORY_COLORS } from "@/data/gear-database";
 
 export default function WeightBreakdown() {
   const { getBaseWeight, getCategoryBreakdown, getItems, weightUnit } =
@@ -69,10 +69,10 @@ export default function WeightBreakdown() {
             <div className="flex items-center gap-2">
               <div
                 className="w-2.5 h-2.5 rounded-sm"
-                style={{ backgroundColor: CATEGORY_COLORS[category] }}
+                style={{ backgroundColor: (CATEGORY_COLORS as Record<string, string>)[category] || "#888" }}
               />
               <span className="text-[12px] text-white/70">
-                {CATEGORY_LABELS[category]}
+                {(CATEGORY_LABELS as Record<string, string>)[category] || category}
               </span>
             </div>
             <div className="flex items-center gap-3">
@@ -116,7 +116,7 @@ function DonutChart({
   breakdown,
   centerLabel,
 }: {
-  breakdown: { category: GearCategory; weightOz: number; percentage: number }[];
+  breakdown: { category: string; weightOz: number; percentage: number }[];
   centerLabel: string;
 }) {
   const size = 180;
@@ -153,7 +153,7 @@ function DonutChart({
               cy={cy}
               r={radius}
               fill="none"
-              stroke={CATEGORY_COLORS[category]}
+              stroke={(CATEGORY_COLORS as Record<string, string>)[category] || "#888"}
               strokeWidth={strokeWidth}
               strokeDasharray={`${segmentLength} ${circumference - segmentLength}`}
               strokeDashoffset={offset}

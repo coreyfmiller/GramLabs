@@ -7,7 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "check-dupes": "node scripts/check-dupes.mjs"
+    "check-dupes": "node scripts/check-dupes.mjs",
+    "check-gemini": "node scripts/check-gemini.mjs",
+    "enrich-db": "node scripts/enrich-database.mjs",
+    "enrich-db:dry": "node scripts/enrich-database.mjs --dry-run",
+    "enrich-db:report": "node scripts/enrich-database.mjs --report-only",
+    "fetch-videos": "node scripts/fetch-youtube-reviews.mjs",
+    "fetch-videos:dry": "node scripts/fetch-youtube-reviews.mjs --dry-run"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

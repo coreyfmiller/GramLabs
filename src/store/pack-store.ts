@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { GearItem, GearCategory } from "@/data/gear-database";
+import { GearItem, GearCategory, CATEGORY_COLORS } from "@/data/gear-database";
 
 export type ItemStatus = "packed" | "worn" | "consumable";
 
@@ -11,6 +11,14 @@ export interface PackItem {
   item: GearItem;
   status: ItemStatus;
   quantity: number;
+  starred?: boolean;
+  url?: string;
+}
+
+export interface CustomCategory {
+  id: string;
+  label: string;
+  color: string;
 }
 
 export interface Loadout {
@@ -23,6 +31,7 @@ export interface PackStore {
   loadouts: Loadout[];
   activeLoadoutId: string;
   weightUnit: WeightUnit;
+  customCategories: CustomCategory[];
 
   // Buy List
   buyList: GearItem[];
@@ -31,6 +40,12 @@ export interface PackStore {
   moveToPack: (id: string) => void;
   clearBuyList: () => void;
   getBuyListCost: () => number;
+
+  // Custom categories
+  addCustomCategory: (label: string, color: string) => void;
+  removeCustomCategory: (id: string) => void;
+  getAllCategoryLabels: () => Record<string, string>;
+  getAllCategoryColors: () => Record<string, string>;
 
   // Loadout management
   createLoadout: (name: string) => void;
@@ -42,10 +57,16 @@ export interface PackStore {
   // Item management (operates on active loadout)
   setPackName: (name: string) => void;
   addItem: (item: GearItem, status?: ItemStatus) => void;
+  addQuickItem: (name: string, category: string, weightOz: number, priceUsd?: number, url?: string) => void;
   removeItem: (gearId: string) => void;
   updateItemStatus: (gearId: string, status: ItemStatus) => void;
   updateItemQuantity: (gearId: string, quantity: number) => void;
+  updateItemUrl: (gearId: string, url: string) => void;
+  updateItemDetails: (gearId: string, updates: { name?: string; brand?: string; weightOz?: number; priceUsd?: number; category?: string }) => void;
+  reorderItem: (gearId: string, targetGearId: string) => void;
+  toggleItemStar: (gearId: string) => void;
   clearPack: () => void;
+  importFromLighterPack: (url: string) => Promise<{ success: boolean; count: number; error?: string }>;
 
   // Computed helpers
   getActiveLoadout: () => Loadout | undefined;
@@ -55,13 +76,15 @@ export interface PackStore {
   getTotalWeight: () => number;
   getWornWeight: () => number;
   getConsumableWeight: () => number;
-  getCategoryBreakdown: () => { category: GearCategory; weightOz: number; percentage: number }[];
+  getCategoryBreakdown: () => { category: string; weightOz: number; percentage: number }[];
   getBig3Weight: () => number;
   getTotalCost: () => number;
   getItemCount: () => number;
 
   // Share
   hydrateFromShareData: (items: PackItem[], name: string) => void;
+  generateShareURL: () => string;
+  exportCSV: () => string;
 }
 
 function generateId() {
@@ -70,6 +93,11 @@ function generateId() {
 
 const DEFAULT_LOADOUT_ID = "default";
 
+const DEFAULT_CUSTOM_COLORS = [
+  "#f97316", "#ec4899", "#14b8a6", "#8b5cf6", "#f59e0b",
+  "#06b6d4", "#ef4444", "#10b981", "#6366f1", "#d946ef",
+];
+
 export const usePackStore = create<PackStore>()(
   persist(
     (set, get) => ({
@@ -77,6 +105,7 @@ export const usePackStore = create<PackStore>()(
       activeLoadoutId: DEFAULT_LOADOUT_ID,
       weightUnit: "oz" as WeightUnit,
       buyList: [],
+      customCategories: [],
 
       // Buy List
       addToBuyList: (item) => {
@@ -117,6 +146,45 @@ export const usePackStore = create<PackStore>()(
 
       getBuyListCost: () => {
         return get().buyList.reduce((sum, item) => sum + item.priceUsd, 0);
+      },
+
+      // Custom categories
+      addCustomCategory: (label, color) => {
+        const state = get();
+        const id = `custom-${generateId()}`;
+        const finalColor = color || DEFAULT_CUSTOM_COLORS[state.customCategories.length % DEFAULT_CUSTOM_COLORS.length];
+        set({ customCategories: [...state.customCategories, { id, label, color: finalColor }] });
+      },
+
+      removeCustomCategory: (id) => {
+        set((state) => ({ customCategories: state.customCategories.filter((c) => c.id !== id) }));
+      },
+
+      getAllCategoryLabels: () => {
+        const state = get();
+        const labels: Record<string, string> = {
+          shelter: "Shelter",
+          sleep: "Sleep",
+          pack: "Pack",
+          kitchen: "Kitchen",
+          electronics: "Electronics",
+          clothing: "Clothing",
+          safety: "Safety",
+          accessories: "Accessories",
+        };
+        state.customCategories.forEach((c) => {
+          labels[c.id] = c.label;
+        });
+        return labels;
+      },
+
+      getAllCategoryColors: () => {
+        const state = get();
+        const colors: Record<string, string> = { ...CATEGORY_COLORS };
+        state.customCategories.forEach((c) => {
+          colors[c.id] = c.color;
+        });
+        return colors;
       },
 
       setWeightUnit: (unit) => set({ weightUnit: unit }),
@@ -188,12 +256,27 @@ export const usePackStore = create<PackStore>()(
                   ...l,
                   items: [
                     ...l.items,
-                    { gearId: item.id, item, status, quantity: 1 },
+                    { gearId: item.id, item, status, quantity: 1, starred: false },
                   ],
                 }
               : l
           ),
         });
+      },
+
+      addQuickItem: (name, category, weightOz, priceUsd = 0, url) => {
+        const item: GearItem = {
+          id: `quick-${Date.now()}-${generateId()}`,
+          name,
+          brand: "",
+          category: category as GearCategory,
+          tier: "mid",
+          weightOz,
+          priceUsd,
+          description: "",
+          url: url || undefined,
+        };
+        get().addItem(item);
       },
 
       removeItem: (gearId) => {
@@ -237,6 +320,150 @@ export const usePackStore = create<PackStore>()(
               : l
           ),
         });
+      },
+
+      toggleItemStar: (gearId) => {
+        const state = get();
+        set({
+          loadouts: state.loadouts.map((l) =>
+            l.id === state.activeLoadoutId
+              ? {
+                  ...l,
+                  items: l.items.map((i) =>
+                    i.gearId === gearId ? { ...i, starred: !i.starred } : i
+                  ),
+                }
+              : l
+          ),
+        });
+      },
+
+      updateItemUrl: (gearId, url) => {
+        const state = get();
+        set({
+          loadouts: state.loadouts.map((l) =>
+            l.id === state.activeLoadoutId
+              ? {
+                  ...l,
+                  items: l.items.map((i) =>
+                    i.gearId === gearId ? { ...i, url } : i
+                  ),
+                }
+              : l
+          ),
+        });
+      },
+
+      updateItemDetails: (gearId, updates) => {
+        const state = get();
+        set({
+          loadouts: state.loadouts.map((l) =>
+            l.id === state.activeLoadoutId
+              ? {
+                  ...l,
+                  items: l.items.map((i) => {
+                    if (i.gearId !== gearId) return i;
+                    const newItem = { ...i.item };
+                    if (updates.name !== undefined) newItem.name = updates.name;
+                    if (updates.brand !== undefined) newItem.brand = updates.brand;
+                    if (updates.weightOz !== undefined) newItem.weightOz = updates.weightOz;
+                    if (updates.priceUsd !== undefined) newItem.priceUsd = updates.priceUsd;
+                    if (updates.category !== undefined) newItem.category = updates.category as GearCategory;
+                    return { ...i, item: newItem };
+                  }),
+                }
+              : l
+          ),
+        });
+      },
+
+      reorderItem: (gearId, targetGearId) => {
+        if (gearId === targetGearId) return;
+        const state = get();
+        const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
+        if (!loadout) return;
+
+        const items = [...loadout.items];
+        const fromIndex = items.findIndex((i) => i.gearId === gearId);
+        const toIndex = items.findIndex((i) => i.gearId === targetGearId);
+        if (fromIndex === -1 || toIndex === -1) return;
+
+        const [moved] = items.splice(fromIndex, 1);
+        items.splice(toIndex, 0, moved);
+
+        set({
+          loadouts: state.loadouts.map((l) =>
+            l.id === state.activeLoadoutId ? { ...l, items } : l
+          ),
+        });
+      },
+
+      importFromLighterPack: async (url) => {
+        try {
+          // Extract the share ID from lighterpack URL
+          const match = url.match(/lighterpack\.com\/r\/([a-z0-9]+)/i);
+          if (!match) return { success: false, count: 0, error: "Invalid LighterPack URL" };
+
+          const shareId = match[1];
+          const res = await fetch(`https://lighterpack.com/r/${shareId}.json`);
+          if (!res.ok) return { success: false, count: 0, error: "Could not fetch pack data" };
+
+          const data = await res.json();
+          const { mapCategory } = await import("@/utils/import-parser");
+
+          const items: PackItem[] = (data.items || []).map((raw: { name?: string; description?: string; category?: string; weight?: number; unit?: string; price?: number; url?: string; worn?: boolean; consumable?: boolean; qty?: number; star?: number }) => {
+            // Convert weight to oz
+            let weightOz = raw.weight || 0;
+            const unit = (raw.unit || "oz").toLowerCase();
+            if (unit === "g" || unit === "grams") weightOz = weightOz / 28.3495;
+            if (unit === "kg") weightOz = (weightOz * 1000) / 28.3495;
+            if (unit === "lb" || unit === "lbs") weightOz = weightOz * 16;
+
+            const category = raw.category ? mapCategory(raw.category) : "accessories";
+
+            const item: GearItem = {
+              id: `lp-${Date.now()}-${generateId()}`,
+              name: raw.name || "Unknown Item",
+              brand: "",
+              category,
+              tier: "mid",
+              weightOz: Math.round(weightOz * 100) / 100,
+              priceUsd: raw.price || 0,
+              description: raw.description || "",
+              url: raw.url || undefined,
+            };
+
+            let status: ItemStatus = "packed";
+            if (raw.worn) status = "worn";
+            if (raw.consumable) status = "consumable";
+
+            return {
+              gearId: item.id,
+              item,
+              status,
+              quantity: raw.qty || 1,
+              starred: (raw.star || 0) > 0,
+              url: raw.url || undefined,
+            };
+          });
+
+          if (items.length === 0) return { success: false, count: 0, error: "No items found" };
+
+          // Create a new loadout with the imported data
+          const newId = generateId();
+          const state = get();
+          set({
+            loadouts: [
+              ...state.loadouts,
+              { id: newId, name: data.name || "LighterPack Import", items },
+            ],
+            activeLoadoutId: newId,
+          });
+
+          return { success: true, count: items.length };
+        } catch (e) {
+          return { success: false, count: 0, error: "Failed to import" };
+        }
       },
 
       clearPack: () => {
@@ -292,10 +519,11 @@ export const usePackStore = create<PackStore>()(
         const baseWeight = items.reduce(
           (sum, i) => sum + i.item.weightOz * i.quantity, 0
         );
-        const map = new Map<GearCategory, number>();
+        const map = new Map<string, number>();
         items.forEach((i) => {
-          const current = map.get(i.item.category) || 0;
-          map.set(i.item.category, current + i.item.weightOz * i.quantity);
+          const cat = i.item.category;
+          const current = map.get(cat) || 0;
+          map.set(cat, current + i.item.weightOz * i.quantity);
         });
         return Array.from(map.entries())
           .map(([category, weightOz]) => ({
@@ -342,6 +570,49 @@ export const usePackStore = create<PackStore>()(
           ],
           activeLoadoutId: newId,
         });
+      },
+
+      generateShareURL: () => {
+        const state = get();
+        const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
+        if (!loadout) return "";
+        const shareData = {
+          n: loadout.name,
+          i: loadout.items.map((pi) => ({
+            nm: pi.item.name,
+            br: pi.item.brand,
+            ca: pi.item.category,
+            wt: pi.item.weightOz,
+            pr: pi.item.priceUsd,
+            st: pi.status,
+            qt: pi.quantity,
+            sr: pi.starred ? 1 : 0,
+            ur: pi.url || pi.item.url || "",
+          })),
+        };
+        const encoded = btoa(encodeURIComponent(JSON.stringify(shareData)));
+        return `${typeof window !== "undefined" ? window.location.origin : ""}/pack-lab?share=${encoded}`;
+      },
+
+      exportCSV: () => {
+        const state = get();
+        const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
+        if (!loadout) return "";
+        const labels = get().getAllCategoryLabels();
+        const header = "Name,Brand,Category,Weight (oz),Price ($),Status,Quantity,Starred";
+        const rows = loadout.items.map((pi) =>
+          [
+            `"${pi.item.name}"`,
+            `"${pi.item.brand}"`,
+            `"${labels[pi.item.category] || pi.item.category}"`,
+            pi.item.weightOz.toFixed(1),
+            pi.item.priceUsd.toFixed(2),
+            pi.status,
+            pi.quantity,
+            pi.starred ? "yes" : "no",
+          ].join(",")
+        );
+        return [header, ...rows].join("\n");
       },
     }),
     {
