@@ -9,7 +9,7 @@ import {
   CATEGORY_COLORS,
   SUBCATEGORIES,
 } from "@/data/gear-database";
-import { searchGear, getCategoryCounts, getSubcategoryCounts } from "@/lib/gear-api";
+import { searchGear, getAllGear, getCategoryCounts, getSubcategoryCounts, getGearCount } from "@/lib/gear-api";
 import { usePackStore } from "@/store/pack-store";
 import { cn } from "@/lib/utils";
 
@@ -46,8 +46,8 @@ export function GearSearch() {
   useEffect(() => {
     getCategoryCounts().then((c) => {
       setCounts(c);
-      setTotalCount(Object.values(c).reduce((s, n) => s + n, 0));
     });
+    getGearCount().then((n) => setTotalCount(n));
   }, []);
 
   // Fetch subcategory counts when category changes
@@ -62,12 +62,22 @@ export function GearSearch() {
   // Search gear from Supabase
   const doSearch = useCallback(async () => {
     setLoading(true);
-    const items = await searchGear({
-      query: query.trim() || undefined,
-      category: filter,
-      subcategory: subFilter !== "all" ? subFilter : undefined,
-      limit: 100,
-    });
+    let items: GearItem[];
+    if (query.trim()) {
+      // Text search — use limited search
+      items = await searchGear({
+        query: query.trim(),
+        category: filter,
+        subcategory: subFilter !== "all" ? subFilter : undefined,
+        limit: 200,
+      });
+    } else {
+      // Browse mode — fetch ALL items (paginated internally)
+      items = await getAllGear({
+        category: filter,
+        subcategory: subFilter !== "all" ? subFilter : undefined,
+      });
+    }
     setResults(items);
     setLoading(false);
   }, [query, filter, subFilter]);

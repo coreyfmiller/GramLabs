@@ -140,15 +140,31 @@ async function main() {
   console.log('');
 
   // Fetch items that DON'T have youtube_video_ids yet
-  const { data: items, error } = await supabase
-    .from('gear_items')
-    .select('id, name, brand, category, subcategory')
-    .is('youtube_video_ids', null)
-    .order('category')
-    .order('brand');
+  // Supabase default limit is 1000 rows — fetch in pages to get all
+  let items = [];
+  let page = 0;
+  const PAGE_SIZE = 1000;
+  while (true) {
+    const { data, error: fetchErr } = await supabase
+      .from('gear_items')
+      .select('id, name, brand, category, subcategory')
+      .is('youtube_video_ids', null)
+      .order('category')
+      .order('brand')
+      .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
+    if (fetchErr) {
+      console.error('Failed to fetch items:', fetchErr.message);
+      process.exit(1);
+    }
+    if (!data || data.length === 0) break;
+    items = items.concat(data);
+    if (data.length < PAGE_SIZE) break;
+    page++;
+  }
+  const error = null;
 
-  if (error || !items) {
-    console.error('Failed to fetch items:', error?.message);
+  if (!items.length) {
+    console.error('No items found to process');
     process.exit(1);
   }
 
