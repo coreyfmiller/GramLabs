@@ -1,110 +1,170 @@
-# HikeMind (Ridgeline) — Current Status
+# HikeMind — Current Status
 
-**Last updated:** August 19, 2026
-
----
-
-## What's Built & Working
-
-### Core Pages
-- **Homepage** — Hero video, marketing copy, nav
-- **Pack Lab** (`/pack-lab`) — Multi-loadout gear list builder with categories, subcategory pill filters, custom item entry, share URLs, LighterPack import, buy list
-- **Gear Compare** (`/compare`) — Search items, side-by-side specs table, winner detection (trophy icons), weight/price diffs, cost-per-oz-saved, "Add to Pack" buttons, shareable URL (query param)
-- **Gear Detail** (`/gear/[id]`) — Full specs display, YouTube video embeds (fullscreen), tier badges
-- **Build My Kit** (`/build`) — Wizard → AI-generated optimized kit by budget/trip/climate (Gemini)
-- **AI Chat** (`/chat`) — Gear advisor constrained to real database items (Gemini)
-- **Trip Engine** (`/trip`) — Location + weather forecast → AI pack-readiness scoring (labeled PRO)
-- **Brands Admin** (`/brands`) — Coverage audit dashboard, search, category breakdown, missing brand detection
-
-### Data & Backend
-- **1000+ item gear database** in Supabase (full specs, subcategories, 115+ brands)
-- **Supabase integration** — All search/filter goes through DB, not client-side
-- **Full-text search** (Supabase `fts` column) working
-- **YouTube video IDs** — Column exists, 92 items populated, 731 remaining
-- **YouTube fetch script** (`scripts/fetch-youtube-reviews.mjs`) — Built, tested, works
-- **GitHub Action** (`.github/workflows/youtube-reviews.yml`) — Built, runs 1st-10th monthly
-- **Gemini health check** script + workflow built
-
-### Pack Lab Features
-- Category + subcategory filtering (pill UI)
-- Custom item entry (any gear with name, weight, price, category)
-- Multiple loadouts
-- Share URL encoding (base64 JSON)
-- Worn/packed/consumable status
-- Star/priority items
-
-### Compare Page Features
-- Item search (Supabase-backed, debounced)
-- Category locking (can only compare within same category)
-- Category-specific spec definitions (shelter, sleep, pack, kitchen, electronics, accessories)
-- Winner detection with trophy icons
-- Diff badges: weight, price, cost-per-oz-saved
-- Shareable URL (`?items=id1,id2`)
-- URL hydration on load (shareable links work)
-- "Add to Pack" integration
+**Last updated:** August 23, 2026  
+**Deployed:** Vercel (auto-deploys from `main` branch)  
+**Database:** Supabase (PostgreSQL)  
+**AI:** Google Gemini 2.0 Flash  
+**Framework:** Next.js 16.3.1 (App Router, Turbopack)
 
 ---
 
-## What Does NOT Exist Yet
+## What's Live and Working
 
-| Feature | Status | Notes |
-|---------|--------|-------|
-| SEO on gear detail pages | ✅ DONE | Server-rendered, generateMetadata, JSON-LD Product, OG tags, canonical URLs. |
-| Sitemap | ✅ DONE | /sitemap.xml lists all static pages + 1000+ gear item URLs. |
-| Internal linking (similar items) | ✅ DONE | "Compare with similar" section on every gear detail page. |
-| User auth | NOT BUILT | No accounts. All data in localStorage. |
-| Cloud-saved packs | NOT BUILT | Packs live in Zustand → localStorage only. |
-| Community data pipeline | NOT BUILT | No Reddit scraping, no LighterPack parsing. |
-| Affiliate/buy links on items | NOT BUILT | 0/1012 items have URLs. |
-| Compare SEO slugs | NOT BUILT | Uses `?items=` query params, not `/compare/item-vs-item` slugs. |
-| YouTube on Compare page | NOT BUILT | Videos display on `/gear/[id]` only, not on Compare. |
-| Pricing/monetization | NOT BUILT | No Stripe, no Pro tier enforcement. |
-| Mobile nav | BROKEN | Hamburger does nothing. |
+### Core Platform
+- [x] Landing page with rotating hero video scenes
+- [x] Dark theme with light mode toggle
+- [x] Responsive nav: MY GEAR | PACK LAB | COMPARE | AI ADVISOR | TRIP ENGINE
+- [x] Sitemap.xml for SEO (auto-generated from gear database)
 
-**Conscious decisions (will NOT build):**
-- No `/gear` browse/index page — discovery through SEO + Compare search + Pack Lab. Detail pages are the product.
-- No Stripe until 100+ authenticated users.
+### Pack Lab (the main product)
+- [x] Multi-loadout gear list builder
+- [x] Drag/drop reordering
+- [x] Category breakdown donut chart + Big 3 tracking
+- [x] Worn/packed/consumable status per item
+- [x] Weight unit toggle (oz/g)
+- [x] Custom item entry (any gear, not just from DB)
+- [x] Custom categories with colors
+- [x] Share URL generation (base64-encoded pack)
+- [x] CSV export
+- [x] LighterPack URL import
+- [x] Buy list / wishlist
+- [x] Item starring
+- [x] "My Gear" tab (shows closet items when logged in)
+- [x] Supabase sync when authenticated (usePackSync hook, 3s debounced)
+- [x] localStorage fallback for anonymous users
+
+### Gear Database
+- [x] 1,560+ items in Supabase with full specs
+- [x] Full-text search (fts tsvector column)
+- [x] Paginated queries (handles >1000 row Supabase cap)
+- [x] Categories: shelter, sleep, pack, kitchen, electronics, safety, accessories
+- [x] Subcategory tagging
+- [x] Pre-computed embeddings for semantic search (gear-embeddings.json)
+- [x] 92+ items with YouTube video IDs
+
+### AI Features (all require auth, rate-limited)
+- [x] AI Advisor chat (Gemini + semantic gear retrieval, 20 msg/day)
+- [x] Build My Kit wizard (AI-generated complete kits by budget/trip/climate, 5/day)
+- [x] Trip Engine (location + weather → pack readiness AI analysis, 10/day)
+- [x] Pack Analyzer (AI systems-level pack audit, 10/day)
+- [x] Import AI matching (fuzzy match + Gemini verification for medium-confidence)
+
+### Auth & User System
+- [x] Supabase Auth (email/password + Google OAuth)
+- [x] Next.js 16 proxy-based session refresh
+- [x] Protected routes: /closet, /trip, /import
+- [x] useAuth hook for client components
+- [x] Profile auto-creation on signup (trigger)
+- [x] Early adopter tier (first 1,000 users get 2x AI limits)
+- [x] User numbering (sequential signup order)
+
+### Gear Closet (/closet)
+- [x] Full gear inventory grid with category filters
+- [x] Add from database (search) or add custom items
+- [x] Remove items
+- [x] "Let's build your gear closet" onboarding state for new users
+- [x] Migration banner (detects localStorage pack data, offers to import to account)
+- [x] Import flow link
+
+### Import (/import)
+- [x] LighterPack URL parsing (fetches JSON from share links)
+- [x] CSV parsing with auto-column detection
+- [x] Plain text parsing (detects items + weights from freeform text)
+- [x] AI matching against 1,560+ item database (confidence tiers)
+- [x] Review step: accept/reject items, toggle linked vs custom
+- [x] Batch import to closet
+
+### Compare (/compare)
+- [x] Select 2-3 items to compare
+- [x] Category-locked comparisons
+- [x] Side-by-side specs table
+- [x] Winner detection (lightest, cheapest, best value)
+- [x] Shareable comparison URL (query params)
+
+### Gear Detail Pages (/gear/[id])
+- [x] Server-rendered (SSR) for SEO
+- [x] Full specs display
+- [x] YouTube video embeds
+- [x] JSON-LD Product structured data
+- [x] "Compare with similar" internal linking
+
+### Security & Rate Limiting
+- [x] IP-based rate limiting (in-memory, per-minute caps)
+- [x] User-based daily limits (Supabase-backed usage_tracking table)
+- [x] Auth required on all AI routes
+- [x] Pro users bypass daily limits
+- [x] Early adopters get 2x daily limits
+- [x] Abuse detection: repeated prompt blocking (3x same msg in 5min)
+- [x] Rapid-fire detection (10+ prompts in 1min = blocked)
+- [x] Bot user-agent blocking on chat route
+- [x] Atomic increment_usage() RPC (no race conditions)
+
+### Monetization Infrastructure
+- [x] affiliate_url + affiliate_source columns on gear_items
+- [x] Affiliate click tracking table (affiliate_clicks)
+- [x] /api/click route (tracks click → returns redirect URL)
+- [x] Plan column on profiles ('free' | 'early-adopter' | 'pro')
+- [x] Rate limiter checks plan before enforcing limits
 
 ---
 
-## YouTube Video Pipeline Status
+## What's NOT Working / Needs Manual Action
 
-| Metric | Count |
-|--------|-------|
-| Items with videos | 179+ (actively growing) |
-| Items without videos (searchable) | ~730 |
-| Items skipped (food/hygiene/generic) | ~177 |
-| API key | ✅ Configured in `.env.local` |
-| GitHub Action | ✅ Built, needs secrets added to repo |
-| Script | ✅ Running — 95 items per run, ~8 more runs to full coverage |
-
-**To fill remaining items:** Run `node scripts/fetch-youtube-reviews.mjs` once daily. Full coverage in ~8 days.
+| Item | Status | Action Required |
+|------|--------|-----------------|
+| Google OAuth | ⚠️ redirect_uri_mismatch | Add JS origins + Vercel production URL to Google Cloud credentials |
+| Gemini spend cap | ❌ Not set | Set $15/day budget in Google Cloud Console → Billing → Budgets |
+| Stripe payments | ❌ Not built | Future: /api/stripe/checkout + webhook + upgrade UI |
+| Affiliate URLs | ❌ Empty | Need to sign up for REI/Amazon programs and populate URLs |
+| Pack Lab sync | ⚠️ Untested | Deployed but never manually verified end-to-end |
+| Closet | ⚠️ Untested | Deployed but needs manual test with logged-in user |
 
 ---
 
-## Tech Stack
+## Architecture
 
-- **Framework:** Next.js (App Router)
-- **Database:** Supabase (PostgreSQL)
-- **Styling:** Tailwind CSS + PostCSS
-- **State:** Zustand (localStorage persistence)
-- **AI:** Gemini (chat, build-kit, trip analysis)
-- **Deployment:** Vercel
-- **Search:** Supabase full-text search (`fts` column)
+```
+User (browser)
+  ├── Anonymous → Pack Lab (localStorage), Compare, Gear Pages
+  └── Logged In → Pack Lab (Supabase sync), Closet, Import, AI features
+
+Next.js 16 App Router
+  ├── src/proxy.ts → session refresh + protected route redirects
+  ├── src/app/ → pages (closet, pack-lab, import, compare, chat, trip, build, gear/[id])
+  ├── src/app/api/ → AI routes (chat, build-kit, trip, analyze-pack, import, click)
+  ├── src/lib/ → data layer (gear-api, closet-api, loadout-api, rate-limit, abuse-detection)
+  ├── src/store/ → Zustand pack-store (localStorage persist + Supabase sync hook)
+  └── src/components/ → UI (PackLabV2, Nav, Hero, MigratePack)
+
+Supabase
+  ├── gear_items (1,560+ rows, public read)
+  ├── profiles (user accounts, tier, plan)
+  ├── user_gear (closet inventory)
+  ├── loadouts + loadout_items (server-side pack configs)
+  ├── trips + trip_gear_notes (future)
+  ├── usage_tracking (AI rate limiting)
+  └── affiliate_clicks (revenue tracking)
+```
 
 ---
 
-## Key Files
+## Business Model
 
-| File | Purpose |
-|------|---------|
-| `src/app/compare/page.tsx` | Gear comparison tool |
-| `src/app/gear/[id]/page.tsx` | Individual gear detail + YouTube |
-| `src/app/pack-lab/page.tsx` | Pack builder |
-| `src/app/build/page.tsx` | AI kit builder wizard |
-| `src/app/chat/page.tsx` | AI gear advisor |
-| `src/app/trip/page.tsx` | Trip weather/pack analyzer |
-| `src/lib/gear-api.ts` | Supabase query layer (search, counts, getByIds) |
-| `src/store/pack-store.ts` | Zustand pack state |
-| `scripts/fetch-youtube-reviews.mjs` | YouTube video ID populator |
-| `.github/workflows/youtube-reviews.yml` | Monthly auto-fetch action |
+| Revenue Source | Status | Expected |
+|---|---|---|
+| Affiliate links (REI, Amazon, Avantlink) | Infrastructure built, URLs not populated | Primary revenue |
+| Pro tier ($5/month) | Schema ready, Stripe not integrated | Secondary revenue |
+| Donations | Not built | Nice-to-have |
+
+**Cost structure:** ~$0.09/active user/month in AI costs. $500/month budget supports ~5,500 active users.
+
+---
+
+## What's Next (Priority Order)
+
+1. **Test the deployed site manually** (auth flow, closet, pack lab sync)
+2. **Set Gemini spend cap** (Google Cloud Console)
+3. **Fix Google OAuth** (add production URLs to credentials)
+4. **Populate affiliate URLs** (sign up for programs, run script)
+5. **Stripe integration** (Pro tier checkout + webhooks)
+6. **Community features** (public loadout sharing, trip logs)
