@@ -80,7 +80,7 @@ export default function ChatPage() {
       <main className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">AI Advisor</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Gear Advisor</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Gear recommendations, kit builds, and comparisons backed by real trail data.
           </p>

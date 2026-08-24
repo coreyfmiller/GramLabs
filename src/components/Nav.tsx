@@ -19,7 +19,7 @@ const NAV_LINKS: NavLink[] = [
   { label: "PACK LAB", href: "/pack-lab" },
   { label: "MY GEAR", href: "/closet" },
   { label: "COMPARE", href: "/compare" },
-  { label: "AI ADVISOR", href: "/chat" },
+  { label: "GEAR ADVISOR", href: "/chat" },
   { label: "TRIP ENGINE", href: "/trip" },
   { label: "BRANDS", href: "/brands", admin: true },
   { label: "TODO", href: "/admin/todo", admin: true },
