@@ -145,6 +145,9 @@
 ## 📋 FUTURE FEATURES (After Business Model is Solid)
 
 ### Community & Social
+- [ ] **Dynamic OG images for shared packs** — next/og generates a PNG with donut chart + base weight + item count. Every shared link shows a rich preview on Reddit/Discord/iMessage. Highest-leverage growth feature.
+- [ ] **"/from-lighterpack" landing page** — migration campaign. "Import your LighterPack in 30 seconds. Get AI analysis free." One clear CTA.
+- [ ] **"Get a free AI audit" button on public pack pages** — viewer clicks, pack pre-loads into analyzer, they sign up to see results.
 - [ ] **Public pack pages** (`/pack/[id]`) — SSR, SEO-indexable, pie chart, clean layout, "Build yours free" CTA. The growth engine.
 - [ ] **Community packs gallery** — browse public packs by trip type/season/weight class. Users toggle packs public/private.
 - [ ] Public loadout share pages (`/u/[username]/[slug]`)
