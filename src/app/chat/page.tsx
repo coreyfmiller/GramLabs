@@ -77,6 +77,16 @@ export default function ChatPage() {
     <div className="h-dvh flex flex-col bg-background text-foreground">
       <Nav />
 
+      {/* Page header — compact, same rhythm as other pages */}
+      <div className="shrink-0 px-4 md:px-6 pt-5 pb-4 border-b border-border">
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">AI Advisor</h1>
+          <p className="mt-0.5 text-sm text-muted-foreground">
+            Gear recommendations, kit builds, and comparisons backed by real trail data.
+          </p>
+        </div>
+      </div>
+
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto scroll-thin">
         <div className="max-w-3xl mx-auto px-4 md:px-6 py-6 space-y-6">
@@ -135,7 +145,7 @@ export default function ChatPage() {
       </div>
 
       {/* Input area */}
-      <div className="border-t border-border px-4 md:px-6 py-4 shrink-0">
+      <div className="shrink-0 px-4 md:px-6 py-4">
         <form onSubmit={handleSubmit} className="max-w-3xl mx-auto flex items-end gap-3">
           <textarea
             value={input}
@@ -143,20 +153,17 @@ export default function ChatPage() {
             onKeyDown={handleKeyDown}
             placeholder="Ask about gear, build a kit, compare items..."
             rows={1}
-            className="flex-1 bg-input border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors resize-none max-h-[120px]"
+            className="flex-1 bg-card border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors resize-none max-h-[120px]"
             style={{ minHeight: "48px" }}
           />
           <button
             type="submit"
             disabled={!input.trim() || loading}
-            className="size-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed shrink-0 active:scale-95"
+            className="size-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center hover:brightness-110 transition-all disabled:opacity-30 disabled:cursor-not-allowed shrink-0 active:scale-95"
           >
             <Send className="size-4" />
           </button>
         </form>
-        <p className="max-w-3xl mx-auto mt-2 text-xs text-muted-foreground/50 text-center">
-          Powered by 1500+ verified gear items and PCT thru-hiker survey data
-        </p>
       </div>
     </div>
   );
@@ -164,15 +171,9 @@ export default function ChatPage() {
 
 function EmptyState({ onPromptClick }: { onPromptClick: (prompt: string) => void }) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="size-12 rounded-xl bg-muted flex items-center justify-center mb-4">
-        <Sparkles className="size-6 text-muted-foreground" />
-      </div>
-      <h2 className="text-xl font-bold tracking-tight mb-1">Gear Advisor</h2>
-      <p className="text-sm text-muted-foreground max-w-md mb-10">
-        Get personalized gear recommendations, kit builds, and comparisons backed by real trail data.
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-lg">
+    <div className="flex flex-col items-center pt-12 pb-6">
+      <p className="text-sm text-muted-foreground mb-6">Try one of these, or ask anything about gear:</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 w-full max-w-xl">
         {SUGGESTED_PROMPTS.map((prompt, i) => (
           <button
             key={i}
