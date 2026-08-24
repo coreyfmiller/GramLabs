@@ -15,6 +15,13 @@
    - Alert goes to your email
 4. This is your emergency circuit breaker — even if code-level rate limiting fails, Google cuts API access at this cap
 
+### Set Supabase Site URL (Fixes Google OAuth)
+1. Go to [Supabase Dashboard](https://supabase.com/dashboard) → your HikeMind project
+2. **Authentication** → **URL Configuration**
+3. Set **Site URL** to: `https://gram-labs.vercel.app`
+4. Under **Redirect URLs**, add: `https://gram-labs.vercel.app/auth/callback`
+5. Save. Wait 30 seconds. Google OAuth will now redirect correctly.
+
 ### Run Security SQL Migration
 1. Open Supabase Dashboard → SQL Editor
 2. Paste and run the contents of `scripts/security-schema.sql`
@@ -24,6 +31,15 @@
    - RLS policies on usage_tracking
    - `plan` column on profiles table ('free' | 'pro')
 4. **Without this, rate limiting will error** — the code calls `increment_usage` and queries `usage_tracking`
+
+### Run Trip Journal SQL Migration
+1. Open Supabase Dashboard → SQL Editor
+2. Paste and run the contents of `scripts/trip-journal-schema.sql`
+3. This creates:
+   - `trips` table (your trip log)
+   - `trip_gear_notes` table (per-item annotations after a trip)
+   - RLS policies (users only see their own trips)
+4. **Without this, the /journal page won't save trips**
 
 ### Fix Google OAuth Redirect
 1. Go to [Google Cloud Console → Credentials](https://console.cloud.google.com/apis/credentials)
