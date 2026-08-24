@@ -161,6 +161,9 @@
 ## 📋 FUTURE FEATURES (After Business Model is Solid)
 
 ### Community & Social
+- [ ] **Short share URLs** — store pack snapshots in Supabase `shared_packs` table, generate 6-char IDs, serve at `/p/[id]` (like LighterPack's `/r/abc123`). No more base64 query strings.
+- [ ] **Two-ring donut chart** — inner ring = categories, outer ring = individual items within each category. See at a glance which specific item is heaviest in each category.
+- [ ] **Graph options** — let users toggle between: single donut, two-ring donut, or horizontal stacked bar. Preference saved to localStorage.
 - [ ] **Dynamic OG images for shared packs** — next/og generates a PNG with donut chart + base weight + item count. Every shared link shows a rich preview on Reddit/Discord/iMessage. Highest-leverage growth feature.
 - [ ] **"/from-lighterpack" landing page** — migration campaign. "Import your LighterPack in 30 seconds. Get AI analysis free." One clear CTA.
 - [ ] **"Get a free AI audit" button on public pack pages** — viewer clicks, pack pre-loads into analyzer, they sign up to see results.
