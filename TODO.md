@@ -173,6 +173,10 @@
 - [ ] Shared gear assignment ("who's carrying the stove?")
 - [ ] Weight balancing across group members
 
+### Possible Future
+- [ ] **PWA / offline mode** — mobile installable, offline pack access, check items at the trailhead
+- [ ] Kits (grouped items — "sleep kit" adds quilt + pad + pillow in one tap)
+
 ### Content & SEO
 - [ ] "Best [category]" collection pages (e.g., `/gear/best-quilts`)
 - [ ] SEO slugs on compare: `/compare/nemo-tensor-vs-thermarest-neoair`
