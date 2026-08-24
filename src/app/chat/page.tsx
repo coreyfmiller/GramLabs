@@ -7,6 +7,7 @@ import { Nav } from "@/components/Nav";
 import { usePackStore } from "@/store/pack-store";
 import { gearDatabase } from "@/data/gear-database";
 import { cn } from "@/lib/utils";
+import { LimitReached, parseLimitError } from "@/components/limit-reached";
 
 interface Message {
   role: "user" | "assistant";
@@ -42,7 +43,14 @@ export default function ChatPage() {
 
       const data = await res.json();
 
-      if (data.error) {
+      if (data.limitReached) {
+        const limitInfo = parseLimitError(data);
+        if (limitInfo) {
+          setMessages([...newMessages, { role: "assistant", content: `__LIMIT_REACHED__${JSON.stringify(limitInfo)}` }]);
+        } else {
+          setMessages([...newMessages, { role: "assistant", content: `Error: ${data.error}` }]);
+        }
+      } else if (data.error) {
         setMessages([...newMessages, { role: "assistant", content: `Error: ${data.error}` }]);
       } else {
         setMessages([...newMessages, { role: "assistant", content: data.message }]);
@@ -94,6 +102,11 @@ export default function ChatPage() {
               >
                 {msg.role === "user" ? (
                   <p className="text-sm leading-relaxed">{msg.content}</p>
+                ) : msg.content.startsWith("__LIMIT_REACHED__") ? (
+                  (() => {
+                    const info = JSON.parse(msg.content.replace("__LIMIT_REACHED__", ""));
+                    return <LimitReached feature={info.feature} limit={info.limit} tier={info.tier} />;
+                  })()
                 ) : (
                   <ChatResponse content={msg.content} />
                 )}

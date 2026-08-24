@@ -5,6 +5,7 @@ import { Loader2, Package, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { cn } from "@/lib/utils";
+import { LimitReached, parseLimitError } from "@/components/limit-reached";
 
 type TripType = "3-season" | "winter" | "thru-hike" | "weekend";
 type Climate = "desert" | "temperate" | "alpine" | "pnw-rain";
@@ -38,11 +39,13 @@ export default function BuildPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<GeneratedKit | null>(null);
   const [error, setError] = useState("");
+  const [limitInfo, setLimitInfo] = useState<{ feature: string; limit: number; tier?: string } | null>(null);
 
   const handleBuild = async () => {
     setLoading(true);
     setError("");
     setResult(null);
+    setLimitInfo(null);
 
     try {
       const res = await fetch("/api/build-kit", {
@@ -52,7 +55,11 @@ export default function BuildPage() {
       });
 
       const data = await res.json();
-      if (data.error) {
+      if (data.limitReached) {
+        const parsed = parseLimitError(data);
+        if (parsed) setLimitInfo(parsed);
+        else setError(data.error);
+      } else if (data.error) {
         setError(data.error);
       } else {
         setResult(data.kit);
@@ -222,6 +229,10 @@ export default function BuildPage() {
                   </>
                 )}
               </button>
+
+              {limitInfo && (
+                <LimitReached feature={limitInfo.feature} limit={limitInfo.limit} tier={limitInfo.tier} className="mt-4" />
+              )}
 
               {error && (
                 <p className="text-sm text-destructive text-center">{error}</p>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useSearchParams } from "next/navigation";
 
@@ -12,8 +12,16 @@ function LoginForm() {
   const [message, setMessage] = useState("");
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/closet";
+  const authError = searchParams.get("error");
 
   const supabase = createClient();
+
+  // Show auth callback errors on mount
+  useEffect(() => {
+    if (authError === "auth_failed") {
+      setMessage("Sign in failed. Please try again.");
+    }
+  }, [authError]);
 
   async function handleEmailAuth(e: React.FormEvent) {
     e.preventDefault();

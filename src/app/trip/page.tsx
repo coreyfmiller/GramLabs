@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Nav } from "@/components/Nav";
 import { cn } from "@/lib/utils";
+import { LimitReached, parseLimitError } from "@/components/limit-reached";
 import { usePackStore } from "@/store/pack-store";
 
 interface DayForecast {
@@ -79,11 +80,13 @@ export default function TripPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<TripResult | null>(null);
   const [error, setError] = useState("");
+  const [limitInfo, setLimitInfo] = useState<{ feature: string; limit: number; tier?: string } | null>(null);
 
   const handleAnalyze = async () => {
     setLoading(true);
     setError("");
     setResult(null);
+    setLimitInfo(null);
 
     const loadout = loadouts.find((l) => l.id === selectedLoadoutId);
     if (!loadout || loadout.items.length === 0) {
@@ -115,7 +118,11 @@ export default function TripPage() {
       });
 
       const data = await res.json();
-      if (data.error) {
+      if (data.limitReached) {
+        const parsed = parseLimitError(data);
+        if (parsed) setLimitInfo(parsed);
+        else setError(data.error);
+      } else if (data.error) {
         setError(data.error);
       } else {
         setResult(data);
@@ -263,6 +270,10 @@ export default function TripPage() {
                   </>
                 )}
               </button>
+
+              {limitInfo && (
+                <LimitReached feature={limitInfo.feature} limit={limitInfo.limit} tier={limitInfo.tier} className="mt-4" />
+              )}
 
               {error && (
                 <p className="text-sm text-destructive text-center">{error}</p>
