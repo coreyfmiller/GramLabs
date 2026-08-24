@@ -16,8 +16,8 @@ interface NavLink {
 }
 
 const NAV_LINKS: NavLink[] = [
-  { label: "MY GEAR", href: "/closet" },
   { label: "PACK LAB", href: "/pack-lab" },
+  { label: "MY GEAR", href: "/closet" },
   { label: "COMPARE", href: "/compare" },
   { label: "AI ADVISOR", href: "/chat" },
   { label: "TRIP ENGINE", href: "/trip" },
