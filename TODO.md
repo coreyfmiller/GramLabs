@@ -156,6 +156,8 @@
 - [ ] Reddit r/Ultralight data pipeline (community gear popularity)
 
 ### Trip Log & Gear Aging
+- [ ] **Trip detail page** — view a trip, annotate individual gear items (rating, notes, tags: "essential", "too heavy", "didn't use", "replace")
+- [ ] **Public trips** — "Make public" toggle, public page at `/trip/[id]` showing loadout + gear notes. AI moderation on publish (Gemini checks for inappropriate content before making visible).
 - [ ] Trip log: date + place + loadout + post-trip notes
 - [ ] Per-item trip notes ("too warm", "zipper broke")
 - [ ] Gear aging: auto-accumulate miles/nights from trips
