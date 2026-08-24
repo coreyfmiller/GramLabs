@@ -165,7 +165,7 @@ export default function TripPage() {
           <>
             {/* Title */}
             <div className="mb-8">
-              <h1 className="text-2xl font-bold tracking-tight text-foreground">Trail Forecast</h1>
+              <h1 className="text-2xl font-bold tracking-tight text-foreground">Weather Engine</h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 AI-powered pack analysis against real weather forecasts. Know if your gear is ready before you hit the trail.
               </p>

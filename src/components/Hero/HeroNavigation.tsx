@@ -8,7 +8,7 @@ const NAV_LINKS = [
   { label: "MY GEAR", href: "/closet" },
   { label: "COMPARE", href: "/compare" },
   { label: "GEAR ADVISOR", href: "/chat" },
-  { label: "TRAIL FORECAST", href: "/trip" },
+  { label: "WEATHER ENGINE", href: "/trip" },
   { label: "CALORIES", href: "/calories" },
   { label: "JOURNAL", href: "/journal" },
 ];
