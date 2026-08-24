@@ -7,13 +7,11 @@ import { Mountain, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { label: "CLOSET", href: "/closet" },
-  { label: "LOADOUTS", href: "/loadouts" },
+  { label: "MY GEAR", href: "/closet" },
   { label: "PACK LAB", href: "/pack-lab" },
-  { label: "BUILD MY KIT", href: "/build" },
-  { label: "GEAR ADVISOR", href: "/chat" },
-  { label: "COMPARE", href: "/compare" },
-  { label: "TRIP ENGINE", href: "/trip", pro: true },
+  { label: "DISCOVER", href: "/compare" },
+  { label: "AI ADVISOR", href: "/chat" },
+  { label: "PLAN", href: "/trip" },
   { label: "BRANDS", href: "/brands", admin: true },
   { label: "TODO", href: "/admin/todo", admin: true },
 ];
@@ -64,12 +62,7 @@ export function Nav() {
                   )}
                 >
                   {link.label}
-                  {link.pro && (
-                    <span className="px-1 py-0.5 text-[8px] font-bold uppercase tracking-wider bg-primary/20 text-primary border border-primary/30 rounded leading-none">
-                      PRO
-                    </span>
-                  )}
-                  {link.admin && (
+                  {("admin" in link) && link.admin && (
                     <span className="px-1 py-0.5 text-[8px] font-bold uppercase tracking-wider bg-yellow-400/20 text-yellow-400 border border-yellow-400/30 rounded leading-none">
                       ADMIN
                     </span>
@@ -131,12 +124,7 @@ export function Nav() {
               onClick={() => setMobileOpen(false)}
             >
               {link.label}
-              {link.pro && (
-                <span className="px-1 py-0.5 text-[8px] font-bold uppercase tracking-wider bg-primary/20 text-primary border border-primary/30 rounded leading-none">
-                  PRO
-                </span>
-              )}
-              {link.admin && (
+              {("admin" in link) && link.admin && (
                 <span className="px-1 py-0.5 text-[8px] font-bold uppercase tracking-wider bg-yellow-400/20 text-yellow-400 border border-yellow-400/30 rounded leading-none">
                   ADMIN
                 </span>

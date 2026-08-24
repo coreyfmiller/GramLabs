@@ -8,11 +8,14 @@ import { Nav } from "@/components/Nav";
 import { GearSearch } from "./GearSearch";
 import { PackList } from "./PackList";
 import { StatsPanel } from "./StatsPanel";
+import { usePackSync } from "@/hooks/use-pack-sync";
 import { cn } from "@/lib/utils";
 
 type Tab = "search" | "pack" | "stats";
 
 export function PackBuilder() {
+  // Sync store to Supabase when logged in
+  usePackSync();
   const [tab, setTab] = useState<Tab>("pack");
 
   const getBaseWeight = usePackStore((s) => s.getBaseWeight);
