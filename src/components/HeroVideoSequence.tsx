@@ -121,7 +121,7 @@ export default function HeroVideoSequence({ onSceneChange }: HeroVideoSequencePr
         className={`${videoBaseStyles} ${showB ? "opacity-100" : "opacity-0"}`}
         muted
         playsInline
-        preload="none"
+        preload="auto"
         aria-hidden="true"
       />
       {/* Keep currentIndex in sync for potential future use */}
