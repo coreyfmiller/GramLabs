@@ -618,7 +618,7 @@ export const usePackStore = create<PackStore>()(
           })),
         };
         const encoded = btoa(encodeURIComponent(JSON.stringify(shareData)));
-        return `${typeof window !== "undefined" ? window.location.origin : ""}/pack-lab?share=${encoded}`;
+        return `${typeof window !== "undefined" ? window.location.origin : ""}/pack/view?share=${encoded}`;
       },
 
       exportCSV: () => {
