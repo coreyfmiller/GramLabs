@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
@@ -138,6 +139,43 @@ export async function POST(req: NextRequest) {
 
     const totalCost = items.reduce((s, i) => s + i.priceUsd * i.quantity, 0);
 
+    // Find lighter alternatives from our database for the heaviest packed items
+    const heaviestItems = [...packedItems]
+      .sort((a, b) => (b.weightOz * b.quantity) - (a.weightOz * a.quantity))
+      .slice(0, 5); // top 5 heaviest
+
+    let alternativesText = "";
+    try {
+      const altResults = await Promise.all(
+        heaviestItems.map(async (item) => {
+          const { data } = await supabase
+            .from("gear_items")
+            .select("name, brand, weight_oz, price_usd, category, subcategory")
+            .eq("category", item.category)
+            .lt("weight_oz", item.weightOz * 0.85) // at least 15% lighter
+            .order("weight_oz", { ascending: true })
+            .limit(3);
+
+          if (!data || data.length === 0) return null;
+          return {
+            current: `${item.brand} ${item.name} (${item.weightOz}oz, $${item.priceUsd})`,
+            alternatives: data.map((alt: { brand: string; name: string; weight_oz: number; price_usd: number }) =>
+              `${alt.brand} ${alt.name} (${alt.weight_oz}oz, $${alt.price_usd}, saves ${(item.weightOz - alt.weight_oz).toFixed(1)}oz)`
+            ),
+          };
+        })
+      );
+
+      const validAlts = altResults.filter(Boolean);
+      if (validAlts.length > 0) {
+        alternativesText = `\n\nLIGHTER ALTERNATIVES FROM OUR DATABASE (real items we stock — prefer these in your recommendations):
+${validAlts.map((a) => `Current: ${a!.current}\n  Options: ${a!.alternatives.join(" | ")}`).join("\n")}`;
+      }
+    } catch (e) {
+      // Non-critical — proceed without alternatives
+      console.error("Failed to fetch alternatives:", e);
+    }
+
     const model = genAI.getGenerativeModel({
       model: "gemini-3.6-flash",
       systemInstruction: SYSTEM_PROMPT,
@@ -163,8 +201,9 @@ ${wornItems.length > 0 ? wornItems.map(i => `- ${i.brand} ${i.name} | ${i.weight
 
 CONSUMABLE ITEMS:
 ${consumableItems.length > 0 ? consumableItems.map(i => `- ${i.brand} ${i.name} | ${i.weightOz}oz`).join('\n') : '(none)'}
+${alternativesText}
 
-Provide a comprehensive system-level analysis. Think like an expert who has hiked 10,000+ miles and seen hundreds of packs. Be specific about which items and which numbers you're referencing. Return valid JSON.`;
+Provide a comprehensive system-level analysis. Think like an expert who has hiked 10,000+ miles and seen hundreds of packs. Be specific about which items and which numbers you're referencing. When suggesting weight-saving swaps, prefer items from the LIGHTER ALTERNATIVES section above (these are real items in our database with verified weights and prices). Return valid JSON.`;
 
     const result = await model.generateContent({
       contents: [{ role: "user", parts: [{ text: prompt }] }],
