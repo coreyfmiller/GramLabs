@@ -6,11 +6,11 @@ import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "./use-auth";
 
 /**
- * Syncs Pack Lab's Zustand store to Supabase when the user is logged in.
+ * Syncs Pack Lab's Zustand store to Supabase.
  *
- * - On mount: loads loadouts from Supabase into the store (replaces localStorage data)
+ * - On mount: loads loadouts from Supabase into the store
  * - On store changes: debounces writes back to Supabase
- * - When not logged in: does nothing (localStorage handles persistence)
+ * - Supabase is the sole source of truth
  */
 export function usePackSync() {
   const { user } = useAuth();
@@ -33,10 +33,8 @@ export function usePackSync() {
         .order("updated_at", { ascending: false });
 
       if (!loadoutsData || loadoutsData.length === 0) {
-        // No server data — user might be new or hasn't synced yet
-        // Push current localStorage state to server on first sync
+        // No server data — new user, nothing to load
         syncingRef.current = false;
-        await saveToServer();
         return;
       }
 

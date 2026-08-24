@@ -86,7 +86,8 @@ We beat everyone by combining things nobody else connects:
 
 - **Database:** Every item has weight_oz and price_usd at minimum. Category-specific specs must be filled before that category appears in Compare.
 - **AI prompts:** Always constrain to database inventory. Never hallucinate products. Always cite real specs.
-- **State:** User data persists. Cloud-first once auth exists. localStorage is a fallback, not a strategy.
+- **State:** User data persists in Supabase. No localStorage for user data. The Zustand store is a runtime cache hydrated from the server.
+- **Auth:** Everything requires sign-in. The homepage is the pitch; the product is gated.
 - **SEO:** Every gear page has proper title, meta description, JSON-LD structured data. We want organic traffic.
 - **Sharing:** Every comparison, every pack list, every trip analysis should have a shareable URL that renders a proper social preview.
 

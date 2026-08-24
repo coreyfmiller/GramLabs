@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { GearItem, GearCategory, CATEGORY_COLORS } from "@/data/gear-database";
 
 export type ItemStatus = "packed" | "worn" | "consumable";
@@ -102,7 +101,6 @@ const DEFAULT_CUSTOM_COLORS = [
 ];
 
 export const usePackStore = create<PackStore>()(
-  persist(
     (set, get) => ({
       loadouts: [{ id: DEFAULT_LOADOUT_ID, name: "My Pack", items: [] }],
       activeLoadoutId: DEFAULT_LOADOUT_ID,
@@ -644,10 +642,6 @@ export const usePackStore = create<PackStore>()(
         return [header, ...rows].join("\n");
       },
     }),
-    {
-      name: "hikemind-pack-v2",
-    }
-  )
 );
 
 // Re-export formatting utilities

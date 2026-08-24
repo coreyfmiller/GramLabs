@@ -12,7 +12,6 @@ import {
 import { searchGear } from "@/lib/gear-api";
 import { GearItem, GearCategory } from "@/data/gear-database";
 import { cn } from "@/lib/utils";
-import { MigratePack } from "@/components/MigratePack";
 import {
   Package,
   Plus,
@@ -129,9 +128,6 @@ export default function ClosetPage() {
       <Nav />
 
       <main className="max-w-6xl mx-auto px-4 py-8">
-        {/* Migration Banner */}
-        <MigratePack />
-
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
