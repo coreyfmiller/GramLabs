@@ -199,6 +199,19 @@ export function Nav() {
               </Link>
             )}
 
+            {/* Theme toggle */}
+            <button
+              onClick={toggleTheme}
+              className="size-9 flex items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors"
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? (
+                <Sun className="size-4 text-muted-foreground" />
+              ) : (
+                <Moon className="size-4 text-muted-foreground" />
+              )}
+            </button>
+
             <button
               className="lg:hidden size-9 flex items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
