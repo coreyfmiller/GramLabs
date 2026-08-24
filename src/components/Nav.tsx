@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Mountain, Sun, Moon, LogOut, Menu, X } from "lucide-react";
+import { Mountain, Sun, Moon, LogOut, Menu, X, Settings } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 
@@ -21,13 +21,18 @@ const NAV_LINKS: NavLink[] = [
   { label: "COMPARE", href: "/compare" },
   { label: "GEAR ADVISOR", href: "/chat" },
   { label: "TRIP ENGINE", href: "/trip" },
+  { label: "CALORIES", href: "/calories" },
   { label: "JOURNAL", href: "/journal" },
-  { label: "BRANDS", href: "/brands", admin: true },
-  { label: "TODO", href: "/admin/todo", admin: true },
+];
+
+const ADMIN_LINKS: NavLink[] = [
+  { label: "Brands", href: "/brands" },
+  { label: "TODO", href: "/admin/todo" },
 ];
 
 export function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const pathname = usePathname();
   const { user, signOut } = useAuth();
@@ -52,9 +57,10 @@ export function Nav() {
   // Close mobile menu on navigation
   useEffect(() => {
     setMobileOpen(false);
+    setAdminOpen(false);
   }, [pathname]);
 
-  const visibleLinks = NAV_LINKS.filter((link) => !link.admin || isAdmin);
+  const visibleLinks = NAV_LINKS;
 
   return (
     <>
@@ -89,8 +95,34 @@ export function Nav() {
             </nav>
           </div>
 
-          {/* Right: User + theme + mobile toggle */}
+          {/* Right: User + admin + theme + mobile toggle */}
           <div className="flex items-center gap-2">
+            {/* Admin dropdown */}
+            {isAdmin && (
+              <div className="relative hidden md:block">
+                <button
+                  onClick={() => setAdminOpen(!adminOpen)}
+                  className="size-9 flex items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors"
+                  aria-label="Admin"
+                >
+                  <Settings className="size-4 text-muted-foreground" />
+                </button>
+                {adminOpen && (
+                  <div className="absolute right-0 top-11 z-50 w-36 rounded-lg border border-border bg-card shadow-xl py-1">
+                    {ADMIN_LINKS.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="block px-3 py-2 text-xs text-foreground hover:bg-muted transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             {user && (
               <button
                 onClick={signOut}
@@ -158,6 +190,20 @@ export function Nav() {
                 <LogOut className="size-3.5" />
                 Sign out
               </button>
+            )}
+
+            {isAdmin && (
+              <div className="border-t border-border mt-2 pt-2">
+                {ADMIN_LINKS.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="text-[11px] font-medium uppercase tracking-[0.12em] px-3 py-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors block"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
             )}
           </nav>
         </div>

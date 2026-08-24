@@ -128,6 +128,24 @@ function calculateCalories(inputs: CalorieInputs): CalorieResult {
   };
 }
 
+/**
+ * Popular trail presets — average daily stats
+ */
+const TRAIL_PRESETS: { name: string; distanceMiles: number; elevationGainFt: number; terrain: TerrainType; hikingHours: number }[] = [
+  { name: "Custom (enter your own)", distanceMiles: 0, elevationGainFt: 0, terrain: "trail", hikingHours: 0 },
+  { name: "Pacific Crest Trail (PCT)", distanceMiles: 20, elevationGainFt: 3500, terrain: "trail", hikingHours: 9 },
+  { name: "Appalachian Trail (AT)", distanceMiles: 15, elevationGainFt: 3000, terrain: "trail", hikingHours: 8 },
+  { name: "Continental Divide Trail (CDT)", distanceMiles: 22, elevationGainFt: 3200, terrain: "trail", hikingHours: 10 },
+  { name: "John Muir Trail (JMT)", distanceMiles: 14, elevationGainFt: 3800, terrain: "trail", hikingHours: 8 },
+  { name: "Wonderland Trail", distanceMiles: 13, elevationGainFt: 3500, terrain: "trail", hikingHours: 8 },
+  { name: "Long Trail (VT)", distanceMiles: 14, elevationGainFt: 3200, terrain: "trail", hikingHours: 8 },
+  { name: "Colorado Trail", distanceMiles: 18, elevationGainFt: 2800, terrain: "trail", hikingHours: 9 },
+  { name: "Haute Route (Alps)", distanceMiles: 12, elevationGainFt: 4500, terrain: "off-trail", hikingHours: 8 },
+  { name: "Tour du Mont Blanc", distanceMiles: 12, elevationGainFt: 4000, terrain: "trail", hikingHours: 7 },
+  { name: "Weekend backpack (moderate)", distanceMiles: 10, elevationGainFt: 2000, terrain: "trail", hikingHours: 6 },
+  { name: "Day hike (strenuous)", distanceMiles: 14, elevationGainFt: 4000, terrain: "trail", hikingHours: 7 },
+];
+
 export default function CaloriesPage() {
   const getBaseWeight = usePackStore((s) => s.getBaseWeight);
 
@@ -196,6 +214,31 @@ export default function CaloriesPage() {
                   </select>
                 </div>
               </div>
+            </div>
+
+            {/* Trail Preset */}
+            <div className="rounded-xl border border-border bg-card p-5">
+              <h2 className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-4">Trail (optional)</h2>
+              <select
+                onChange={(e) => {
+                  const preset = TRAIL_PRESETS[parseInt(e.target.value)];
+                  if (preset && preset.distanceMiles > 0) {
+                    setInputs((prev) => ({
+                      ...prev,
+                      distanceMiles: preset.distanceMiles,
+                      elevationGainFt: preset.elevationGainFt,
+                      terrain: preset.terrain,
+                      hikingHours: preset.hikingHours,
+                    }));
+                  }
+                }}
+                className="w-full rounded-lg border border-border bg-input px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50"
+              >
+                {TRAIL_PRESETS.map((t, i) => (
+                  <option key={t.name} value={i}>{t.name}</option>
+                ))}
+              </select>
+              <p className="mt-2 text-[11px] text-muted-foreground">Selects average daily distance, elevation, and terrain. You can still edit below.</p>
             </div>
 
             {/* Trip details */}

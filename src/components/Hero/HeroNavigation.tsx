@@ -9,6 +9,8 @@ const NAV_LINKS = [
   { label: "COMPARE", href: "/compare" },
   { label: "GEAR ADVISOR", href: "/chat" },
   { label: "TRIP ENGINE", href: "/trip" },
+  { label: "CALORIES", href: "/calories" },
+  { label: "JOURNAL", href: "/journal" },
 ];
 
 interface HeroNavigationProps {
