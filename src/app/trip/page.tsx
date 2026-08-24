@@ -165,9 +165,12 @@ export default function TripPage() {
           <>
             {/* Title */}
             <div className="mb-8">
-              <h1 className="text-2xl font-bold tracking-tight text-foreground">Trip Engine</h1>
+              <h1 className="text-2xl font-bold tracking-tight text-foreground">Trail Forecast</h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 AI-powered pack analysis against real weather forecasts. Know if your gear is ready before you hit the trail.
+              </p>
+              <p className="mt-2 text-[11px] text-muted-foreground">
+                Weather data from Open-Meteo. Always check local conditions before heading out.
               </p>
               <a href="/calories" className="inline-flex items-center gap-1.5 mt-3 text-xs text-primary hover:underline">
                 Calorie & food calculator →

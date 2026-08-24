@@ -267,7 +267,7 @@ export default function ClosetPage() {
 
                 {/* Actions */}
                 <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
-                  <AddToLoadoutButton gearItem={item.gearItem} />
+                  <AddToLoadoutButton gearItem={item.gearItem} customItem={!item.gearItem ? { name: item.customName || "Unknown", brand: item.customBrand || "", category: item.customCategory || "accessories", weightOz: item.customWeightOz || 0 } : undefined} />
                   <button
                     onClick={() => handleRemove(item.id)}
                     className="p-1.5 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
@@ -296,7 +296,7 @@ export default function ClosetPage() {
 
 // ===== Add to Loadout Button =====
 
-function AddToLoadoutButton({ gearItem }: { gearItem?: GearItem }) {
+function AddToLoadoutButton({ gearItem, customItem }: { gearItem?: GearItem; customItem?: { name: string; brand: string; category: string; weightOz: number } }) {
   const [open, setOpen] = useState(false);
   const [added, setAdded] = useState<string | null>(null);
   const loadouts = usePackStore((s) => s.loadouts);
@@ -304,12 +304,23 @@ function AddToLoadoutButton({ gearItem }: { gearItem?: GearItem }) {
   const switchLoadout = usePackStore((s) => s.switchLoadout);
   const activeLoadoutId = usePackStore((s) => s.activeLoadoutId);
 
-  if (!gearItem) return null;
+  if (!gearItem && !customItem) return null;
+
+  const itemToAdd: GearItem = gearItem || {
+    id: `custom-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`,
+    name: customItem!.name,
+    brand: customItem!.brand,
+    category: customItem!.category as GearCategory,
+    weightOz: customItem!.weightOz,
+    priceUsd: 0,
+    tier: "mid" as const,
+    description: "",
+  };
 
   const handleAdd = (loadoutId: string) => {
     const prev = activeLoadoutId;
     switchLoadout(loadoutId);
-    addItem(gearItem);
+    addItem(itemToAdd);
     switchLoadout(prev);
     setAdded(loadoutId);
     setTimeout(() => { setAdded(null); setOpen(false); }, 600);
