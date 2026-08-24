@@ -127,8 +127,14 @@ ${BACKTICKS}`;
 }
 
 import { rateLimit } from "@/lib/rate-limit";
+import { isAbusivePrompt, isBotUserAgent } from "@/lib/abuse-detection";
 
 export async function POST(req: NextRequest) {
+  // Block known bots
+  if (isBotUserAgent(req)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   // Rate limit: require auth, 20 messages/day, 10 req/min
   const check = await rateLimit(req, {
     requireAuth: true,
@@ -140,6 +146,15 @@ export async function POST(req: NextRequest) {
 
   try {
     const { messages } = await req.json();
+
+    // Abuse detection: check for repeated prompts
+    const latestUserMsg = messages?.filter((m: { role: string }) => m.role === "user").pop();
+    if (latestUserMsg && check.user) {
+      const abuse = isAbusivePrompt(check.user.id, latestUserMsg.content);
+      if (abuse.blocked) {
+        return NextResponse.json({ error: abuse.reason }, { status: 429 });
+      }
+    }
 
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json(

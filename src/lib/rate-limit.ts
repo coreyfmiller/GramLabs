@@ -135,14 +135,38 @@ export async function rateLimit(
     const currentCount = usage?.count || 0;
 
     if (currentCount >= dailyLimit) {
-      // Check if user is on pro plan
+      // Check if user is on pro or early-adopter plan
       const { data: profile } = await supabase
         .from("profiles")
-        .select("plan")
+        .select("plan, tier")
         .eq("id", user.id)
         .single();
 
-      if (profile?.plan !== "pro") {
+      // Pro users bypass entirely
+      if (profile?.plan === "pro") {
+        // Pro — no limit
+      } else if (profile?.tier === "early-adopter") {
+        // Early adopters get 2x the free limit before being capped
+        const earlyAdopterLimit = dailyLimit * 2;
+        if (currentCount >= earlyAdopterLimit) {
+          return {
+            error: NextResponse.json(
+              {
+                error: `Daily limit reached (${earlyAdopterLimit}/${earlyAdopterLimit}). Early adopter bonus applied. Resets at midnight UTC.`,
+                limitReached: true,
+                current: currentCount,
+                limit: earlyAdopterLimit,
+                feature,
+                tier: "early-adopter",
+              },
+              { status: 429 }
+            ),
+            user: { id: user.id, email: user.email },
+            remaining: 0,
+          };
+        }
+        // Under early adopter limit — allow through
+      } else {
         return {
           error: NextResponse.json(
             {
@@ -158,7 +182,6 @@ export async function rateLimit(
           remaining: 0,
         };
       }
-      // Pro users bypass daily limits
     }
 
     // Increment usage (upsert)
