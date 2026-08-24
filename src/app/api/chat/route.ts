@@ -126,7 +126,18 @@ ${BACKTICKS}gear
 ${BACKTICKS}`;
 }
 
+import { rateLimit } from "@/lib/rate-limit";
+
 export async function POST(req: NextRequest) {
+  // Rate limit: require auth, 20 messages/day, 10 req/min
+  const check = await rateLimit(req, {
+    requireAuth: true,
+    dailyLimit: 20,
+    maxPerMinute: 10,
+    feature: "chat",
+  });
+  if (check.error) return check.error;
+
   try {
     const { messages } = await req.json();
 

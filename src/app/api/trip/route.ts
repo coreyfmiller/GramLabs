@@ -200,7 +200,18 @@ async function getWeatherForecast(lat: number, lng: number, days: number): Promi
   return forecasts;
 }
 
+import { rateLimit } from "@/lib/rate-limit";
+
 export async function POST(req: NextRequest) {
+  // Rate limit: require auth, 10 analyses/day, 5 req/min
+  const check = await rateLimit(req, {
+    requireAuth: true,
+    dailyLimit: 10,
+    maxPerMinute: 5,
+    feature: "trip",
+  });
+  if (check.error) return check.error;
+
   try {
     const { location, latitude, longitude, locationName, startDate, duration, packItems } = await req.json() as {
       location?: string;

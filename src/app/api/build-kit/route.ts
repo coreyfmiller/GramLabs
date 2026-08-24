@@ -56,7 +56,18 @@ RESPONSE FORMAT — you MUST respond with valid JSON only, no markdown, no expla
 Order items by: Shelter, Insulation, Sleeping Pad, Pack, Clothing (puffy, shell, fleece, base layers), Cooking, Water, Electronics, Safety, Hygiene, Accessories.`;
 }
 
+import { rateLimit } from "@/lib/rate-limit";
+
 export async function POST(req: NextRequest) {
+  // Rate limit: require auth, 5 builds/day, 5 req/min
+  const check = await rateLimit(req, {
+    requireAuth: true,
+    dailyLimit: 5,
+    maxPerMinute: 5,
+    feature: "build-kit",
+  });
+  if (check.error) return check.error;
+
   try {
     const { budget, tripType, climate, sleepStyle, priority } = await req.json();
 

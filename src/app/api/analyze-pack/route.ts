@@ -96,7 +96,18 @@ RESPONSE FORMAT — valid JSON only, no markdown:
   "summary": "Solid lightweight kit with room to cut 1-2 lb through shelter and pack upgrades. Sleep system is well-matched. Main opportunity is the Big 3 — currently 64% of base weight."
 }`;
 
+import { rateLimit } from "@/lib/rate-limit";
+
 export async function POST(req: NextRequest) {
+  // Rate limit: require auth, 10 analyses/day, 5 req/min
+  const check = await rateLimit(req, {
+    requireAuth: true,
+    dailyLimit: 10,
+    maxPerMinute: 5,
+    feature: "analyze-pack",
+  });
+  if (check.error) return check.error;
+
   try {
     const { items, tripContext } = await req.json() as {
       items: PackItemInput[];
