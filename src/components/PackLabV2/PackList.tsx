@@ -18,6 +18,7 @@ import {
   Import,
   X,
   ChevronDown,
+  Archive,
 } from "lucide-react";
 import {
   CATEGORY_LABELS,
@@ -26,6 +27,7 @@ import {
 } from "@/data/gear-database";
 import { usePackStore, PackItem, ItemStatus } from "@/store/pack-store";
 import { formatWeightWithUnit } from "@/utils/format";
+import { addToCloset } from "@/lib/closet-api";
 import { cn } from "@/lib/utils";
 
 const CATEGORY_ORDER: string[] = [
@@ -291,6 +293,18 @@ export function PackList() {
                           onToggleStar={() => toggleItemStar(packItem.gearId)}
                           onUpdateUrl={(url) => updateItemUrl(packItem.gearId, url)}
                           onUpdateDetails={(updates) => updateItemDetails(packItem.gearId, updates)}
+                          onAddToCloset={() => {
+                            if (packItem.item.id && !packItem.item.id.startsWith("custom-") && !packItem.item.id.startsWith("advisor-") && !packItem.item.id.startsWith("import-")) {
+                              addToCloset({ gearItemId: packItem.item.id });
+                            } else {
+                              addToCloset({
+                                customName: packItem.item.name,
+                                customBrand: packItem.item.brand,
+                                customWeightOz: packItem.item.weightOz,
+                                customCategory: packItem.item.category,
+                              });
+                            }
+                          }}
                         />
                       </li>
                     ))}
@@ -535,12 +549,13 @@ function getItemSpecs(item: GearItem): SpecDisplay[] {
 
 // ─── PackRow Component ──────────────────────────────────────────────────────
 
-function PackRow({ packItem, color, weightUnit, categories, isDragging, isDropTarget, onRemove, onQty, onStatusChange, onToggleStar, onUpdateUrl, onUpdateDetails }: {
+function PackRow({ packItem, color, weightUnit, categories, isDragging, isDropTarget, onRemove, onQty, onStatusChange, onToggleStar, onUpdateUrl, onUpdateDetails, onAddToCloset }: {
   packItem: PackItem; color: string; weightUnit: "oz" | "g"; categories: Record<string, string>;
   isDragging: boolean; isDropTarget: boolean;
   onRemove: () => void; onQty: (delta: number) => void; onStatusChange: (status: ItemStatus) => void;
   onToggleStar: () => void; onUpdateUrl: (url: string) => void;
   onUpdateDetails: (updates: { name?: string; brand?: string; weightOz?: number; category?: string }) => void;
+  onAddToCloset?: () => void;
 }) {
   const [editing, setEditing] = useState(false);
   const [expanded, setExpanded] = useState(true);
@@ -643,6 +658,7 @@ function PackRow({ packItem, color, weightUnit, categories, isDragging, isDropTa
           <IconBtn label="Star" onClick={onToggleStar} active={packItem.starred} icon={<Star className={cn("size-3.5", packItem.starred && "fill-current")} />} />
           <IconBtn label="Worn" onClick={() => onStatusChange(isWorn ? "packed" : "worn")} active={isWorn} icon={<Shirt className="size-3.5" />} />
           <IconBtn label="Consumable" onClick={() => onStatusChange(isConsumable ? "packed" : "consumable")} active={isConsumable} activeColor="text-blue-400" icon={<Droplets className="size-3.5" />} />
+          {onAddToCloset && <IconBtn label="Add to closet" onClick={onAddToCloset} icon={<Archive className="size-3.5" />} />}
           <IconBtn label="Remove" onClick={onRemove} danger icon={<Trash2 className="size-3.5" />} />
         </div>
       </div>
