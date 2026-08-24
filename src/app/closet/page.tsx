@@ -25,7 +25,9 @@ import {
   Zap,
   Shield,
   Puzzle,
+  PackagePlus,
 } from "lucide-react";
+import { usePackStore } from "@/store/pack-store";
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   shelter: <Tent className="size-4" />,
@@ -253,14 +255,29 @@ export default function ClosetPage() {
                   </span>
                 </div>
 
-                {/* Delete */}
-                <button
-                  onClick={() => handleRemove(item.id)}
-                  className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 p-1.5 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-all"
-                  aria-label="Remove from closet"
-                >
-                  <Trash2 className="size-3.5" />
-                </button>
+                {/* Actions */}
+                <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                  <button
+                    onClick={() => {
+                      const gearItem = item.gearItem;
+                      if (gearItem) {
+                        usePackStore.getState().addItem(gearItem);
+                      }
+                    }}
+                    className="p-1.5 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                    aria-label="Add to Pack Lab"
+                    title="Add to Pack Lab"
+                  >
+                    <PackagePlus className="size-3.5" />
+                  </button>
+                  <button
+                    onClick={() => handleRemove(item.id)}
+                    className="p-1.5 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
+                    aria-label="Remove from closet"
+                  >
+                    <Trash2 className="size-3.5" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>

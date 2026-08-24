@@ -45,6 +45,9 @@ export function PackList() {
   const getPackName = usePackStore((s) => s.getPackName);
   const setPackName = usePackStore((s) => s.setPackName);
   const getBaseWeight = usePackStore((s) => s.getBaseWeight);
+  const createLoadout = usePackStore((s) => s.createLoadout);
+  const switchLoadout = usePackStore((s) => s.switchLoadout);
+  const deleteLoadout = usePackStore((s) => s.deleteLoadout);
   const removeItem = usePackStore((s) => s.removeItem);
   const updateItemStatus = usePackStore((s) => s.updateItemStatus);
   const updateItemQuantity = usePackStore((s) => s.updateItemQuantity);
@@ -69,6 +72,7 @@ export function PackList() {
   const packName = getPackName();
   const baseWeight = getBaseWeight();
 
+  const [showLoadoutMenu, setShowLoadoutMenu] = useState(false);
   const [showQuickAdd, setShowQuickAdd] = useState(false);
   const [showCategoryAdd, setShowCategoryAdd] = useState(false);
   const [showImport, setShowImport] = useState(false);
@@ -127,11 +131,37 @@ export function PackList() {
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-white/10 p-4 md:px-6">
+      <header className="flex flex-col border-b border-border p-4 md:px-6">
+        {/* Loadout tabs */}
+        <div className="flex items-center gap-1 mb-3 overflow-x-auto scroll-thin">
+          {loadouts.map((l) => (
+            <button
+              key={l.id}
+              onClick={() => switchLoadout(l.id)}
+              className={cn(
+                "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap",
+                l.id === activeLoadoutId
+                  ? "bg-primary/10 text-primary border border-primary/30"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted border border-transparent"
+              )}
+            >
+              {l.name}
+            </button>
+          ))}
+          <button
+            onClick={() => {
+              const name = prompt("Loadout name:");
+              if (name?.trim()) createLoadout(name.trim());
+            }}
+            className="px-2 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            title="New loadout"
+          >
+            <Plus className="size-3.5" />
+          </button>
+        </div>
+
+        <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h2 className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-            My Pack
-          </h2>
           {editingName ? (
             <input
               type="text"
@@ -139,13 +169,13 @@ export function PackList() {
               onChange={(e) => setNameValue(e.target.value)}
               onBlur={handleNameSubmit}
               onKeyDown={(e) => { if (e.key === "Enter") handleNameSubmit(); if (e.key === "Escape") setEditingName(false); }}
-              className="mt-1 bg-transparent border-b border-primary text-lg font-semibold tracking-tight outline-none w-48"
+              className="bg-transparent border-b border-primary text-lg font-semibold tracking-tight outline-none w-48"
               autoFocus
             />
           ) : (
             <button
               onClick={() => { setNameValue(packName); setEditingName(true); }}
-              className="mt-1 text-lg font-semibold tracking-tight hover:text-primary transition-colors group flex items-center gap-2"
+              className="text-lg font-semibold tracking-tight hover:text-primary transition-colors group flex items-center gap-2"
             >
               {packName}
               <Pencil className="size-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -157,7 +187,7 @@ export function PackList() {
           <button
             type="button"
             onClick={() => setWeightUnit(weightUnit === "oz" ? "g" : "oz")}
-            className="rounded-md border border-white/10 bg-white/[0.03] px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground transition-colors hover:border-white/20 hover:text-foreground"
+            className="rounded-md border border-border bg-card px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
           >
             {weightUnit === "oz" ? "oz → g" : "g → oz"}
           </button>
@@ -168,7 +198,7 @@ export function PackList() {
             onClick={() => setShowImport(!showImport)}
             title="Import from LighterPack"
             className={cn(
-              "flex size-8 items-center justify-center rounded-md border border-white/10 bg-white/[0.03] text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary",
+              "flex size-8 items-center justify-center rounded-md border border-border bg-card text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary",
               showImport && "border-primary/40 text-primary"
             )}
           >
@@ -180,7 +210,7 @@ export function PackList() {
             type="button"
             onClick={handleShare}
             title="Copy share link"
-            className="flex size-8 items-center justify-center rounded-md border border-white/10 bg-white/[0.03] text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+            className="flex size-8 items-center justify-center rounded-md border border-border bg-card text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
           >
             {shareSuccess ? <Check className="size-3.5 text-primary" /> : <Share2 className="size-3.5" />}
           </button>
@@ -190,7 +220,7 @@ export function PackList() {
             type="button"
             onClick={handleExport}
             title="Export CSV"
-            className="flex size-8 items-center justify-center rounded-md border border-white/10 bg-white/[0.03] text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+            className="flex size-8 items-center justify-center rounded-md border border-border bg-card text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
           >
             <Download className="size-3.5" />
           </button>
@@ -201,6 +231,7 @@ export function PackList() {
           <div className="hidden sm:block">
             <Metric label="Base weight" value={formatWeightWithUnit(baseWeight, weightUnit)} accent />
           </div>
+        </div>
         </div>
       </header>
 
@@ -290,11 +321,11 @@ export function PackList() {
           />
         ) : (
           <div className="flex gap-2">
-            <button type="button" onClick={() => setShowQuickAdd(true)} className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/10 hover:text-primary">
+            <button type="button" onClick={() => setShowQuickAdd(true)} className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-2.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/10 hover:text-primary">
               <PlusCircle className="size-3.5" />
               Add Item
             </button>
-            <button type="button" onClick={() => setShowCategoryAdd(true)} className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-xs font-medium text-muted-foreground transition-colors hover:border-white/20 hover:bg-white/[0.05] hover:text-foreground">
+            <button type="button" onClick={() => setShowCategoryAdd(true)} className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-2.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/30 hover:bg-white/[0.05] hover:text-foreground">
               <Plus className="size-3.5" />
               Add Category
             </button>
@@ -560,7 +591,7 @@ function PackRow({ packItem, color, weightUnit, categories, isDragging, isDropTa
     <div className="space-y-0">
       <div className={cn(
         "group relative flex items-center gap-2 rounded-lg border border-white/[0.07] bg-white/[0.02] px-2 py-2.5 transition-all duration-200 sm:gap-3 sm:px-3",
-        "hover:border-white/20 hover:bg-white/[0.05]",
+        "hover:border-primary/30 hover:bg-white/[0.05]",
         isDragging && "opacity-40",
         isDropTarget && "border-primary/60 bg-primary/[0.06]",
         expanded && "rounded-b-none border-b-0"
