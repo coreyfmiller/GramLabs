@@ -5,8 +5,8 @@ import Link from "next/link";
 
 const NAV_LINKS = [
   { label: "PACK LAB", href: "/pack-lab" },
-  { label: "BUILD MY KIT", href: "/build" },
-  { label: "GEAR ADVISOR", href: "/chat" },
+  { label: "AI ADVISOR", href: "/chat" },
+  { label: "TRIP ENGINE", href: "/trip" },
 ];
 
 interface HeroNavigationProps {

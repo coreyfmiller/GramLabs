@@ -11,7 +11,7 @@ const NAV_LINKS = [
   { label: "PACK LAB", href: "/pack-lab" },
   { label: "DISCOVER", href: "/compare" },
   { label: "AI ADVISOR", href: "/chat" },
-  { label: "PLAN", href: "/trip" },
+  { label: "TRIP ENGINE", href: "/trip" },
   { label: "BRANDS", href: "/brands", admin: true },
   { label: "TODO", href: "/admin/todo", admin: true },
 ];

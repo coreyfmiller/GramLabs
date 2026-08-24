@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { addToCloset } from "@/lib/closet-api";
 import { createLoadout, addItemToLoadout } from "@/lib/loadout-api";
-import { createClient } from "@/lib/supabase/client";
 import { Upload, X, Check, Loader2 } from "lucide-react";
 
 interface LocalPackItem {
@@ -85,7 +84,6 @@ export function MigratePack() {
     if (!localData || !user) return;
     setMigrating(true);
 
-    const supabase = createClient();
     let closetItemCount = 0;
     let loadoutsMigrated = 0;
 

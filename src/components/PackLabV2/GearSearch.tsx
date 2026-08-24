@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Plus, Search, X, Loader2 } from "lucide-react";
+import { Plus, Search, X, Loader2, Package } from "lucide-react";
 import {
   GearCategory,
   GearItem,
@@ -11,6 +11,8 @@ import {
 } from "@/data/gear-database";
 import { searchGear, getAllGear, getCategoryCounts, getSubcategoryCounts, getGearCount } from "@/lib/gear-api";
 import { usePackStore } from "@/store/pack-store";
+import { useAuth } from "@/hooks/use-auth";
+import { getClosetItemsWithGear, UserGearItem } from "@/lib/closet-api";
 import { cn } from "@/lib/utils";
 
 const CATEGORY_ORDER: GearCategory[] = [
@@ -33,7 +35,11 @@ export function GearSearch() {
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [subCounts, setSubCounts] = useState<Record<string, number>>({});
   const [totalCount, setTotalCount] = useState(0);
+  const [source, setSource] = useState<"database" | "my-gear">("database");
+  const [closetItems, setClosetItems] = useState<UserGearItem[]>([]);
+  const [closetLoading, setClosetLoading] = useState(false);
 
+  const { user } = useAuth();
   const addItem = usePackStore((s) => s.addItem);
   const loadouts = usePackStore((s) => s.loadouts);
   const activeLoadoutId = usePackStore((s) => s.activeLoadoutId);
@@ -41,6 +47,52 @@ export function GearSearch() {
   const packIds = useMemo(() => packItems.map((i) => i.gearId), [packItems]);
 
   const activeSubcategories = filter !== "all" ? SUBCATEGORIES[filter] ?? [] : [];
+
+  // Load closet items when user switches to "My Gear" tab
+  useEffect(() => {
+    if (source === "my-gear" && user && closetItems.length === 0) {
+      setClosetLoading(true);
+      getClosetItemsWithGear().then((items) => {
+        setClosetItems(items);
+        setClosetLoading(false);
+      });
+    }
+  }, [source, user, closetItems.length]);
+
+  // Convert a closet item to a GearItem for adding to pack
+  function closetItemToGear(item: UserGearItem): GearItem {
+    if (item.gearItem) return item.gearItem;
+    return {
+      id: `closet-${item.id}`,
+      name: item.customName || "Unknown",
+      brand: item.customBrand || "",
+      category: (item.customCategory || "accessories") as GearCategory,
+      tier: "mid",
+      weightOz: item.customWeightOz || 0,
+      priceUsd: 0,
+      description: "",
+    };
+  }
+
+  // Filtered closet items based on query and category
+  const filteredClosetItems = useMemo(() => {
+    let items = closetItems;
+    if (filter !== "all") {
+      items = items.filter((i) => {
+        const cat = i.gearItem?.category || i.customCategory;
+        return cat === filter;
+      });
+    }
+    if (query.trim()) {
+      const q = query.toLowerCase();
+      items = items.filter((i) => {
+        const name = (i.gearItem?.name || i.customName || "").toLowerCase();
+        const brand = (i.gearItem?.brand || i.customBrand || "").toLowerCase();
+        return name.includes(q) || brand.includes(q);
+      });
+    }
+    return items;
+  }, [closetItems, filter, query]);
 
   // Fetch category counts on mount
   useEffect(() => {
@@ -101,9 +153,39 @@ export function GearSearch() {
             Gear Library
           </h2>
           <span className="num text-xs text-muted-foreground">
-            {results.length}/{totalCount}
+            {source === "my-gear" ? `${filteredClosetItems.length}/${closetItems.length}` : `${results.length}/${totalCount}`}
           </span>
         </div>
+
+        {/* Source toggle: My Gear vs Database */}
+        {user && (
+          <div className="flex rounded-lg border border-white/10 p-0.5">
+            <button
+              onClick={() => setSource("my-gear")}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-[11px] font-medium transition-colors",
+                source === "my-gear"
+                  ? "bg-primary/15 text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Package className="size-3" />
+              My Gear
+            </button>
+            <button
+              onClick={() => setSource("database")}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-[11px] font-medium transition-colors",
+                source === "database"
+                  ? "bg-primary/15 text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Search className="size-3" />
+              Browse Database
+            </button>
+          </div>
+        )}
 
         <div className="group relative">
           <Search
@@ -196,6 +278,42 @@ export function GearSearch() {
             }}
             onCancel={() => setShowCustomForm(false)}
           />
+        ) : source === "my-gear" ? (
+          // My Gear tab
+          closetLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="size-5 animate-spin text-muted-foreground" />
+            </div>
+          ) : filteredClosetItems.length === 0 ? (
+            <div className="px-2 py-8 text-center">
+              <Package className="size-8 text-muted-foreground/40 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">
+                {closetItems.length === 0
+                  ? "Your gear closet is empty"
+                  : "No items match this filter"}
+              </p>
+              {closetItems.length === 0 && (
+                <a href="/closet" className="text-xs text-primary hover:underline mt-1 inline-block">
+                  Add gear to your closet →
+                </a>
+              )}
+            </div>
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {filteredClosetItems.map((item) => {
+                const gear = closetItemToGear(item);
+                return (
+                  <li key={item.id}>
+                    <ResultCard
+                      gear={gear}
+                      inPack={packIds.includes(gear.id)}
+                      onAdd={() => addItem(gear)}
+                    />
+                  </li>
+                );
+              })}
+            </ul>
+          )
         ) : loading ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="size-5 animate-spin text-muted-foreground" />
