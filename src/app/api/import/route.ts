@@ -101,67 +101,79 @@ export async function POST(request: Request) {
         
         const html = await htmlRes.text();
         
-        // Parse items from the HTML structure
-        // LighterPack renders items with name, weight, and unit in structured elements
-        const itemRegex = /<tr[^>]*class="[^"]*itemRow[^"]*"[^>]*>[\s\S]*?<\/tr>/gi;
-        const nameRegex = /class="[^"]*name[^"]*"[^>]*>([^<]+)/i;
-        const weightRegex = /class="[^"]*weight[^"]*"[^>]*>(\d+\.?\d*)/i;
-        const unitRegex = /class="[^"]*unit[^"]*"[^>]*selected[^>]*>([^<]+)/i;
+        // LighterPack HTML renders items as repeating blocks of:
+        //   [item name] \n [brand/description] \n ... \n [weight number] \n ... \n [unit]
+        // We parse by splitting into lines and detecting the pattern:
+        // A non-empty text line followed eventually by a number line followed by a unit line (oz/g/kg/lb)
+        const lines = html.split('\n').map(l => l.trim()).filter(l => l.length > 0);
         
-        // Alternative: simpler regex for the rendered text pattern
-        // LighterPack pages have item data in a structured format
-        const lines = html.split('\n');
-        let currentName = '';
-        let currentWeight = 0;
-        let currentUnit = 'g';
-        
-        for (let i = 0; i < lines.length; i++) {
-          const line = lines[i].trim();
+        let i = 0;
+        while (i < lines.length) {
+          // Look for a weight number followed by a unit indicator
+          const weightLineIdx = lines.findIndex((l, idx) => {
+            if (idx <= i) return false;
+            // A line that's just a number (weight value)
+            if (!/^\d+\.?\d*$/.test(l)) return false;
+            // Next few lines should contain a unit
+            const nextFew = lines.slice(idx + 1, idx + 8).join(' ');
+            return /\b(oz|lb|g|kg)\b/.test(nextFew);
+          });
           
-          // Look for item names (they appear in specific elements)
-          const itemNameMatch = line.match(/class="lpItemName[^"]*"[^>]*>([^<]+)/);
-          if (itemNameMatch) {
-            if (currentName && currentWeight > 0) {
-              lpItems.push({ name: currentName, weight: currentWeight, unit: currentUnit });
+          if (weightLineIdx === -1) break;
+          
+          // Work backwards from the weight to find the item name
+          // The item name is the first substantial text line in the block before the weight
+          // Skip lines that are just HTML artifacts, single characters, or category headers
+          let nameIdx = -1;
+          for (let j = weightLineIdx - 1; j >= Math.max(0, weightLineIdx - 10); j--) {
+            const candidate = lines[j];
+            // Skip very short lines, numbers, unit strings
+            if (candidate.length < 2) continue;
+            if (/^\d+\.?\d*$/.test(candidate)) continue;
+            if (/^(oz|lb|g|kg)$/.test(candidate)) continue;
+            if (/^(base weight|worn weight|leave at home|total weight)$/i.test(candidate)) continue;
+            // This looks like a name or description
+            nameIdx = j;
+            break;
+          }
+          
+          if (nameIdx === -1) {
+            i = weightLineIdx + 1;
+            continue;
+          }
+          
+          const itemName = lines[nameIdx];
+          const weight = parseFloat(lines[weightLineIdx]);
+          
+          // Find the selected unit (look for g/oz/kg/lb after the weight)
+          let unit = 'g';
+          for (let k = weightLineIdx + 1; k < Math.min(weightLineIdx + 8, lines.length); k++) {
+            if (/^(oz|g|kg|lb)$/.test(lines[k])) {
+              unit = lines[k];
+              break;
             }
-            currentName = itemNameMatch[1].trim();
-            currentWeight = 0;
-            currentUnit = 'g';
           }
           
-          const weightMatch = line.match(/class="lpItemWeight[^"]*"[^>]*>(\d+\.?\d*)/);
-          if (weightMatch) {
-            currentWeight = parseFloat(weightMatch[1]);
+          // Get brand/description (line between name and weight that isn't the name)
+          let brand = '';
+          for (let k = nameIdx + 1; k < weightLineIdx; k++) {
+            const candidate = lines[k];
+            if (candidate.length >= 2 && !/^\d/.test(candidate) && !/^(oz|lb|g|kg)$/.test(candidate)) {
+              brand = candidate;
+              break;
+            }
           }
           
-          const unitMatch = line.match(/class="lpItemUnit[^"]*"[^>]*selected[^>]*>([^<]+)/);
-          if (unitMatch) {
-            currentUnit = unitMatch[1].trim();
+          if (weight > 0) {
+            lpItems.push({ name: itemName, brand: brand || undefined, weight, unit });
           }
-        }
-        // Push last item
-        if (currentName && currentWeight > 0) {
-          lpItems.push({ name: currentName, weight: currentWeight, unit: currentUnit });
-        }
-        
-        // If regex parsing didn't work, try a more generic approach
-        // LighterPack outputs weight data in the page — look for the JSON data embedded in script tags
-        if (lpItems.length === 0) {
-          const scriptMatch = html.match(/var\s+lpData\s*=\s*(\{[\s\S]*?\});/);
-          if (scriptMatch) {
-            try {
-              const lpData = JSON.parse(scriptMatch[1]);
-              if (lpData.items) lpItems = lpData.items;
-              else if (lpData.categories) {
-                lpItems = lpData.categories.flatMap((c: { items?: unknown[] }) => c.items || []);
-              }
-            } catch { /* ignore */ }
-          }
+          
+          i = weightLineIdx + 1;
         }
         
         if (lpItems.length === 0) {
           return NextResponse.json(
-            { error: "This LighterPack list couldn't be read. It may be private or in an unsupported format. Try exporting as CSV from LighterPack instead." },
+            { error: "This LighterPack list couldn't be read. Try exporting as CSV from LighterPack instead." },
             { status: 400 }
           );
         }
