@@ -162,9 +162,10 @@ Supabase
 
 ## What's Next (Priority Order)
 
-1. **Test the deployed site manually** (auth flow, closet, pack lab sync)
-2. **Set Gemini spend cap** (Google Cloud Console)
-3. **Fix Google OAuth** (add production URLs to credentials)
-4. **Populate affiliate URLs** (sign up for programs, run script)
-5. **Stripe integration** (Pro tier checkout + webhooks)
-6. **Community features** (public loadout sharing, trip logs)
+1. **Test the deployed site manually** — sign up with Google, visit closet, add gear, open Pack Lab, send a chat message
+2. **Set Gemini spend cap** (Google Cloud Console — $15/day)
+3. **Fix Google OAuth** if still broken (add Vercel production URL to credentials)
+4. **Build Quadropus Command Center** (agent visualization dashboard)
+5. **Populate affiliate URLs** (sign up for programs, run script)
+6. **Stripe integration** (Pro tier checkout + webhooks)
+7. **Community features** (public loadout sharing, trip logs)
