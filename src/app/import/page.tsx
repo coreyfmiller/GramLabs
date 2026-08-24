@@ -5,6 +5,7 @@ import { Nav } from "@/components/Nav";
 import { useAuth } from "@/hooks/use-auth";
 import { addToCloset } from "@/lib/closet-api";
 import { cn } from "@/lib/utils";
+import { usePackStore } from "@/store/pack-store";
 import {
   Upload,
   FileText,
@@ -37,6 +38,7 @@ export default function ImportPage() {
   const [items, setItems] = useState<MatchedItem[]>([]);
   const [error, setError] = useState("");
   const [importStats, setImportStats] = useState({ added: 0, total: 0 });
+  const [packName, setPackName] = useState("");
 
   async function handleSubmit() {
     if (!inputText.trim()) return;
@@ -81,11 +83,22 @@ export default function ImportPage() {
     setStep("importing");
     const toImport = items.filter((i) => i.accepted);
     let added = 0;
+    const importedGearItems: { id: string; name: string; brand: string; category: string; weightOz: number; priceUsd: number }[] = [];
 
     for (const item of toImport) {
       let result;
       if (item.useMatch && item.match) {
         result = await addToCloset({ gearItemId: item.match.id });
+        if (result) {
+          importedGearItems.push({
+            id: item.match.id,
+            name: item.match.name,
+            brand: item.match.brand,
+            category: item.match.category || "accessories",
+            weightOz: item.parsed.weightOz,
+            priceUsd: 0,
+          });
+        }
       } else {
         result = await addToCloset({
           customName: item.parsed.name,
@@ -93,8 +106,29 @@ export default function ImportPage() {
           customWeightOz: item.parsed.weightOz,
           customCategory: item.parsed.category || "accessories",
         });
+        if (result) {
+          importedGearItems.push({
+            id: `import-${Date.now()}-${added}`,
+            name: item.parsed.name,
+            brand: item.parsed.brand || "",
+            category: item.parsed.category || "accessories",
+            weightOz: item.parsed.weightOz,
+            priceUsd: 0,
+          });
+        }
       }
       if (result) added++;
+    }
+
+    // Create a loadout in Pack Lab if user gave it a name
+    if (importedGearItems.length > 0) {
+      const name = packName.trim() || "Imported Pack";
+      const store = usePackStore.getState();
+      store.createLoadout(name);
+      // Add all items to the newly created (now active) loadout
+      for (const gear of importedGearItems) {
+        store.addItem(gear as any);
+      }
     }
 
     setImportStats({ added, total: toImport.length });
@@ -279,14 +313,24 @@ export default function ImportPage() {
                   {items.filter((i) => i.confidence === "none").length} no match (will add as custom)
                 </p>
               </div>
-              <button
-                onClick={handleImport}
-                disabled={items.filter((i) => i.accepted).length === 0}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-foreground text-sm font-medium hover:brightness-110 transition-colors disabled:opacity-50"
-              >
-                <Package className="size-4" />
-                Import {items.filter((i) => i.accepted).length} items
-              </button>
+              {/* Pack name input */}
+              <div className="flex items-center gap-3">
+                <input
+                  type="text"
+                  value={packName}
+                  onChange={(e) => setPackName(e.target.value)}
+                  placeholder="Name this loadout (e.g. PCT 2026)"
+                  className="w-48 rounded-lg border border-border bg-input px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors"
+                />
+                <button
+                  onClick={handleImport}
+                  disabled={items.filter((i) => i.accepted).length === 0}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-110 transition-colors disabled:opacity-50"
+                >
+                  <Package className="size-4" />
+                  Import {items.filter((i) => i.accepted).length} items
+                </button>
+              </div>
             </div>
 
             {/* Items list */}
@@ -384,7 +428,7 @@ export default function ImportPage() {
             <Check className="size-12 text-primary mx-auto mb-4" />
             <h2 className="text-xl font-bold text-foreground mb-2">Import complete</h2>
             <p className="text-sm text-muted-foreground mb-6">
-              Added {importStats.added} of {importStats.total} items to your gear closet.
+              Added {importStats.added} items to your closet and created loadout &ldquo;{packName.trim() || "Imported Pack"}&rdquo; in Pack Lab.
             </p>
             <div className="flex gap-3 justify-center">
               <a
