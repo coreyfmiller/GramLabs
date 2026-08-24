@@ -22,6 +22,7 @@ const NAV_LINKS: NavLink[] = [
   { label: "AI ADVISOR", href: "/chat" },
   { label: "TRIP ENGINE", href: "/trip" },
   { label: "BRANDS", href: "/brands", admin: true },
+  { label: "TODO", href: "/admin/todo", admin: true },
 ];
 
 export function Nav() {
