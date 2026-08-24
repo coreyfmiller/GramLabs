@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { supabase as publicSupabase } from "@/lib/supabase";
-import { parseCSV, parseText, ParsedItem } from "@/utils/import-parser";
+import { parseCSV, parseText, ParsedItem, mapCategory } from "@/utils/import-parser";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     let parsedItems: ParsedItem[];
 
     if (format === "lighterpack-url") {
-      // Fetch LighterPack JSON from share URL
+      // Fetch LighterPack data from share URL
       const match = text.match(/lighterpack\.com\/r\/([a-z0-9]+)/i);
       if (!match) {
         return NextResponse.json(
@@ -56,29 +56,130 @@ export async function POST(request: Request) {
           { status: 400 }
         );
       }
-      const res = await fetch(`https://lighterpack.com/r/${match[1]}.json`);
-      if (!res.ok) {
-        return NextResponse.json(
-          { error: "Could not fetch LighterPack data" },
-          { status: 400 }
-        );
-      }
-      const data = await res.json();
-      parsedItems = (data.items || []).map(
-        (item: { name?: string; category?: string; weight?: number; unit?: string; price?: number }) => {
-          let weightOz = item.weight || 0;
-          const unit = (item.unit || "oz").toLowerCase();
-          if (unit === "g" || unit === "grams") weightOz = weightOz / 28.3495;
-          if (unit === "kg") weightOz = (weightOz * 1000) / 28.3495;
-          if (unit === "lb" || unit === "lbs") weightOz = weightOz * 16;
-          return {
-            name: item.name || "Unknown",
-            category: item.category || undefined,
-            weightOz: Math.round(weightOz * 100) / 100,
-            price: item.price || undefined,
-          };
+      
+      // Try JSON endpoint first, fall back to HTML parsing
+      const shareId = match[1];
+      let lpItems: { name: string; brand?: string; weight: number; unit: string; category?: string }[] = [];
+      
+      const jsonRes = await fetch(`https://lighterpack.com/r/${shareId}.json`, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (compatible; HikeMind/1.0)",
+          "Accept": "application/json",
+        },
+      });
+      
+      if (jsonRes.ok) {
+        const rawText = await jsonRes.text();
+        try {
+          const data = JSON.parse(rawText);
+          // LighterPack JSON can have items at top level or nested in categories
+          if (data.items) {
+            lpItems = data.items;
+          } else if (data.categories) {
+            lpItems = data.categories.flatMap((cat: { items?: unknown[]; categoryItems?: unknown[] }) => cat.items || cat.categoryItems || []);
+          }
+        } catch {
+          // JSON parse failed — fall through to HTML parsing
         }
-      );
+      }
+      
+      // Fallback: parse the HTML page
+      if (lpItems.length === 0) {
+        const htmlRes = await fetch(`https://lighterpack.com/r/${shareId}`, {
+          headers: {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "text/html",
+          },
+        });
+        
+        if (!htmlRes.ok) {
+          return NextResponse.json(
+            { error: "Could not fetch LighterPack list. Make sure the URL is a public share link." },
+            { status: 400 }
+          );
+        }
+        
+        const html = await htmlRes.text();
+        
+        // Parse items from the HTML structure
+        // LighterPack renders items with name, weight, and unit in structured elements
+        const itemRegex = /<tr[^>]*class="[^"]*itemRow[^"]*"[^>]*>[\s\S]*?<\/tr>/gi;
+        const nameRegex = /class="[^"]*name[^"]*"[^>]*>([^<]+)/i;
+        const weightRegex = /class="[^"]*weight[^"]*"[^>]*>(\d+\.?\d*)/i;
+        const unitRegex = /class="[^"]*unit[^"]*"[^>]*selected[^>]*>([^<]+)/i;
+        
+        // Alternative: simpler regex for the rendered text pattern
+        // LighterPack pages have item data in a structured format
+        const lines = html.split('\n');
+        let currentName = '';
+        let currentWeight = 0;
+        let currentUnit = 'g';
+        
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+          
+          // Look for item names (they appear in specific elements)
+          const itemNameMatch = line.match(/class="lpItemName[^"]*"[^>]*>([^<]+)/);
+          if (itemNameMatch) {
+            if (currentName && currentWeight > 0) {
+              lpItems.push({ name: currentName, weight: currentWeight, unit: currentUnit });
+            }
+            currentName = itemNameMatch[1].trim();
+            currentWeight = 0;
+            currentUnit = 'g';
+          }
+          
+          const weightMatch = line.match(/class="lpItemWeight[^"]*"[^>]*>(\d+\.?\d*)/);
+          if (weightMatch) {
+            currentWeight = parseFloat(weightMatch[1]);
+          }
+          
+          const unitMatch = line.match(/class="lpItemUnit[^"]*"[^>]*selected[^>]*>([^<]+)/);
+          if (unitMatch) {
+            currentUnit = unitMatch[1].trim();
+          }
+        }
+        // Push last item
+        if (currentName && currentWeight > 0) {
+          lpItems.push({ name: currentName, weight: currentWeight, unit: currentUnit });
+        }
+        
+        // If regex parsing didn't work, try a more generic approach
+        // LighterPack outputs weight data in the page — look for the JSON data embedded in script tags
+        if (lpItems.length === 0) {
+          const scriptMatch = html.match(/var\s+lpData\s*=\s*(\{[\s\S]*?\});/);
+          if (scriptMatch) {
+            try {
+              const lpData = JSON.parse(scriptMatch[1]);
+              if (lpData.items) lpItems = lpData.items;
+              else if (lpData.categories) {
+                lpItems = lpData.categories.flatMap((c: { items?: unknown[] }) => c.items || []);
+              }
+            } catch { /* ignore */ }
+          }
+        }
+        
+        if (lpItems.length === 0) {
+          return NextResponse.json(
+            { error: "This LighterPack list couldn't be read. It may be private or in an unsupported format. Try exporting as CSV from LighterPack instead." },
+            { status: 400 }
+          );
+        }
+      }
+      
+      parsedItems = lpItems.map((item) => {
+        let weightOz = item.weight || 0;
+        const unit = (item.unit || "g").toLowerCase();
+        if (unit === "g" || unit === "grams") weightOz = weightOz / 28.3495;
+        if (unit === "kg") weightOz = (weightOz * 1000) / 28.3495;
+        if (unit === "lb" || unit === "lbs") weightOz = weightOz * 16;
+        if (unit === "oz") weightOz = item.weight;
+        return {
+          name: item.name || "Unknown",
+          category: item.category ? mapCategory(item.category) : undefined,
+          weightOz: Math.round(weightOz * 100) / 100,
+        };
+      });
     } else if (format === "csv") {
       parsedItems = parseCSV(text);
     } else {
