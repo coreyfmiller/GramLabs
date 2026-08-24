@@ -96,7 +96,7 @@ export default function ChatPage() {
                 className={cn(
                   "max-w-[88%] md:max-w-[78%] rounded-xl px-4 py-3",
                   msg.role === "user"
-                    ? "glass border border-border"
+                    ? "bg-card border border-border"
                     : "bg-transparent"
                 )}
               >
@@ -112,7 +112,7 @@ export default function ChatPage() {
                 )}
               </div>
               {msg.role === "user" && (
-                <div className="size-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0 mt-1">
+                <div className="size-8 rounded-lg bg-muted flex items-center justify-center shrink-0 mt-1">
                   <User className="size-4 text-muted-foreground" />
                 </div>
               )}
@@ -124,7 +124,7 @@ export default function ChatPage() {
               <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                 <Sparkles className="size-4 text-primary" />
               </div>
-              <div className="glass rounded-xl border border-border px-4 py-3">
+              <div className="rounded-xl border border-border bg-card px-4 py-3">
                 <Loader2 className="size-4 text-primary animate-spin" />
               </div>
             </div>
@@ -143,7 +143,7 @@ export default function ChatPage() {
             onKeyDown={handleKeyDown}
             placeholder="Ask about gear, build a kit, compare items..."
             rows={1}
-            className="flex-1 bg-white/[0.03] border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/60 transition-colors resize-none max-h-[120px]"
+            className="flex-1 bg-input border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors resize-none max-h-[120px]"
             style={{ minHeight: "48px" }}
           />
           <button
@@ -165,10 +165,10 @@ export default function ChatPage() {
 function EmptyState({ onPromptClick }: { onPromptClick: (prompt: string) => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
-        <Sparkles className="size-8 text-primary" />
+      <div className="size-12 rounded-xl bg-muted flex items-center justify-center mb-4">
+        <Sparkles className="size-6 text-muted-foreground" />
       </div>
-      <h2 className="text-2xl font-bold tracking-tight mb-2">Gear Advisor</h2>
+      <h2 className="text-xl font-bold tracking-tight mb-1">Gear Advisor</h2>
       <p className="text-sm text-muted-foreground max-w-md mb-10">
         Get personalized gear recommendations, kit builds, and comparisons backed by real trail data.
       </p>
@@ -177,7 +177,7 @@ function EmptyState({ onPromptClick }: { onPromptClick: (prompt: string) => void
           <button
             key={i}
             onClick={() => onPromptClick(prompt)}
-            className="glass text-left px-4 py-3 rounded-xl border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all"
+            className="text-left px-4 py-3 rounded-xl border border-border bg-card text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all"
           >
             {prompt}
           </button>
@@ -287,7 +287,7 @@ function ChatResponse({ content }: { content: string }) {
   return (
     <div className="text-sm leading-relaxed space-y-4">
       {textContent && (
-        <div className="prose-invert">
+        <div className="prose-chat">
           <ReactMarkdown>{textContent}</ReactMarkdown>
         </div>
       )}
@@ -309,7 +309,7 @@ function ChatResponse({ content }: { content: string }) {
                 {items.map((item, j) => (
                   <div
                     key={j}
-                    className="glass flex items-start gap-3 rounded-lg border border-border p-3 hover:border-primary/30 transition-colors"
+                    className="flex items-start gap-3 rounded-lg border border-border bg-card p-3 hover:border-primary/30 transition-colors"
                   >
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium">{item.brand} {item.name}</p>
