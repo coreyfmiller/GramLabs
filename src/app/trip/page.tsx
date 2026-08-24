@@ -172,9 +172,6 @@ export default function TripPage() {
               <p className="mt-2 text-[11px] text-muted-foreground">
                 Weather data from Open-Meteo. Always check local conditions before heading out.
               </p>
-              <a href="/calories" className="inline-flex items-center gap-1.5 mt-3 text-xs text-primary hover:underline">
-                Calorie & food calculator →
-              </a>
             </div>
 
             {/* Form */}
