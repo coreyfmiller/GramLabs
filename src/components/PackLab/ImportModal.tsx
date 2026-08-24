@@ -35,9 +35,9 @@ export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
       />
 
       {/* Modal card */}
-      <div className="relative w-full max-w-2xl max-h-[90vh] mx-4 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+      <div className="relative w-full max-w-2xl max-h-[90vh] mx-4 bg-background border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <h2 className="text-[15px] font-bold tracking-wide text-white">
             Import Gear List
           </h2>
@@ -50,7 +50,7 @@ export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-white/10">
+        <div className="flex border-b border-border">
           <TabButton
             active={activeTab === "lighterpack"}
             onClick={() => setActiveTab("lighterpack")}
@@ -128,7 +128,7 @@ function LighterPackTab({ onClose }: { onClose: () => void }) {
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://lighterpack.com/r/xyz123"
-          className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-[14px] text-white placeholder:text-white/30 outline-none focus:border-lime-400/50 transition-colors"
+          className="w-full bg-white/[0.05] border border-border rounded-lg px-4 py-3 text-[14px] text-white placeholder:text-white/30 outline-none focus:border-lime-400/50 transition-colors"
         />
         {shareCode && (
           <p className="mt-2 text-[12px] text-lime-400/70">
@@ -138,7 +138,7 @@ function LighterPackTab({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Instructions */}
-      <div className="bg-white/[0.03] border border-white/10 rounded-lg p-4 space-y-3">
+      <div className="bg-white/[0.03] border border-border rounded-lg p-4 space-y-3">
         <div className="flex items-start gap-2">
           <AlertCircle className="w-4 h-4 text-lime-400/70 mt-0.5 shrink-0" />
           <div className="space-y-2 text-[13px] text-white/60">
@@ -241,7 +241,7 @@ function CSVTab({ onClose }: { onClose: () => void }) {
         />
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white/[0.05] border border-white/10 text-[13px] text-white/70 hover:text-white hover:border-white/20 transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white/[0.05] border border-border text-[13px] text-white/70 hover:text-white hover:border-white/20 transition-colors"
         >
           <Upload className="w-4 h-4" />
           Upload CSV / TSV
@@ -266,7 +266,7 @@ function CSVTab({ onClose }: { onClose: () => void }) {
           }}
           placeholder={"Name, Weight, Unit, Category\nULA Circuit, 39, oz, Pack\nNemo Tensor, 15, oz, Sleep System"}
           rows={5}
-          className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-[13px] text-white placeholder:text-white/30 outline-none focus:border-lime-400/50 transition-colors font-[family-name:var(--font-jetbrains-mono)] resize-none"
+          className="w-full bg-white/[0.05] border border-border rounded-lg px-4 py-3 text-[13px] text-white placeholder:text-white/30 outline-none focus:border-lime-400/50 transition-colors font-[family-name:var(--font-jetbrains-mono)] resize-none"
         />
         {!parseResult && (
           <button
@@ -297,7 +297,7 @@ function CSVTab({ onClose }: { onClose: () => void }) {
                     onChange={(e) =>
                       setMapping({ ...mapping, [field]: parseInt(e.target.value) })
                     }
-                    className="flex-1 bg-white/[0.05] border border-white/10 rounded-md px-2 py-1.5 text-[11px] text-white outline-none focus:border-lime-400/50"
+                    className="flex-1 bg-white/[0.05] border border-border rounded-md px-2 py-1.5 text-[11px] text-white outline-none focus:border-lime-400/50"
                   >
                     <option value={-1} className="bg-[#1a1a1a]">
                       — skip —
@@ -398,7 +398,7 @@ function PasteTab({ onClose }: { onClose: () => void }) {
           }}
           placeholder={`Nemo Hornet 2P - 30 oz\nTherm-a-Rest NeoAir XLite, 12oz\nSawyer Squeeze (3 oz)\nULA Circuit\t39\toz`}
           rows={8}
-          className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-[13px] text-white placeholder:text-white/30 outline-none focus:border-lime-400/50 transition-colors font-[family-name:var(--font-jetbrains-mono)] resize-none"
+          className="w-full bg-white/[0.05] border border-border rounded-lg px-4 py-3 text-[13px] text-white placeholder:text-white/30 outline-none focus:border-lime-400/50 transition-colors font-[family-name:var(--font-jetbrains-mono)] resize-none"
         />
         <p className="mt-1.5 text-[11px] text-white/30">
           One item per line. We&apos;ll auto-detect weights in formats like &quot;12

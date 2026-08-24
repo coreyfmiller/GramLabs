@@ -126,7 +126,7 @@ export default function ImportPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <Nav />
 
       <main className="max-w-3xl mx-auto px-4 py-8">
@@ -216,7 +216,7 @@ export default function ImportPage() {
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
                     rows={12}
-                    className="w-full px-4 py-3 rounded-lg bg-card border border-border text-white placeholder:text-zinc-600 text-sm font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500/50 resize-y"
+                    className="w-full px-4 py-3 rounded-lg bg-card border border-border text-foreground placeholder:text-muted-foreground text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 resize-y"
                   />
                 </div>
               )}
@@ -232,7 +232,7 @@ export default function ImportPage() {
             <button
               onClick={handleSubmit}
               disabled={!inputText.trim()}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-white text-sm font-medium hover:brightness-110 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-foreground text-sm font-medium hover:brightness-110 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ArrowRight className="size-4" />
               Parse &amp; Match
@@ -270,7 +270,7 @@ export default function ImportPage() {
             {/* Summary */}
             <div className="flex items-center justify-between p-4 rounded-lg border border-border bg-card/50">
               <div>
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm font-medium text-foreground">
                   {items.length} items parsed
                 </p>
                 <p className="text-xs text-muted-foreground">
@@ -282,7 +282,7 @@ export default function ImportPage() {
               <button
                 onClick={handleImport}
                 disabled={items.filter((i) => i.accepted).length === 0}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:brightness-110 transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-foreground text-sm font-medium hover:brightness-110 transition-colors disabled:opacity-50"
               >
                 <Package className="size-4" />
                 Import {items.filter((i) => i.accepted).length} items
@@ -306,7 +306,7 @@ export default function ImportPage() {
                       {/* Parsed item */}
                       <div className="flex items-center gap-2">
                         <ConfidenceBadge confidence={item.confidence} />
-                        <p className="text-sm font-medium text-white truncate">
+                        <p className="text-sm font-medium text-foreground truncate">
                           {item.parsed.name}
                         </p>
                         <span className="text-xs text-muted-foreground shrink-0">
@@ -320,7 +320,7 @@ export default function ImportPage() {
                           → {item.match.brand} {item.match.name} ({item.match.weightOz.toFixed(1)} oz)
                         </p>
                       ) : (
-                        <p className="text-xs text-zinc-600 mt-1 ml-6">
+                        <p className="text-xs text-muted-foreground mt-1 ml-6">
                           → Will add as custom item
                         </p>
                       )}
@@ -334,7 +334,7 @@ export default function ImportPage() {
                           className={cn(
                             "text-[10px] px-2 py-0.5 rounded border transition-colors",
                             item.useMatch
-                              ? "border-emerald-500/30 text-primary bg-emerald-500/10"
+                              ? "border-primary/30 text-primary bg-primary/10"
                               : "border-border text-muted-foreground"
                           )}
                         >
@@ -348,8 +348,8 @@ export default function ImportPage() {
                         className={cn(
                           "size-7 flex items-center justify-center rounded-md border transition-colors",
                           item.accepted
-                            ? "border-emerald-500/30 bg-emerald-500/10 text-primary"
-                            : "border-border text-zinc-600 hover:border-zinc-600"
+                            ? "border-emerald-500/30 bg-primary/10 text-primary"
+                            : "border-border text-muted-foreground hover:border-primary/30"
                         )}
                       >
                         {item.accepted ? <Check className="size-3.5" /> : <X className="size-3.5" />}
@@ -382,14 +382,14 @@ export default function ImportPage() {
         {step === "done" && (
           <div className="text-center py-16">
             <Check className="size-12 text-primary mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-white mb-2">Import complete</h2>
+            <h2 className="text-xl font-bold text-foreground mb-2">Import complete</h2>
             <p className="text-sm text-muted-foreground mb-6">
               Added {importStats.added} of {importStats.total} items to your gear closet.
             </p>
             <div className="flex gap-3 justify-center">
               <a
                 href="/closet"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-white text-sm font-medium hover:brightness-110 transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-foreground text-sm font-medium hover:brightness-110 transition-colors"
               >
                 <Package className="size-4" />
                 View Closet
@@ -416,7 +416,7 @@ function ConfidenceBadge({ confidence }: { confidence: string }) {
   switch (confidence) {
     case "high":
       return (
-        <span className="size-5 flex items-center justify-center rounded-full bg-emerald-500/10">
+        <span className="size-5 flex items-center justify-center rounded-full bg-primary/10">
           <Check className="size-3 text-primary" />
         </span>
       );
