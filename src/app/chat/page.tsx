@@ -74,46 +74,21 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="h-dvh flex flex-col bg-background text-foreground">
+    <div className="min-h-dvh bg-background text-foreground">
       <Nav />
 
-      {/* Page header */}
-      <div className="shrink-0 px-4 md:px-6 py-6 md:py-8">
-        <div className="max-w-6xl mx-auto">
+      <main className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-8">
+        {/* Header */}
+        <div className="mb-8">
           <h1 className="text-2xl font-bold tracking-tight text-foreground">AI Advisor</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Gear recommendations, kit builds, and comparisons backed by real trail data.
           </p>
         </div>
-      </div>
 
-      {/* Messages area */}
-      <div className="flex-1 overflow-y-auto scroll-thin">
-        <div className="max-w-3xl mx-auto px-4 md:px-6 py-6 space-y-6">
-          {messages.length === 0 && (
-            <>
-              <EmptyState onPromptClick={handlePromptClick} />
-              {/* Input inline when empty — feels cohesive, not lost at the bottom */}
-              <form onSubmit={handleSubmit} className="flex items-end gap-3">
-                <textarea
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Ask about gear, build a kit, compare items..."
-                  rows={1}
-                  className="flex-1 bg-card border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors resize-none max-h-[120px]"
-                  style={{ minHeight: "48px" }}
-                />
-                <button
-                  type="submit"
-                  disabled={!input.trim() || loading}
-                  className="size-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center hover:brightness-110 transition-all disabled:opacity-30 disabled:cursor-not-allowed shrink-0 active:scale-95"
-                >
-                  <Send className="size-4" />
-                </button>
-              </form>
-            </>
-          )}
+        {/* Chat area */}
+        <div className="max-w-3xl space-y-6">
+          {messages.length === 0 && <EmptyState onPromptClick={handlePromptClick} />}
 
           {messages.map((msg, i) => (
             <div
@@ -164,13 +139,9 @@ export default function ChatPage() {
           )}
 
           <div ref={messagesEndRef} />
-        </div>
-      </div>
 
-      {/* Input area — pinned to bottom once conversation starts */}
-      {messages.length > 0 && (
-        <div className="shrink-0 px-4 md:px-6 py-4">
-          <form onSubmit={handleSubmit} className="max-w-3xl mx-auto flex items-end gap-3">
+          {/* Input */}
+          <form onSubmit={handleSubmit} className="flex items-end gap-3 pt-4">
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -189,7 +160,7 @@ export default function ChatPage() {
             </button>
           </form>
         </div>
-      )}
+      </main>
     </div>
   );
 }
