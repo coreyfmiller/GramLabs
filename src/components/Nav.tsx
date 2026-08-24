@@ -78,7 +78,7 @@ export function Nav() {
               </span>
             </Link>
 
-            <nav className="hidden md:flex items-center gap-6 ml-8" aria-label="Main">
+            <nav className="hidden lg:flex items-center gap-6 ml-8" aria-label="Main">
               {visibleLinks.map((link) => (
                 <Link
                   key={link.href}
@@ -100,7 +100,7 @@ export function Nav() {
           <div className="flex items-center gap-2">
             {/* Profile dropdown (logged in) */}
             {user && (
-              <div className="relative hidden md:block">
+              <div className="relative hidden lg:block">
                 <button
                   onClick={() => setAdminOpen(!adminOpen)}
                   className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border hover:bg-muted transition-colors"
@@ -193,14 +193,14 @@ export function Nav() {
             {!user && (
               <Link
                 href="/login"
-                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border hover:bg-muted transition-colors text-xs font-medium text-muted-foreground hover:text-foreground"
+                className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border hover:bg-muted transition-colors text-xs font-medium text-muted-foreground hover:text-foreground"
               >
                 Sign in
               </Link>
             )}
 
             <button
-              className="md:hidden size-9 flex items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors"
+              className="lg:hidden size-9 flex items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               onClick={() => setMobileOpen(!mobileOpen)}
             >
@@ -216,7 +216,7 @@ export function Nav() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="fixed inset-x-0 top-[53px] bottom-0 z-40 bg-background/95 backdrop-blur-md md:hidden">
+        <div className="fixed inset-x-0 top-[53px] bottom-0 z-40 bg-background/95 backdrop-blur-md lg:hidden">
           <nav className="flex flex-col gap-1 px-4 py-4" aria-label="Mobile">
             {visibleLinks.map((link) => (
               <Link
@@ -234,13 +234,39 @@ export function Nav() {
             ))}
 
             {user && (
-              <button
-                onClick={signOut}
-                className="flex items-center gap-2 mt-4 px-3 py-3 rounded-lg text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              >
-                <LogOut className="size-3.5" />
-                Sign out
-              </button>
+              <div className="border-t border-border mt-2 pt-2">
+                {/* Unit toggle */}
+                <div className="flex items-center justify-between px-3 py-3">
+                  <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">Weight unit</span>
+                  <button
+                    onClick={() => {
+                      const store = usePackStore.getState();
+                      store.setWeightUnit(store.weightUnit === "oz" ? "g" : "oz");
+                    }}
+                    className="text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded border border-border"
+                  >
+                    {usePackStore.getState().weightUnit === "oz" ? "oz → g" : "g → oz"}
+                  </button>
+                </div>
+                {/* Theme toggle */}
+                <div className="flex items-center justify-between px-3 py-3">
+                  <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">Theme</span>
+                  <button
+                    onClick={toggleTheme}
+                    className="text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded border border-border"
+                  >
+                    {theme === "dark" ? "Dark → Light" : "Light → Dark"}
+                  </button>
+                </div>
+                {/* Sign out */}
+                <button
+                  onClick={signOut}
+                  className="flex items-center gap-2 w-full px-3 py-3 rounded-lg text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                >
+                  <LogOut className="size-3.5" />
+                  Sign out
+                </button>
+              </div>
             )}
 
             {isAdmin && (

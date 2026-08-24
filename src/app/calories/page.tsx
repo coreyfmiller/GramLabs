@@ -192,7 +192,7 @@ export default function CaloriesPage() {
             {/* Body stats */}
             <div className="rounded-xl border border-border bg-card p-5">
               <h2 className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-4">Hiker Profile</h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs text-muted-foreground mb-1 block">Body Weight (lbs)</label>
                   <input
@@ -244,7 +244,7 @@ export default function CaloriesPage() {
             {/* Trip details */}
             <div className="rounded-xl border border-border bg-card p-5">
               <h2 className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-4">Trip Details</h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs text-muted-foreground mb-1 block">Pack Weight (lbs)</label>
                   <input

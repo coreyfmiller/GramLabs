@@ -132,7 +132,7 @@ export default function ClosetPage() {
 
       <main className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-8">
         {/* Header */}
-        <div className="flex items-start justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
               Gear Closet
