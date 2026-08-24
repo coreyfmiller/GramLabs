@@ -21,6 +21,7 @@ const NAV_LINKS: NavLink[] = [
   { label: "COMPARE", href: "/compare" },
   { label: "GEAR ADVISOR", href: "/chat" },
   { label: "TRIP ENGINE", href: "/trip" },
+  { label: "JOURNAL", href: "/journal" },
   { label: "BRANDS", href: "/brands", admin: true },
   { label: "TODO", href: "/admin/todo", admin: true },
 ];
