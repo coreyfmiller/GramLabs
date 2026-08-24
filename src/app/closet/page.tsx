@@ -257,19 +257,7 @@ export default function ClosetPage() {
 
                 {/* Actions */}
                 <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
-                  <button
-                    onClick={() => {
-                      const gearItem = item.gearItem;
-                      if (gearItem) {
-                        usePackStore.getState().addItem(gearItem);
-                      }
-                    }}
-                    className="p-1.5 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
-                    aria-label="Add to Pack Lab"
-                    title="Add to Pack Lab"
-                  >
-                    <PackagePlus className="size-3.5" />
-                  </button>
+                  <AddToLoadoutButton gearItem={item.gearItem} />
                   <button
                     onClick={() => handleRemove(item.id)}
                     className="p-1.5 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
@@ -291,6 +279,61 @@ export default function ClosetPage() {
           onAddFromDB={handleAdd}
           onAddCustom={handleAddCustom}
         />
+      )}
+    </div>
+  );
+}
+
+// ===== Add to Loadout Button =====
+
+function AddToLoadoutButton({ gearItem }: { gearItem?: GearItem }) {
+  const [open, setOpen] = useState(false);
+  const [added, setAdded] = useState<string | null>(null);
+  const loadouts = usePackStore((s) => s.loadouts);
+  const addItem = usePackStore((s) => s.addItem);
+  const switchLoadout = usePackStore((s) => s.switchLoadout);
+  const activeLoadoutId = usePackStore((s) => s.activeLoadoutId);
+
+  if (!gearItem) return null;
+
+  const handleAdd = (loadoutId: string) => {
+    const prev = activeLoadoutId;
+    switchLoadout(loadoutId);
+    addItem(gearItem);
+    switchLoadout(prev);
+    setAdded(loadoutId);
+    setTimeout(() => { setAdded(null); setOpen(false); }, 600);
+  };
+
+  return (
+    <div className="relative">
+      <button
+        onClick={(e) => { e.stopPropagation(); setOpen(!open); }}
+        className="p-1.5 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+        aria-label="Add to loadout"
+        title="Add to loadout"
+      >
+        <PackagePlus className="size-3.5" />
+      </button>
+      {open && (
+        <div
+          className="absolute right-0 top-8 z-50 w-44 rounded-lg border border-border bg-card shadow-xl py-1"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <p className="px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+            Add to loadout
+          </p>
+          {loadouts.map((l) => (
+            <button
+              key={l.id}
+              onClick={() => handleAdd(l.id)}
+              className="w-full text-left px-3 py-2 text-xs text-foreground hover:bg-muted transition-colors flex items-center justify-between"
+            >
+              {l.name}
+              {added === l.id && <span className="text-primary text-[10px]">Added</span>}
+            </button>
+          ))}
+        </div>
       )}
     </div>
   );
