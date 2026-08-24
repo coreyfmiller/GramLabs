@@ -73,7 +73,10 @@ export function PackList() {
   const items = loadouts.find((l) => l.id === activeLoadoutId)?.items ?? [];
   const packName = getPackName();
   const baseWeight = getBaseWeight();
+  const toggleItemChecked = usePackStore((s) => s.toggleItemChecked);
+  const uncheckAll = usePackStore((s) => s.uncheckAll);
 
+  const [packingMode, setPackingMode] = useState(false);
   const [showLoadoutMenu, setShowLoadoutMenu] = useState(false);
   const [showQuickAdd, setShowQuickAdd] = useState(false);
   const [showCategoryAdd, setShowCategoryAdd] = useState(false);
@@ -185,6 +188,20 @@ export function PackList() {
           )}
         </div>
         <div className="flex items-center gap-3">
+          {/* Packing mode toggle */}
+          <button
+            type="button"
+            onClick={() => { setPackingMode(!packingMode); if (packingMode) uncheckAll(); }}
+            className={cn(
+              "rounded-md border px-2 py-1 text-[10px] font-semibold uppercase tracking-wider transition-colors",
+              packingMode
+                ? "border-primary/40 bg-primary/10 text-primary"
+                : "border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground"
+            )}
+          >
+            {packingMode ? "Done Packing" : "Pack Mode"}
+          </button>
+
           {/* Unit toggle */}
           <button
             type="button"
@@ -305,6 +322,8 @@ export function PackList() {
                               });
                             }
                           }}
+                          packingMode={packingMode}
+                          onToggleChecked={() => toggleItemChecked(packItem.gearId)}
                         />
                       </li>
                     ))}
@@ -549,13 +568,15 @@ function getItemSpecs(item: GearItem): SpecDisplay[] {
 
 // ─── PackRow Component ──────────────────────────────────────────────────────
 
-function PackRow({ packItem, color, weightUnit, categories, isDragging, isDropTarget, onRemove, onQty, onStatusChange, onToggleStar, onUpdateUrl, onUpdateDetails, onAddToCloset }: {
+function PackRow({ packItem, color, weightUnit, categories, isDragging, isDropTarget, onRemove, onQty, onStatusChange, onToggleStar, onUpdateUrl, onUpdateDetails, onAddToCloset, packingMode, onToggleChecked }: {
   packItem: PackItem; color: string; weightUnit: "oz" | "g"; categories: Record<string, string>;
   isDragging: boolean; isDropTarget: boolean;
   onRemove: () => void; onQty: (delta: number) => void; onStatusChange: (status: ItemStatus) => void;
   onToggleStar: () => void; onUpdateUrl: (url: string) => void;
   onUpdateDetails: (updates: { name?: string; brand?: string; weightOz?: number; category?: string }) => void;
   onAddToCloset?: () => void;
+  packingMode?: boolean;
+  onToggleChecked?: () => void;
 }) {
   const [editing, setEditing] = useState(false);
   const [expanded, setExpanded] = useState(true);
@@ -611,9 +632,23 @@ function PackRow({ packItem, color, weightUnit, categories, isDragging, isDropTa
           <GripVertical className="size-4" />
         </span>
 
+        {packingMode && (
+          <button
+            onClick={onToggleChecked}
+            className={cn(
+              "size-5 shrink-0 rounded border-2 flex items-center justify-center transition-colors",
+              packItem.checked
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-muted-foreground/40 hover:border-primary/60"
+            )}
+          >
+            {packItem.checked && <Check className="size-3" />}
+          </button>
+        )}
+
         <span aria-hidden="true" className="size-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
 
-        <div className="min-w-0 flex-1 cursor-pointer" onClick={() => hasSpecs && setExpanded(!expanded)}>
+        <div className={cn("min-w-0 flex-1 cursor-pointer", packingMode && packItem.checked && "opacity-50")} onClick={() => hasSpecs && setExpanded(!expanded)}>
           <div className="flex items-center gap-2">
             <p className="text-pretty text-base font-medium leading-tight">{packItem.item.name}</p>
             {isWorn && <span className="shrink-0 rounded border border-primary/30 bg-primary/10 px-1.5 py-px text-[10px] font-semibold uppercase tracking-wider text-primary">Worn</span>}

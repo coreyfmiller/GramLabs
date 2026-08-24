@@ -12,6 +12,7 @@ export interface PackItem {
   quantity: number;
   starred?: boolean;
   url?: string;
+  checked?: boolean;
 }
 
 export interface CustomCategory {
@@ -64,6 +65,8 @@ export interface PackStore {
   updateItemDetails: (gearId: string, updates: { name?: string; brand?: string; weightOz?: number; priceUsd?: number; category?: string }) => void;
   reorderItem: (gearId: string, targetGearId: string) => void;
   toggleItemStar: (gearId: string) => void;
+  toggleItemChecked: (gearId: string) => void;
+  uncheckAll: () => void;
   clearPack: () => void;
   importFromLighterPack: (url: string) => Promise<{ success: boolean; count: number; error?: string }>;
 
@@ -333,6 +336,36 @@ export const usePackStore = create<PackStore>()(
                   items: l.items.map((i) =>
                     i.gearId === gearId ? { ...i, starred: !i.starred } : i
                   ),
+                }
+              : l
+          ),
+        });
+      },
+
+      toggleItemChecked: (gearId) => {
+        const state = get();
+        set({
+          loadouts: state.loadouts.map((l) =>
+            l.id === state.activeLoadoutId
+              ? {
+                  ...l,
+                  items: l.items.map((i) =>
+                    i.gearId === gearId ? { ...i, checked: !i.checked } : i
+                  ),
+                }
+              : l
+          ),
+        });
+      },
+
+      uncheckAll: () => {
+        const state = get();
+        set({
+          loadouts: state.loadouts.map((l) =>
+            l.id === state.activeLoadoutId
+              ? {
+                  ...l,
+                  items: l.items.map((i) => ({ ...i, checked: false })),
                 }
               : l
           ),
