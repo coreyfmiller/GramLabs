@@ -83,11 +83,11 @@ export async function POST(request: Request) {
         }
       }
       
-      // Fallback: parse the HTML page
+      // Fallback: parse the HTML page as plain text
       if (lpItems.length === 0) {
         const htmlRes = await fetch(`https://lighterpack.com/r/${shareId}`, {
           headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
             "Accept": "text/html",
           },
         });
@@ -101,74 +101,67 @@ export async function POST(request: Request) {
         
         const html = await htmlRes.text();
         
-        // LighterPack HTML renders items as repeating blocks of:
-        //   [item name] \n [brand/description] \n ... \n [weight number] \n ... \n [unit]
-        // We parse by splitting into lines and detecting the pattern:
-        // A non-empty text line followed eventually by a number line followed by a unit line (oz/g/kg/lb)
-        const lines = html.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        // Strip HTML tags to get pure text, then parse the repeating pattern
+        const text = html.replace(/<[^>]+>/g, '\n').replace(/&[a-z]+;/g, ' ');
+        const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
         
-        let i = 0;
-        while (i < lines.length) {
-          // Look for a weight number followed by a unit indicator
-          const weightLineIdx = lines.findIndex((l, idx) => {
-            if (idx <= i) return false;
-            // A line that's just a number (weight value)
-            if (!/^\d+\.?\d*$/.test(l)) return false;
-            // Next few lines should contain a unit
-            const nextFew = lines.slice(idx + 1, idx + 8).join(' ');
-            return /\b(oz|lb|g|kg)\b/.test(nextFew);
-          });
+        // LighterPack renders a repeating pattern per item:
+        //   [item name]
+        //   [brand/description] (may be empty/missing)
+        //   [weight number]
+        //   [unit options: oz lb g kg] (the first one after weight is the selected unit)
+        //   [quantity]
+        //
+        // We scan for lines that are pure numbers followed within a few lines by unit strings
+        const unitPattern = /^(oz|lb|g|kg)$/;
+        const numberPattern = /^\d+\.?\d*$/;
+        
+        for (let idx = 0; idx < lines.length; idx++) {
+          // Find a weight value: a line that's just a number
+          if (!numberPattern.test(lines[idx])) continue;
           
-          if (weightLineIdx === -1) break;
+          const weight = parseFloat(lines[idx]);
           
-          // Work backwards from the weight to find the item name
-          // The item name is the first substantial text line in the block before the weight
-          // Skip lines that are just HTML artifacts, single characters, or category headers
-          let nameIdx = -1;
-          for (let j = weightLineIdx - 1; j >= Math.max(0, weightLineIdx - 10); j--) {
-            const candidate = lines[j];
-            // Skip very short lines, numbers, unit strings
-            if (candidate.length < 2) continue;
-            if (/^\d+\.?\d*$/.test(candidate)) continue;
-            if (/^(oz|lb|g|kg)$/.test(candidate)) continue;
-            if (/^(base weight|worn weight|leave at home|total weight)$/i.test(candidate)) continue;
-            // This looks like a name or description
-            nameIdx = j;
-            break;
-          }
+          // Check if the next few lines contain unit options (oz, lb, g, kg pattern)
+          const lookahead = lines.slice(idx + 1, idx + 10);
+          const hasUnits = lookahead.filter(l => unitPattern.test(l)).length >= 2; // LP shows all 4 units
+          if (!hasUnits) continue;
           
-          if (nameIdx === -1) {
-            i = weightLineIdx + 1;
-            continue;
-          }
-          
-          const itemName = lines[nameIdx];
-          const weight = parseFloat(lines[weightLineIdx]);
-          
-          // Find the selected unit (look for g/oz/kg/lb after the weight)
+          // This is a weight line. Find the selected unit (first unit after weight)
           let unit = 'g';
-          for (let k = weightLineIdx + 1; k < Math.min(weightLineIdx + 8, lines.length); k++) {
-            if (/^(oz|g|kg|lb)$/.test(lines[k])) {
-              unit = lines[k];
+          for (const l of lookahead) {
+            if (unitPattern.test(l)) {
+              unit = l;
               break;
             }
           }
           
-          // Get brand/description (line between name and weight that isn't the name)
+          // Work backwards to find the item name and brand
+          // Pattern: name is 2+ lines before weight, brand is 1 line before (or name is 1 line before if no brand)
+          let name = '';
           let brand = '';
-          for (let k = nameIdx + 1; k < weightLineIdx; k++) {
-            const candidate = lines[k];
-            if (candidate.length >= 2 && !/^\d/.test(candidate) && !/^(oz|lb|g|kg)$/.test(candidate)) {
-              brand = candidate;
-              break;
-            }
+          
+          // Look back up to 6 lines for content
+          const lookback: string[] = [];
+          for (let j = idx - 1; j >= Math.max(0, idx - 8); j--) {
+            const l = lines[j];
+            if (numberPattern.test(l)) break; // hit previous item's weight
+            if (unitPattern.test(l)) break; // hit previous item's units
+            if (/^(base weight|worn weight|leave at home|total weight|\d+\.\d+ kg|\d+\.\d+ lb)$/i.test(l)) break;
+            if (l.length >= 2) lookback.unshift(l);
+            if (lookback.length >= 2) break; // we only need name + brand
           }
           
-          if (weight > 0) {
-            lpItems.push({ name: itemName, brand: brand || undefined, weight, unit });
+          if (lookback.length >= 2) {
+            name = lookback[0];
+            brand = lookback[1];
+          } else if (lookback.length === 1) {
+            name = lookback[0];
           }
           
-          i = weightLineIdx + 1;
+          if (name && weight > 0) {
+            lpItems.push({ name, brand: brand || undefined, weight, unit });
+          }
         }
         
         if (lpItems.length === 0) {
