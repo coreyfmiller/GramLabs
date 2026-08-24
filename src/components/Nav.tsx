@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Mountain, Sun, Moon, LogOut, Menu, X, Settings } from "lucide-react";
+import { Mountain, Sun, Moon, LogOut, Menu, X, Settings, User as UserIcon, Scale, ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { usePackStore } from "@/store/pack-store";
 import { cn } from "@/lib/utils";
 
 const ADMIN_EMAIL = "coreyfmiller@gmail.com";
@@ -95,58 +96,108 @@ export function Nav() {
             </nav>
           </div>
 
-          {/* Right: User + admin + theme + mobile toggle */}
+          {/* Right: Profile + mobile toggle */}
           <div className="flex items-center gap-2">
-            {/* Admin dropdown */}
-            {isAdmin && (
+            {/* Profile dropdown (logged in) */}
+            {user && (
               <div className="relative hidden md:block">
                 <button
                   onClick={() => setAdminOpen(!adminOpen)}
-                  className="size-9 flex items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors"
-                  aria-label="Admin"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border hover:bg-muted transition-colors"
                 >
-                  <Settings className="size-4 text-muted-foreground" />
+                  <div className="size-6 rounded-full bg-primary/15 flex items-center justify-center">
+                    <UserIcon className="size-3.5 text-primary" />
+                  </div>
+                  <span className="text-xs font-medium text-foreground max-w-[80px] truncate">
+                    {user.email?.split("@")[0]}
+                  </span>
+                  <ChevronDown className="size-3 text-muted-foreground" />
                 </button>
+
                 {adminOpen && (
-                  <div className="absolute right-0 top-11 z-50 w-36 rounded-lg border border-border bg-card shadow-xl py-1">
-                    {ADMIN_LINKS.map((link) => (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        className="block px-3 py-2 text-xs text-foreground hover:bg-muted transition-colors"
+                  <div className="absolute right-0 top-11 z-50 w-56 rounded-xl border border-border bg-card shadow-xl py-2">
+                    {/* User info */}
+                    <div className="px-3 py-2 border-b border-border mb-1">
+                      <p className="text-xs font-medium text-foreground truncate">{user.email}</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">Free plan</p>
+                    </div>
+
+                    {/* Units preference */}
+                    <div className="px-3 py-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+                          <Scale className="size-3" />
+                          Weight unit
+                        </span>
+                        <button
+                          onClick={() => {
+                            const store = usePackStore.getState();
+                            store.setWeightUnit(store.weightUnit === "oz" ? "g" : "oz");
+                          }}
+                          className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded border border-border hover:border-primary/30 transition-colors"
+                        >
+                          {usePackStore.getState().weightUnit === "oz" ? "oz → kg/g" : "g → oz/lb"}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Theme */}
+                    <div className="px-3 py-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+                          {theme === "dark" ? <Moon className="size-3" /> : <Sun className="size-3" />}
+                          Theme
+                        </span>
+                        <button
+                          onClick={toggleTheme}
+                          className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded border border-border hover:border-primary/30 transition-colors"
+                        >
+                          {theme === "dark" ? "Dark → Light" : "Light → Dark"}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Admin section */}
+                    {isAdmin && (
+                      <div className="border-t border-border mt-1 pt-1">
+                        <p className="px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Admin</p>
+                        {ADMIN_LINKS.map((link) => (
+                          <Link
+                            key={link.href}
+                            href={link.href}
+                            className="flex items-center gap-2 px-3 py-2 text-xs text-foreground hover:bg-muted transition-colors"
+                          >
+                            <Settings className="size-3 text-muted-foreground" />
+                            {link.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Sign out */}
+                    <div className="border-t border-border mt-1 pt-1">
+                      <button
+                        onClick={signOut}
+                        className="flex items-center gap-2 w-full px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                       >
-                        {link.label}
-                      </Link>
-                    ))}
+                        <LogOut className="size-3" />
+                        Sign out
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
             )}
 
-            {user && (
-              <button
-                onClick={signOut}
-                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                title="Sign out"
+            {/* Login link (not logged in) */}
+            {!user && (
+              <Link
+                href="/login"
+                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border hover:bg-muted transition-colors text-xs font-medium text-muted-foreground hover:text-foreground"
               >
-                <LogOut className="size-3.5" />
-                <span className="max-w-[100px] truncate">
-                  {user.email?.split("@")[0]}
-                </span>
-              </button>
+                Sign in
+              </Link>
             )}
-
-            <button
-              onClick={toggleTheme}
-              className="size-9 flex items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors"
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? (
-                <Sun className="size-4 text-muted-foreground" />
-              ) : (
-                <Moon className="size-4 text-muted-foreground" />
-              )}
-            </button>
 
             <button
               className="md:hidden size-9 flex items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors"
