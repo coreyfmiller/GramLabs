@@ -169,6 +169,9 @@ export default function TripPage() {
               <p className="mt-1 text-sm text-muted-foreground">
                 AI-powered pack analysis against real weather forecasts. Know if your gear is ready before you hit the trail.
               </p>
+              <a href="/calories" className="inline-flex items-center gap-1.5 mt-3 text-xs text-primary hover:underline">
+                Calorie & food calculator →
+              </a>
             </div>
 
             {/* Form */}
