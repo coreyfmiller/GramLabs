@@ -166,12 +166,12 @@ export function MigratePack() {
 
   if (done) {
     return (
-      <div className="mx-4 mb-6 p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5">
+      <div className="mx-4 mb-6 p-4 rounded-xl border border-primary/20 bg-primary/5">
         <div className="flex items-center gap-3">
-          <Check className="size-5 text-emerald-400 shrink-0" />
+          <Check className="size-5 text-primary shrink-0" />
           <div>
-            <p className="text-sm font-medium text-emerald-300">Migration complete</p>
-            <p className="text-xs text-zinc-400 mt-0.5">
+            <p className="text-sm font-medium text-primary">Migration complete</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
               Added {stats.closetItems} items to your closet and created {stats.loadouts} loadout{stats.loadouts !== 1 ? "s" : ""}.
             </p>
           </div>
@@ -189,7 +189,7 @@ export function MigratePack() {
             <p className="text-sm font-medium text-amber-300">
               Migrate your existing pack data
             </p>
-            <p className="text-xs text-zinc-400 mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               We found {totalItems} items across {loadoutCount} loadout{loadoutCount !== 1 ? "s" : ""} saved in your browser.
               Import them to your account so they sync across devices.
             </p>
@@ -211,7 +211,7 @@ export function MigratePack() {
         </div>
         <button
           onClick={() => setDismissed(true)}
-          className="p-1 rounded-md hover:bg-white/5 text-zinc-500"
+          className="p-1 rounded-md hover:bg-muted text-muted-foreground"
           aria-label="Dismiss"
         >
           <X className="size-4" />

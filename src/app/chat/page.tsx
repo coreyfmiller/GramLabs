@@ -96,7 +96,7 @@ export default function ChatPage() {
                 className={cn(
                   "max-w-[88%] md:max-w-[78%] rounded-xl px-4 py-3",
                   msg.role === "user"
-                    ? "glass border border-white/10"
+                    ? "glass border border-border"
                     : "bg-transparent"
                 )}
               >
@@ -124,7 +124,7 @@ export default function ChatPage() {
               <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                 <Sparkles className="size-4 text-primary" />
               </div>
-              <div className="glass rounded-xl border border-white/10 px-4 py-3">
+              <div className="glass rounded-xl border border-border px-4 py-3">
                 <Loader2 className="size-4 text-primary animate-spin" />
               </div>
             </div>
@@ -177,7 +177,7 @@ function EmptyState({ onPromptClick }: { onPromptClick: (prompt: string) => void
           <button
             key={i}
             onClick={() => onPromptClick(prompt)}
-            className="glass text-left px-4 py-3 rounded-xl border border-white/10 text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all"
+            className="glass text-left px-4 py-3 rounded-xl border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all"
           >
             {prompt}
           </button>
@@ -309,7 +309,7 @@ function ChatResponse({ content }: { content: string }) {
                 {items.map((item, j) => (
                   <div
                     key={j}
-                    className="glass flex items-start gap-3 rounded-lg border border-white/10 p-3 hover:border-primary/30 transition-colors"
+                    className="glass flex items-start gap-3 rounded-lg border border-border p-3 hover:border-primary/30 transition-colors"
                   >
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium">{item.brand} {item.name}</p>
@@ -323,14 +323,14 @@ function ChatResponse({ content }: { content: string }) {
                       <button
                         onClick={() => handleAddToPack(item)}
                         title="Add to Pack Lab"
-                        className="size-7 flex items-center justify-center rounded-md border border-white/10 bg-white/[0.04] text-muted-foreground hover:border-primary/50 hover:bg-primary hover:text-primary-foreground transition-colors active:scale-95"
+                        className="size-7 flex items-center justify-center rounded-md border border-border bg-muted text-muted-foreground hover:border-primary/50 hover:bg-primary hover:text-primary-foreground transition-colors active:scale-95"
                       >
                         <Plus className="size-3.5" />
                       </button>
                       <button
                         onClick={() => handleAddToBuyList(item)}
                         title="Save to Buy List"
-                        className="size-7 flex items-center justify-center rounded-md border border-white/10 bg-white/[0.04] text-muted-foreground hover:border-yellow-500/50 hover:bg-yellow-500 hover:text-black transition-colors active:scale-95"
+                        className="size-7 flex items-center justify-center rounded-md border border-border bg-muted text-muted-foreground hover:border-yellow-500/50 hover:bg-yellow-500 hover:text-black transition-colors active:scale-95"
                       >
                         <ShoppingCart className="size-3.5" />
                       </button>

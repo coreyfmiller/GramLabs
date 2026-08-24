@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${archivo.variable} ${jetbrainsMono.variable}`}>
-      <body className="bg-[#0a0a0a] font-[family-name:var(--font-archivo)]">
+      <body className="bg-background font-[family-name:var(--font-archivo)]">
         {children}
       </body>
     </html>

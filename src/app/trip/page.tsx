@@ -160,29 +160,21 @@ export default function TripPage() {
     <div className="min-h-dvh bg-background text-foreground">
       <Nav />
 
-      <div className="max-w-5xl mx-auto px-4 md:px-8 py-10">
+      <div className="max-w-5xl mx-auto px-4 md:px-6 py-6 md:py-8">
         {!result ? (
           <>
             {/* Title */}
-            <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-2 mb-4">
-                <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Trip Engine</h1>
-                <span className="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-primary/20 text-primary border border-primary/30 rounded">
-                  PRO
-                </span>
-              </div>
-              <p className="text-base text-muted-foreground max-w-lg mx-auto">
-                Get AI-powered pack analysis against real weather forecasts. Know if your gear is ready before you hit the trail.
-              </p>
-              <p className="text-xs text-muted-foreground/60 mt-2">
-                Trip Engine is a Pro feature. Free during beta.
+            <div className="mb-8">
+              <h1 className="text-2xl font-bold tracking-tight text-foreground">Trip Engine</h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                AI-powered pack analysis against real weather forecasts. Know if your gear is ready before you hit the trail.
               </p>
             </div>
 
             {/* Form */}
             <div className="grid gap-5 max-w-2xl mx-auto overflow-visible">
               {/* Location */}
-              <div className="glass rounded-xl border border-white/10 p-5 relative z-30 overflow-visible">
+              <div className="rounded-xl border border-border bg-card p-5 relative z-30 overflow-visible">
                 <label className="block text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground mb-3">
                   <MapPin className="size-3.5 inline mr-1.5 -mt-0.5" />
                   Location / Trail Name
@@ -203,7 +195,7 @@ export default function TripPage() {
 
               {/* Date + Duration Row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="glass rounded-xl border border-white/10 p-5">
+                <div className="rounded-xl border border-border bg-card p-5">
                   <label className="block text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground mb-3">
                     <Calendar className="size-3.5 inline mr-1.5 -mt-0.5" />
                     Start Date
@@ -213,11 +205,11 @@ export default function TripPage() {
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
                     min={todayStr}
-                    className="w-full rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors"
+                    className="w-full rounded-lg border border-border bg-input px-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/30 transition-colors"
                   />
                 </div>
 
-                <div className="glass rounded-xl border border-white/10 p-5">
+                <div className="rounded-xl border border-border bg-card p-5">
                   <label className="block text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground mb-3">
                     <Mountain className="size-3.5 inline mr-1.5 -mt-0.5" />
                     Duration (days)
@@ -228,13 +220,13 @@ export default function TripPage() {
                     max={14}
                     value={duration}
                     onChange={(e) => setDuration(Math.min(14, Math.max(1, parseInt(e.target.value) || 1)))}
-                    className="w-full rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors"
+                    className="w-full rounded-lg border border-border bg-input px-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/30 transition-colors"
                   />
                 </div>
               </div>
 
               {/* Loadout Selection */}
-              <div className="glass rounded-xl border border-white/10 p-5">
+              <div className="rounded-xl border border-border bg-card p-5">
                 <label className="block text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground mb-3">
                   <Shield className="size-3.5 inline mr-1.5 -mt-0.5" />
                   Loadout to Analyze
@@ -242,7 +234,7 @@ export default function TripPage() {
                 <select
                   value={selectedLoadoutId}
                   onChange={(e) => setSelectedLoadoutId(e.target.value)}
-                  className="w-full rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors"
+                  className="w-full rounded-lg border border-border bg-input px-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/30 transition-colors"
                 >
                   {loadouts.map((l) => (
                     <option key={l.id} value={l.id} className="bg-background text-foreground">
@@ -294,14 +286,14 @@ export default function TripPage() {
               </div>
               <button
                 onClick={() => setResult(null)}
-                className="px-4 py-2 rounded-lg border border-white/10 bg-white/[0.03] text-sm font-medium hover:bg-white/[0.06] transition-colors"
+                className="px-4 py-2 rounded-lg border border-border bg-input text-sm font-medium hover:bg-muted transition-colors"
               >
                 New Analysis
               </button>
             </div>
 
             {/* Score */}
-            <div className={cn("glass rounded-xl border p-6 text-center", getScoreBg(result.analysis.score))}>
+            <div className={cn("rounded-xl border border-border bg-card p-6 text-center", getScoreBg(result.analysis.score))}>
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground mb-2">Pack Readiness Score</p>
               <p className={cn("num text-6xl font-bold", getScoreColor(result.analysis.score))}>
                 {result.analysis.score}
@@ -311,7 +303,7 @@ export default function TripPage() {
 
             {/* Warnings */}
             {result.analysis.warnings.length > 0 && (
-              <div className="glass rounded-xl border border-white/10 p-5">
+              <div className="rounded-xl border border-border bg-card p-5">
                 <h3 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground mb-4">
                   <AlertTriangle className="size-3.5 inline mr-1.5 -mt-0.5" />
                   Warnings
@@ -341,7 +333,7 @@ export default function TripPage() {
             )}
 
             {/* Weather Forecast */}
-            <div className="glass rounded-xl border border-white/10 p-5">
+            <div className="rounded-xl border border-border bg-card p-5">
               <h3 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground mb-4">
                 <Thermometer className="size-3.5 inline mr-1.5 -mt-0.5" />
                 Weather Forecast
@@ -355,7 +347,7 @@ export default function TripPage() {
                 {result.weather.map((day, i) => (
                   <div
                     key={i}
-                    className="rounded-lg border border-white/[0.07] bg-white/[0.02] p-4 hover:bg-white/[0.04] transition-colors"
+                    className="rounded-lg border border-border bg-card p-4 hover:bg-muted transition-colors"
                   >
                     <div className="flex items-center gap-4 flex-wrap">
                       {/* Date + Icon */}
@@ -437,7 +429,7 @@ export default function TripPage() {
 
             {/* Recommendations */}
             {result.analysis.recommendations.length > 0 && (
-              <div className="glass rounded-xl border border-white/10 p-5">
+              <div className="rounded-xl border border-border bg-card p-5">
                 <h3 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground mb-4">
                   <CheckCircle className="size-3.5 inline mr-1.5 -mt-0.5" />
                   Recommendations
@@ -455,14 +447,14 @@ export default function TripPage() {
 
             {/* Day-by-Day */}
             {result.analysis.dayByDay.length > 0 && (
-              <div className="glass rounded-xl border border-white/10 p-5">
+              <div className="rounded-xl border border-border bg-card p-5">
                 <h3 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground mb-4">
                   <Calendar className="size-3.5 inline mr-1.5 -mt-0.5" />
                   Day-by-Day Breakdown
                 </h3>
                 <div className="space-y-4">
                   {result.analysis.dayByDay.map((day) => (
-                    <div key={day.day} className="rounded-lg border border-white/[0.07] bg-white/[0.02] p-4">
+                    <div key={day.day} className="rounded-lg border border-border bg-card p-4">
                       <div className="flex items-center gap-2 mb-2">
                         <span className="num text-xs font-bold text-primary bg-primary/15 px-2 py-0.5 rounded">
                           Day {day.day}
@@ -569,7 +561,7 @@ function LocationAutocomplete({
           onFocus={() => { if (results.length > 0) setOpen(true); }}
           onBlur={() => setTimeout(() => setOpen(false), 200)}
           placeholder="Start typing... e.g. Katahdin, Yosemite, Banff"
-          className="w-full rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors"
+          className="w-full rounded-lg border border-border bg-input px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/30 transition-colors"
         />
         {searching && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -579,14 +571,14 @@ function LocationAutocomplete({
       </div>
 
       {open && results.length > 0 && (
-        <div className="absolute z-[100] mt-1 w-full rounded-lg border border-white/10 bg-background/98 backdrop-blur-xl shadow-2xl overflow-y-auto max-h-[320px]">
+        <div className="absolute z-[100] mt-1 w-full rounded-lg border border-border bg-card backdrop-blur-xl shadow-2xl overflow-y-auto max-h-[320px]">
           {results.map((r) => (
             <button
               key={r.id}
               type="button"
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => handleSelect(r)}
-              className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-white/[0.06] transition-colors border-b border-white/[0.05] last:border-0"
+              className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-muted transition-colors border-b border-border last:border-0"
             >
               <MapPin className="size-4 text-primary mt-0.5 shrink-0" />
               <div className="min-w-0 flex-1">

@@ -221,15 +221,14 @@ export default function ComparePage() {
   const specs = lockedCategory ? getSpecsForCategory(lockedCategory) : [];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-dvh bg-background text-foreground">
       <Nav />
-      <div className="px-4 py-8 md:px-6">
-      <div className="mx-auto max-w-6xl">
+      <main className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold tracking-tight text-foreground">Gear Compare</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Select 2–3 items to compare side by side. {lockedCategory && <span className="text-primary">Locked to {lockedCategory} category.</span>}
+            Select 2-3 items to compare side by side.{lockedCategory && <span className="text-primary"> Locked to {lockedCategory}.</span>}
           </p>
         </div>
 
@@ -422,8 +421,7 @@ export default function ComparePage() {
             <p className="text-muted-foreground/60 text-xs mt-1">Searching within {items[0].category} category</p>
           </div>
         )}
-      </div>
-      </div>
+      </main>
     </div>
   );
 }

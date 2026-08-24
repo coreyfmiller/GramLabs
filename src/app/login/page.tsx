@@ -16,7 +16,6 @@ function LoginForm() {
 
   const supabase = createClient();
 
-  // Show auth callback errors on mount
   useEffect(() => {
     if (authError === "auth_failed") {
       setMessage("Sign in failed. Please try again.");
@@ -74,10 +73,10 @@ function LoginForm() {
     <div className="w-full max-w-sm space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-white">
+        <h1 className="text-2xl font-bold text-foreground">
           {mode === "login" ? "Welcome back" : "Create your free account"}
         </h1>
-        <p className="text-sm text-zinc-400 mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           {mode === "login"
             ? "Sign in to access your gear closet"
             : "Pack Lab, Compare, and AI Advisor — free forever"}
@@ -88,7 +87,7 @@ function LoginForm() {
       <button
         onClick={() => handleOAuthLogin("google")}
         disabled={loading}
-        className="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-lg border border-zinc-700 bg-zinc-800/50 text-white hover:bg-zinc-800 transition-colors disabled:opacity-50"
+        className="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-lg border border-border bg-card text-foreground hover:bg-muted transition-colors disabled:opacity-50"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
           <path
@@ -114,10 +113,10 @@ function LoginForm() {
       {/* Divider */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-zinc-800" />
+          <div className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-xs">
-          <span className="px-2 bg-[#0a0a0a] text-zinc-500">or</span>
+          <span className="px-2 bg-background text-muted-foreground">or</span>
         </div>
       </div>
 
@@ -129,7 +128,7 @@ function LoginForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="w-full px-3 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+          className="w-full px-3 py-2.5 rounded-lg border border-border bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors"
         />
         <input
           type="password"
@@ -138,12 +137,12 @@ function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           required
           minLength={6}
-          className="w-full px-3 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+          className="w-full px-3 py-2.5 rounded-lg border border-border bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors"
         />
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2.5 rounded-lg bg-emerald-600 text-white font-medium hover:bg-emerald-500 transition-colors disabled:opacity-50"
+          className="w-full py-2.5 rounded-lg bg-primary text-primary-foreground font-medium hover:brightness-110 transition-all disabled:opacity-50"
         >
           {loading
             ? "..."
@@ -155,17 +154,17 @@ function LoginForm() {
 
       {/* Message */}
       {message && (
-        <p className="text-sm text-center text-amber-400">{message}</p>
+        <p className="text-sm text-center text-warning">{message}</p>
       )}
 
       {/* Toggle mode */}
-      <p className="text-center text-sm text-zinc-400">
+      <p className="text-center text-sm text-muted-foreground">
         {mode === "login" ? (
           <>
             New here?{" "}
             <button
               onClick={() => setMode("signup")}
-              className="text-emerald-400 hover:text-emerald-300"
+              className="text-primary hover:brightness-110"
             >
               Sign up free
             </button>
@@ -175,7 +174,7 @@ function LoginForm() {
             Already have an account?{" "}
             <button
               onClick={() => setMode("login")}
-              className="text-emerald-400 hover:text-emerald-300"
+              className="text-primary hover:brightness-110"
             >
               Sign in
             </button>
@@ -188,8 +187,8 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
-      <Suspense fallback={<div className="text-zinc-500 text-sm">Loading...</div>}>
+    <div className="min-h-dvh bg-background flex items-center justify-center px-4">
+      <Suspense fallback={<div className="text-muted-foreground text-sm">Loading...</div>}>
         <LoginForm />
       </Suspense>
     </div>

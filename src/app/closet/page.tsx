@@ -44,7 +44,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   kitchen: "text-orange-400 bg-orange-400/10 border-orange-400/20",
   electronics: "text-yellow-400 bg-yellow-400/10 border-yellow-400/20",
   safety: "text-red-400 bg-red-400/10 border-red-400/20",
-  accessories: "text-emerald-400 bg-emerald-400/10 border-emerald-400/20",
+  accessories: "text-primary bg-primary/10 border-primary/20",
 };
 
 export default function ClosetPage() {
@@ -117,31 +117,30 @@ export default function ClosetPage() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <div className="text-zinc-500 text-sm">Loading...</div>
+      <div className="min-h-dvh bg-background flex items-center justify-center">
+        <div className="text-muted-foreground text-sm">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-dvh bg-background text-foreground">
       <Nav />
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-start justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Package className="size-6 text-emerald-400" />
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
               Gear Closet
             </h1>
-            <p className="text-sm text-zinc-400 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               {items.length} items · {totalWeight.toFixed(1)} oz total
             </p>
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-500 transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-110 transition-all"
           >
             <Plus className="size-4" />
             Add Gear
@@ -155,8 +154,8 @@ export default function ClosetPage() {
             className={cn(
               "px-3 py-1.5 rounded-full text-xs font-medium border transition-colors",
               filterCategory === "all"
-                ? "bg-white/10 text-white border-white/20"
-                : "bg-transparent text-zinc-400 border-zinc-800 hover:border-zinc-600"
+                ? "bg-primary/10 text-primary border-primary/30"
+                : "bg-transparent text-muted-foreground border-border hover:border-primary/30"
             )}
           >
             All ({items.length})
@@ -168,8 +167,8 @@ export default function ClosetPage() {
               className={cn(
                 "px-3 py-1.5 rounded-full text-xs font-medium border transition-colors flex items-center gap-1.5",
                 filterCategory === cat
-                  ? CATEGORY_COLORS[cat] || "bg-white/10 text-white border-white/20"
-                  : "bg-transparent text-zinc-400 border-zinc-800 hover:border-zinc-600"
+                  ? CATEGORY_COLORS[cat] || "bg-primary/10 text-primary border-primary/30"
+                  : "bg-transparent text-muted-foreground border-border hover:border-primary/30"
               )}
             >
               {CATEGORY_ICONS[cat]}
@@ -180,30 +179,30 @@ export default function ClosetPage() {
 
         {/* Gear Grid */}
         {loading ? (
-          <div className="text-center text-zinc-500 py-16">Loading your gear...</div>
+          <div className="text-center text-muted-foreground py-16">Loading your gear...</div>
         ) : filteredItems.length === 0 ? (
           <div className="text-center py-16">
             {items.length === 0 ? (
               <>
-                <Package className="size-12 text-zinc-700 mx-auto mb-4" />
-                <h2 className="text-lg font-semibold text-white mb-2">
+                <Package className="size-12 text-muted-foreground mx-auto mb-4" />
+                <h2 className="text-lg font-semibold text-foreground mb-2">
                   Let&apos;s build your gear closet
                 </h2>
-                <p className="text-sm text-zinc-400 mb-6 max-w-md mx-auto">
+                <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
                   Your closet is where all your gear lives. Add items from our
                   database of 1,500+ products, or enter custom gear.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <button
                     onClick={() => setShowAddModal(true)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-500 transition-colors"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-foreground text-sm font-medium hover:brightness-110 transition-colors"
                   >
                     <Search className="size-4" />
                     Browse &amp; Add Gear
                   </button>
                   <a
                     href="/import"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-zinc-700 text-zinc-300 text-sm font-medium hover:bg-zinc-800 transition-colors"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-muted transition-colors"
                   >
                     <Plus className="size-4" />
                     Import from LighterPack
@@ -212,8 +211,8 @@ export default function ClosetPage() {
               </>
             ) : (
               <>
-                <Package className="size-12 text-zinc-700 mx-auto mb-3" />
-                <p className="text-zinc-400 mb-2">No items in this category</p>
+                <Package className="size-12 text-muted-foreground mx-auto mb-3" />
+                <p className="text-muted-foreground mb-2">No items in this category</p>
               </>
             )}
           </div>
@@ -222,14 +221,14 @@ export default function ClosetPage() {
             {filteredItems.map((item) => (
               <div
                 key={item.id}
-                className="group relative p-4 rounded-xl border border-zinc-800 bg-zinc-900/50 hover:border-zinc-700 transition-colors"
+                className="group relative p-4 rounded-xl border border-border bg-card hover:border-border transition-colors"
               >
                 {/* Category badge */}
                 <div
                   className={cn(
                     "inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider border mb-2",
                     CATEGORY_COLORS[getItemCategory(item)] ||
-                      "text-zinc-400 bg-zinc-800 border-zinc-700"
+                      "text-muted-foreground bg-muted border-border"
                   )}
                 >
                   {CATEGORY_ICONS[getItemCategory(item)]}
@@ -237,19 +236,19 @@ export default function ClosetPage() {
                 </div>
 
                 {/* Item info */}
-                <h3 className="font-medium text-sm text-white leading-tight">
+                <h3 className="font-medium text-sm text-foreground leading-tight">
                   {getItemName(item)}
                 </h3>
-                <p className="text-xs text-zinc-500 mt-0.5">
+                <p className="text-xs text-muted-foreground mt-0.5">
                   {getItemBrand(item)}
                 </p>
 
                 {/* Weight */}
                 <div className="mt-3 flex items-center justify-between">
-                  <span className="text-xs text-zinc-400">
+                  <span className="text-xs text-muted-foreground">
                     {getItemWeight(item).toFixed(1)} oz
                   </span>
-                  <span className="text-[10px] text-zinc-600 capitalize">
+                  <span className="text-[10px] text-muted-foreground capitalize">
                     {item.condition}
                   </span>
                 </div>
@@ -318,27 +317,27 @@ function AddGearModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-      <div className="w-full max-w-lg bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden">
+      <div className="w-full max-w-lg bg-card border border-border rounded-xl shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800">
-          <h2 className="font-semibold text-white">Add Gear to Closet</h2>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+          <h2 className="font-semibold text-foreground">Add Gear to Closet</h2>
           <button
             onClick={onClose}
-            className="p-1 rounded-md hover:bg-zinc-800 text-zinc-400"
+            className="p-1 rounded-md hover:bg-muted text-muted-foreground"
           >
             <X className="size-5" />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-zinc-800">
+        <div className="flex border-b border-border">
           <button
             onClick={() => setTab("search")}
             className={cn(
               "flex-1 px-4 py-2.5 text-sm font-medium transition-colors",
               tab === "search"
-                ? "text-emerald-400 border-b-2 border-emerald-400"
-                : "text-zinc-400 hover:text-zinc-300"
+                ? "text-primary border-b-2 border-primary"
+                : "text-muted-foreground hover:text-foreground"
             )}
           >
             Search Database
@@ -348,8 +347,8 @@ function AddGearModal({
             className={cn(
               "flex-1 px-4 py-2.5 text-sm font-medium transition-colors",
               tab === "custom"
-                ? "text-emerald-400 border-b-2 border-emerald-400"
-                : "text-zinc-400 hover:text-zinc-300"
+                ? "text-primary border-b-2 border-primary"
+                : "text-muted-foreground hover:text-foreground"
             )}
           >
             Custom Item
@@ -361,40 +360,40 @@ function AddGearModal({
           {tab === "search" ? (
             <div className="space-y-3">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-500" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="Search gear by name, brand..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   autoFocus
-                  className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                  className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-muted border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50"
                 />
               </div>
               {searching && (
-                <p className="text-xs text-zinc-500">Searching...</p>
+                <p className="text-xs text-muted-foreground">Searching...</p>
               )}
               {results.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => onAddFromDB(item)}
-                  className="w-full text-left p-3 rounded-lg border border-zinc-800 hover:border-emerald-500/30 hover:bg-emerald-500/5 transition-colors"
+                  className="w-full text-left p-3 rounded-lg border border-border hover:border-primary/30 hover:brightness-110/5 transition-colors"
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-white">
+                      <p className="text-sm font-medium text-foreground">
                         {item.name}
                       </p>
-                      <p className="text-xs text-zinc-500">{item.brand}</p>
+                      <p className="text-xs text-muted-foreground">{item.brand}</p>
                     </div>
-                    <span className="text-xs text-zinc-400">
+                    <span className="text-xs text-muted-foreground">
                       {item.weightOz.toFixed(1)} oz
                     </span>
                   </div>
                 </button>
               ))}
               {query.length >= 2 && !searching && results.length === 0 && (
-                <p className="text-xs text-zinc-500 text-center py-4">
+                <p className="text-xs text-muted-foreground text-center py-4">
                   No results. Try a different search or add as a custom item.
                 </p>
               )}
@@ -406,26 +405,26 @@ function AddGearModal({
                 placeholder="Item name"
                 value={customName}
                 onChange={(e) => setCustomName(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                className="w-full px-3 py-2.5 rounded-lg bg-muted border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50"
               />
               <input
                 type="text"
                 placeholder="Brand (optional)"
                 value={customBrand}
                 onChange={(e) => setCustomBrand(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                className="w-full px-3 py-2.5 rounded-lg bg-muted border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50"
               />
               <input
                 type="number"
                 placeholder="Weight (oz)"
                 value={customWeight}
                 onChange={(e) => setCustomWeight(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                className="w-full px-3 py-2.5 rounded-lg bg-muted border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50"
               />
               <select
                 value={customCategory}
                 onChange={(e) => setCustomCategory(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg bg-zinc-800 border border-zinc-700 text-white text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                className="w-full px-3 py-2.5 rounded-lg bg-muted border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50"
               >
                 <option value="shelter">Shelter</option>
                 <option value="sleep">Sleep</option>
@@ -446,7 +445,7 @@ function AddGearModal({
                   });
                 }}
                 disabled={!customName.trim()}
-                className="w-full py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-2.5 rounded-lg bg-primary text-foreground text-sm font-medium hover:brightness-110 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Add to Closet
               </button>

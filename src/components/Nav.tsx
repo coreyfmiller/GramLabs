@@ -3,18 +3,25 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Mountain, Sun, Moon, LogOut } from "lucide-react";
+import { Mountain, Sun, Moon, LogOut, Menu, X } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 
-const NAV_LINKS = [
+const ADMIN_EMAIL = "coreyfmiller@gmail.com";
+
+interface NavLink {
+  label: string;
+  href: string;
+  admin?: boolean;
+}
+
+const NAV_LINKS: NavLink[] = [
   { label: "MY GEAR", href: "/closet" },
   { label: "PACK LAB", href: "/pack-lab" },
   { label: "COMPARE", href: "/compare" },
   { label: "AI ADVISOR", href: "/chat" },
   { label: "TRIP ENGINE", href: "/trip" },
   { label: "BRANDS", href: "/brands", admin: true },
-  { label: "TODO", href: "/admin/todo", admin: true },
 ];
 
 export function Nav() {
@@ -22,6 +29,8 @@ export function Nav() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const pathname = usePathname();
   const { user, signOut } = useAuth();
+
+  const isAdmin = user?.email === ADMIN_EMAIL;
 
   useEffect(() => {
     const saved = localStorage.getItem("hikemind-theme") as "dark" | "light" | null;
@@ -38,57 +47,64 @@ export function Nav() {
     document.documentElement.classList.toggle("light", next === "light");
   };
 
+  // Close mobile menu on navigation
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  const visibleLinks = NAV_LINKS.filter((link) => !link.admin || isAdmin);
+
   return (
     <>
-      <header className="shrink-0 border-b border-white/10 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="flex items-center justify-between gap-4 px-4 py-3 md:px-6">
-          {/* Left: Logo + nav */}
-          <div className="flex items-center gap-4">
+      <header className="shrink-0 sticky top-0 z-50 border-b border-border glass">
+        <div className="flex items-center justify-between px-4 py-3 md:px-6">
+          {/* Left: Logo + nav links */}
+          <div className="flex items-center">
             <Link href="/" className="flex items-center gap-2.5">
-              <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-                <Mountain className="size-5" aria-hidden="true" />
+              <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <Mountain className="size-[18px]" aria-hidden="true" />
               </span>
-              <span className="text-base font-semibold tracking-tight">HikeMind</span>
+              <span className="text-[15px] font-semibold tracking-tight text-foreground">
+                HikeMind
+              </span>
             </Link>
 
-            <nav className="hidden md:flex items-center gap-5 ml-4">
-              {NAV_LINKS.map((link) => (
+            <nav className="hidden md:flex items-center gap-6 ml-8" aria-label="Main">
+              {visibleLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "text-xs font-medium tracking-[0.15em] transition-colors inline-flex items-center gap-1.5",
-                    pathname === link.href
-                      ? "text-primary font-bold"
+                    "text-[11px] font-medium uppercase tracking-[0.12em] transition-colors",
+                    pathname === link.href || pathname.startsWith(link.href + "/")
+                      ? "text-primary"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >
                   {link.label}
-                  {("admin" in link) && link.admin && (
-                    <span className="px-1 py-0.5 text-[8px] font-bold uppercase tracking-wider bg-yellow-400/20 text-yellow-400 border border-yellow-400/30 rounded leading-none">
-                      ADMIN
-                    </span>
-                  )}
                 </Link>
               ))}
             </nav>
           </div>
 
-          {/* Theme toggle + Auth + Mobile hamburger */}
+          {/* Right: User + theme + mobile toggle */}
           <div className="flex items-center gap-2">
             {user && (
               <button
                 onClick={signOut}
-                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-white/[0.05] transition-colors"
+                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                 title="Sign out"
               >
                 <LogOut className="size-3.5" />
-                <span className="max-w-[100px] truncate">{user.email?.split("@")[0]}</span>
+                <span className="max-w-[100px] truncate">
+                  {user.email?.split("@")[0]}
+                </span>
               </button>
             )}
+
             <button
               onClick={toggleTheme}
-              className="size-9 flex items-center justify-center rounded-lg border border-border bg-white/[0.03] hover:bg-white/[0.08] transition-colors"
+              className="size-9 flex items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors"
               aria-label="Toggle theme"
             >
               {theme === "dark" ? (
@@ -99,22 +115,15 @@ export function Nav() {
             </button>
 
             <button
-              className="md:hidden flex flex-col gap-[5px] p-2"
-              aria-label="Menu"
+              className="md:hidden size-9 flex items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors"
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
               onClick={() => setMobileOpen(!mobileOpen)}
             >
-              <span
-                className={cn(
-                  "block w-5 h-[1.5px] bg-foreground transition-transform duration-300",
-                  mobileOpen && "rotate-45 translate-y-[3.5px]"
-                )}
-              />
-              <span
-                className={cn(
-                  "block w-5 h-[1.5px] bg-foreground transition-transform duration-300",
-                  mobileOpen && "-rotate-45 -translate-y-[3.5px]"
-                )}
-              />
+              {mobileOpen ? (
+                <X className="size-4 text-foreground" />
+              ) : (
+                <Menu className="size-4 text-muted-foreground" />
+              )}
             </button>
           </div>
         </div>
@@ -122,27 +131,33 @@ export function Nav() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="fixed inset-x-0 top-[57px] z-50 bg-background/95 backdrop-blur-md border-b border-white/10 px-6 py-6 flex flex-col gap-4 md:hidden">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "text-sm font-medium tracking-[0.15em] transition-colors inline-flex items-center gap-2",
-                pathname === link.href
-                  ? "text-primary font-bold"
-                  : "text-foreground hover:text-primary"
-              )}
-              onClick={() => setMobileOpen(false)}
-            >
-              {link.label}
-              {("admin" in link) && link.admin && (
-                <span className="px-1 py-0.5 text-[8px] font-bold uppercase tracking-wider bg-yellow-400/20 text-yellow-400 border border-yellow-400/30 rounded leading-none">
-                  ADMIN
-                </span>
-              )}
-            </Link>
-          ))}
+        <div className="fixed inset-x-0 top-[53px] bottom-0 z-40 bg-background/95 backdrop-blur-md md:hidden">
+          <nav className="flex flex-col gap-1 px-4 py-4" aria-label="Mobile">
+            {visibleLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "text-[11px] font-medium uppercase tracking-[0.12em] px-3 py-3 rounded-lg transition-colors",
+                  pathname === link.href || pathname.startsWith(link.href + "/")
+                    ? "text-primary bg-primary/5"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+
+            {user && (
+              <button
+                onClick={signOut}
+                className="flex items-center gap-2 mt-4 px-3 py-3 rounded-lg text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              >
+                <LogOut className="size-3.5" />
+                Sign out
+              </button>
+            )}
+          </nav>
         </div>
       )}
     </>

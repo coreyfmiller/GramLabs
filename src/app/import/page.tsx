@@ -119,24 +119,24 @@ export default function ImportPage() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <div className="text-zinc-500 text-sm">Loading...</div>
+      <div className="min-h-dvh bg-background flex items-center justify-center">
+        <div className="text-muted-foreground text-sm">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-background text-white">
       <Nav />
 
       <main className="max-w-3xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Upload className="size-6 text-emerald-400" />
+            <Upload className="size-6 text-primary" />
             Import Gear
           </h1>
-          <p className="text-sm text-zinc-400 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Bring your gear list from LighterPack, a CSV file, or paste it as text.
             We&apos;ll match items to our database automatically.
           </p>
@@ -152,8 +152,8 @@ export default function ImportPage() {
                 className={cn(
                   "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-colors",
                   inputMode === "url"
-                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                    : "border-zinc-800 text-zinc-400 hover:border-zinc-700"
+                    ? "border-primary/30 bg-primary/10 text-primary"
+                    : "border-border text-muted-foreground hover:border-primary/30"
                 )}
               >
                 <Link className="size-4" />
@@ -164,8 +164,8 @@ export default function ImportPage() {
                 className={cn(
                   "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-colors",
                   inputMode === "csv"
-                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                    : "border-zinc-800 text-zinc-400 hover:border-zinc-700"
+                    ? "border-primary/30 bg-primary/10 text-primary"
+                    : "border-border text-muted-foreground hover:border-primary/30"
                 )}
               >
                 <FileText className="size-4" />
@@ -176,8 +176,8 @@ export default function ImportPage() {
                 className={cn(
                   "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-colors",
                   inputMode === "text"
-                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                    : "border-zinc-800 text-zinc-400 hover:border-zinc-700"
+                    ? "border-primary/30 bg-primary/10 text-primary"
+                    : "border-border text-muted-foreground hover:border-primary/30"
                 )}
               >
                 <FileText className="size-4" />
@@ -189,7 +189,7 @@ export default function ImportPage() {
             <div>
               {inputMode === "url" ? (
                 <div className="space-y-2">
-                  <label className="text-xs text-zinc-500">
+                  <label className="text-xs text-muted-foreground">
                     Paste your LighterPack share URL
                   </label>
                   <input
@@ -197,12 +197,12 @@ export default function ImportPage() {
                     placeholder="https://lighterpack.com/r/abc123"
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                    className="w-full px-4 py-3 rounded-lg border border-border bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors"
                   />
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <label className="text-xs text-zinc-500">
+                  <label className="text-xs text-muted-foreground">
                     {inputMode === "csv"
                       ? "Paste your CSV data (exported from LighterPack, PackWizard, or any spreadsheet)"
                       : "Paste your gear list as plain text (we'll detect items and weights)"}
@@ -216,7 +216,7 @@ export default function ImportPage() {
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
                     rows={12}
-                    className="w-full px-4 py-3 rounded-lg bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-600 text-sm font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500/50 resize-y"
+                    className="w-full px-4 py-3 rounded-lg bg-card border border-border text-white placeholder:text-zinc-600 text-sm font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500/50 resize-y"
                   />
                 </div>
               )}
@@ -232,22 +232,22 @@ export default function ImportPage() {
             <button
               onClick={handleSubmit}
               disabled={!inputText.trim()}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-white text-sm font-medium hover:brightness-110 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ArrowRight className="size-4" />
               Parse &amp; Match
             </button>
 
             {/* Help text */}
-            <div className="p-4 rounded-lg border border-zinc-800 bg-zinc-900/30">
-              <h3 className="text-xs font-medium text-zinc-300 flex items-center gap-1.5 mb-2">
+            <div className="p-4 rounded-lg border border-border bg-card/30">
+              <h3 className="text-xs font-medium text-foreground flex items-center gap-1.5 mb-2">
                 <HelpCircle className="size-3.5" />
                 Supported formats
               </h3>
-              <ul className="text-xs text-zinc-500 space-y-1">
-                <li>• <strong className="text-zinc-400">LighterPack URL:</strong> Any lighterpack.com/r/... share link</li>
-                <li>• <strong className="text-zinc-400">CSV:</strong> LighterPack export, PackWizard export, or any spreadsheet with name + weight columns</li>
-                <li>• <strong className="text-zinc-400">Plain text:</strong> Just paste your list — we&apos;ll detect item names and weights (e.g. &quot;Nemo Tensor 15oz&quot;)</li>
+              <ul className="text-xs text-muted-foreground space-y-1">
+                <li>• <strong className="text-muted-foreground">LighterPack URL:</strong> Any lighterpack.com/r/... share link</li>
+                <li>• <strong className="text-muted-foreground">CSV:</strong> LighterPack export, PackWizard export, or any spreadsheet with name + weight columns</li>
+                <li>• <strong className="text-muted-foreground">Plain text:</strong> Just paste your list — we&apos;ll detect item names and weights (e.g. &quot;Nemo Tensor 15oz&quot;)</li>
               </ul>
             </div>
           </div>
@@ -256,9 +256,9 @@ export default function ImportPage() {
         {/* Step: Matching (loading) */}
         {step === "matching" && (
           <div className="text-center py-16">
-            <Loader2 className="size-8 text-emerald-400 animate-spin mx-auto mb-4" />
-            <p className="text-zinc-300 font-medium">Parsing and matching your gear...</p>
-            <p className="text-xs text-zinc-500 mt-1">
+            <Loader2 className="size-8 text-primary animate-spin mx-auto mb-4" />
+            <p className="text-foreground font-medium">Parsing and matching your gear...</p>
+            <p className="text-xs text-muted-foreground mt-1">
               Searching our database of 1,500+ items
             </p>
           </div>
@@ -268,12 +268,12 @@ export default function ImportPage() {
         {step === "review" && (
           <div className="space-y-6">
             {/* Summary */}
-            <div className="flex items-center justify-between p-4 rounded-lg border border-zinc-800 bg-zinc-900/50">
+            <div className="flex items-center justify-between p-4 rounded-lg border border-border bg-card/50">
               <div>
                 <p className="text-sm font-medium text-white">
                   {items.length} items parsed
                 </p>
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-muted-foreground">
                   {items.filter((i) => i.confidence === "high").length} high-confidence matches ·{" "}
                   {items.filter((i) => i.confidence === "medium").length} needs review ·{" "}
                   {items.filter((i) => i.confidence === "none").length} no match (will add as custom)
@@ -282,7 +282,7 @@ export default function ImportPage() {
               <button
                 onClick={handleImport}
                 disabled={items.filter((i) => i.accepted).length === 0}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-500 transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:brightness-110 transition-colors disabled:opacity-50"
               >
                 <Package className="size-4" />
                 Import {items.filter((i) => i.accepted).length} items
@@ -297,8 +297,8 @@ export default function ImportPage() {
                   className={cn(
                     "p-3 rounded-lg border transition-colors",
                     item.accepted
-                      ? "border-zinc-800 bg-zinc-900/50"
-                      : "border-zinc-800/50 bg-zinc-900/20 opacity-50"
+                      ? "border-border bg-card/50"
+                      : "border-border/50 bg-card/20 opacity-50"
                   )}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -309,14 +309,14 @@ export default function ImportPage() {
                         <p className="text-sm font-medium text-white truncate">
                           {item.parsed.name}
                         </p>
-                        <span className="text-xs text-zinc-500 shrink-0">
+                        <span className="text-xs text-muted-foreground shrink-0">
                           {item.parsed.weightOz.toFixed(1)} oz
                         </span>
                       </div>
 
                       {/* Match info */}
                       {item.match && item.useMatch ? (
-                        <p className="text-xs text-emerald-400/80 mt-1 ml-6 truncate">
+                        <p className="text-xs text-primary/80 mt-1 ml-6 truncate">
                           → {item.match.brand} {item.match.name} ({item.match.weightOz.toFixed(1)} oz)
                         </p>
                       ) : (
@@ -334,8 +334,8 @@ export default function ImportPage() {
                           className={cn(
                             "text-[10px] px-2 py-0.5 rounded border transition-colors",
                             item.useMatch
-                              ? "border-emerald-500/30 text-emerald-400 bg-emerald-500/10"
-                              : "border-zinc-700 text-zinc-500"
+                              ? "border-emerald-500/30 text-primary bg-emerald-500/10"
+                              : "border-border text-muted-foreground"
                           )}
                         >
                           {item.useMatch ? "Linked" : "Custom"}
@@ -348,8 +348,8 @@ export default function ImportPage() {
                         className={cn(
                           "size-7 flex items-center justify-center rounded-md border transition-colors",
                           item.accepted
-                            ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                            : "border-zinc-700 text-zinc-600 hover:border-zinc-600"
+                            ? "border-emerald-500/30 bg-emerald-500/10 text-primary"
+                            : "border-border text-zinc-600 hover:border-zinc-600"
                         )}
                       >
                         {item.accepted ? <Check className="size-3.5" /> : <X className="size-3.5" />}
@@ -363,7 +363,7 @@ export default function ImportPage() {
             {/* Back button */}
             <button
               onClick={() => setStep("input")}
-              className="text-xs text-zinc-500 hover:text-zinc-300"
+              className="text-xs text-muted-foreground hover:text-foreground"
             >
               ← Start over
             </button>
@@ -373,23 +373,23 @@ export default function ImportPage() {
         {/* Step: Importing */}
         {step === "importing" && (
           <div className="text-center py-16">
-            <Loader2 className="size-8 text-emerald-400 animate-spin mx-auto mb-4" />
-            <p className="text-zinc-300 font-medium">Adding gear to your closet...</p>
+            <Loader2 className="size-8 text-primary animate-spin mx-auto mb-4" />
+            <p className="text-foreground font-medium">Adding gear to your closet...</p>
           </div>
         )}
 
         {/* Step: Done */}
         {step === "done" && (
           <div className="text-center py-16">
-            <Check className="size-12 text-emerald-400 mx-auto mb-4" />
+            <Check className="size-12 text-primary mx-auto mb-4" />
             <h2 className="text-xl font-bold text-white mb-2">Import complete</h2>
-            <p className="text-sm text-zinc-400 mb-6">
+            <p className="text-sm text-muted-foreground mb-6">
               Added {importStats.added} of {importStats.total} items to your gear closet.
             </p>
             <div className="flex gap-3 justify-center">
               <a
                 href="/closet"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-500 transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-white text-sm font-medium hover:brightness-110 transition-colors"
               >
                 <Package className="size-4" />
                 View Closet
@@ -400,7 +400,7 @@ export default function ImportPage() {
                   setInputText("");
                   setItems([]);
                 }}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-zinc-700 text-zinc-300 text-sm font-medium hover:bg-zinc-800 transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-card transition-colors"
               >
                 Import More
               </button>
@@ -417,7 +417,7 @@ function ConfidenceBadge({ confidence }: { confidence: string }) {
     case "high":
       return (
         <span className="size-5 flex items-center justify-center rounded-full bg-emerald-500/10">
-          <Check className="size-3 text-emerald-400" />
+          <Check className="size-3 text-primary" />
         </span>
       );
     case "medium":
@@ -434,8 +434,8 @@ function ConfidenceBadge({ confidence }: { confidence: string }) {
       );
     default:
       return (
-        <span className="size-5 flex items-center justify-center rounded-full bg-zinc-800">
-          <X className="size-3 text-zinc-500" />
+        <span className="size-5 flex items-center justify-center rounded-full bg-card">
+          <X className="size-3 text-muted-foreground" />
         </span>
       );
   }

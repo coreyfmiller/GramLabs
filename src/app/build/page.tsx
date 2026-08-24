@@ -75,21 +75,21 @@ export default function BuildPage() {
     <div className="min-h-dvh bg-background text-foreground">
       <Nav />
 
-      <div className="max-w-4xl mx-auto px-4 md:px-8 py-10">
+      <div className="max-w-4xl mx-auto px-4 md:px-6 py-6 md:py-8">
         {!result ? (
           <>
             {/* Title */}
-            <div className="text-center mb-10">
-              <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-3">Build My Kit</h1>
-              <p className="text-base text-muted-foreground max-w-lg mx-auto">
-                Tell us your budget and trip style. We&apos;ll build you an optimized pack from 1500+ verified gear items.
+            <div className="mb-8">
+              <h1 className="text-2xl font-bold tracking-tight text-foreground">Build My Kit</h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Tell us your budget and trip style. We&apos;ll build you an optimized pack from 1,500+ verified gear items.
               </p>
             </div>
 
             {/* Form */}
             <div className="grid gap-6 max-w-2xl mx-auto">
               {/* Budget */}
-              <div className="glass rounded-xl border border-white/10 p-5">
+              <div className="rounded-xl border border-border bg-card p-5">
                 <label className="block text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground mb-3">
                   Total Budget
                 </label>
@@ -102,7 +102,7 @@ export default function BuildPage() {
                         "rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors",
                         inputs.budget === b
                           ? "border-primary/50 bg-primary/15 text-primary"
-                          : "border-white/10 bg-white/[0.02] text-muted-foreground hover:border-white/20"
+                          : "border-border bg-card text-muted-foreground hover:border-primary/30"
                       )}
                     >
                       ${b.toLocaleString()}
@@ -122,7 +122,7 @@ export default function BuildPage() {
               </div>
 
               {/* Trip Type */}
-              <div className="glass rounded-xl border border-white/10 p-5">
+              <div className="rounded-xl border border-border bg-card p-5">
                 <label className="block text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground mb-3">
                   Trip Type
                 </label>
@@ -145,7 +145,7 @@ export default function BuildPage() {
               </div>
 
               {/* Climate */}
-              <div className="glass rounded-xl border border-white/10 p-5">
+              <div className="rounded-xl border border-border bg-card p-5">
                 <label className="block text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground mb-3">
                   Climate / Region
                 </label>
@@ -168,7 +168,7 @@ export default function BuildPage() {
               </div>
 
               {/* Sleep Style */}
-              <div className="glass rounded-xl border border-white/10 p-5">
+              <div className="rounded-xl border border-border bg-card p-5">
                 <label className="block text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground mb-3">
                   Sleep System
                 </label>
@@ -190,7 +190,7 @@ export default function BuildPage() {
               </div>
 
               {/* Priority */}
-              <div className="glass rounded-xl border border-white/10 p-5">
+              <div className="rounded-xl border border-border bg-card p-5">
                 <label className="block text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground mb-3">
                   Optimize For
                 </label>
@@ -249,23 +249,23 @@ export default function BuildPage() {
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-3">
-              <div className="glass rounded-xl border border-white/10 p-4 text-center">
+              <div className="rounded-xl border border-border bg-card p-4 text-center">
                 <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Base Weight</p>
                 <p className="num text-xl font-semibold text-primary mt-1">{result.baseWeight}</p>
               </div>
-              <div className="glass rounded-xl border border-white/10 p-4 text-center">
+              <div className="rounded-xl border border-border bg-card p-4 text-center">
                 <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Total Cost</p>
                 <p className="num text-xl font-semibold text-foreground mt-1">{result.totalCost}</p>
               </div>
-              <div className="glass rounded-xl border border-white/10 p-4 text-center">
+              <div className="rounded-xl border border-border bg-card p-4 text-center">
                 <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Items</p>
                 <p className="num text-xl font-semibold text-foreground mt-1">{result.items.length}</p>
               </div>
             </div>
 
             {/* Item List */}
-            <div className="glass rounded-xl border border-white/10 overflow-hidden">
-              <div className="border-b border-white/10 p-4">
+            <div className="rounded-xl border border-border bg-card overflow-hidden">
+              <div className="border-b border-border p-4">
                 <h3 className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Recommended Gear</h3>
               </div>
               <div className="divide-y divide-white/[0.07]">
@@ -298,7 +298,7 @@ export default function BuildPage() {
               </Link>
               <button
                 onClick={() => setResult(null)}
-                className="flex-1 py-3 rounded-xl border border-white/10 bg-white/[0.03] text-foreground font-semibold text-sm hover:bg-white/[0.06] transition-colors"
+                className="flex-1 py-3 rounded-xl border border-border bg-card text-foreground font-semibold text-sm hover:bg-muted transition-colors"
               >
                 Build Another Kit
               </button>
@@ -328,7 +328,7 @@ function OptionButton({
         "rounded-lg border px-3 py-3 text-left transition-colors",
         active
           ? "border-primary/50 bg-primary/15"
-          : "border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.05]"
+          : "border-border bg-card hover:border-primary/30 hover:bg-muted"
       )}
     >
       <p className={cn("text-sm font-medium", active ? "text-primary" : "text-foreground")}>{label}</p>

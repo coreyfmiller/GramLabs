@@ -34,7 +34,7 @@ export function PackBuilder() {
       <Nav />
 
       {/* Stats bar */}
-      <div className="flex shrink-0 items-center justify-end gap-4 border-b border-white/10 px-4 py-2 md:px-6">
+      <div className="flex shrink-0 items-center justify-end gap-4 border-b border-border px-4 py-2 md:px-6">
         <div className="hidden items-center gap-4 sm:flex">
           <HeaderStat label="Base" value={formatWeightWithUnit(baseWeight, weightUnit)} accent />
           <span aria-hidden="true" className="h-7 w-px bg-white/10" />
