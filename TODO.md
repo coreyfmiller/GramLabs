@@ -31,7 +31,7 @@
 3. Under **Authorised JavaScript origins**, add:
    - `http://localhost:3000`
    - `https://kkncobvfavgyibisdevc.supabase.co`
-   - Your Vercel production URL (e.g., `https://your-app.vercel.app`)
+   - `https://gram-labs.vercel.app`
 4. Under **Authorised redirect URIs**, confirm:
    - `https://kkncobvfavgyibisdevc.supabase.co/auth/v1/callback`
 5. Save and wait 5 minutes for propagation

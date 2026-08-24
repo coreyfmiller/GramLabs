@@ -6,6 +6,7 @@ import { GearItem, GearCategory, TIER_LABELS, TIER_COLORS } from "@/data/gear-da
 import { searchGear, getGearByIds } from "@/lib/gear-api";
 import { usePackStore } from "@/store/pack-store";
 import { cn } from "@/lib/utils";
+import { Nav } from "@/components/Nav";
 
 // === SPEC DEFINITIONS PER CATEGORY ===
 interface SpecDef {
@@ -220,7 +221,9 @@ export default function ComparePage() {
   const specs = lockedCategory ? getSpecsForCategory(lockedCategory) : [];
 
   return (
-    <div className="min-h-screen px-4 py-8 md:px-6">
+    <div className="min-h-screen bg-background text-foreground">
+      <Nav />
+      <div className="px-4 py-8 md:px-6">
       <div className="mx-auto max-w-6xl">
         {/* Header */}
         <div className="mb-8">
@@ -419,6 +422,7 @@ export default function ComparePage() {
             <p className="text-muted-foreground/60 text-xs mt-1">Searching within {items[0].category} category</p>
           </div>
         )}
+      </div>
       </div>
     </div>
   );
