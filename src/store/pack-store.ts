@@ -49,6 +49,7 @@ export interface PackStore {
 
   // Loadout management
   createLoadout: (name: string) => void;
+  duplicateLoadout: (id: string) => void;
   deleteLoadout: (id: string) => void;
   switchLoadout: (id: string) => void;
   renameLoadout: (id: string, name: string) => void;
@@ -199,6 +200,17 @@ export const usePackStore = create<PackStore>()(
           loadouts: [...state.loadouts, { id, name, items: [] }],
           activeLoadoutId: id,
         }));
+      },
+
+      duplicateLoadout: (id) => {
+        const state = get();
+        const source = state.loadouts.find((l) => l.id === id);
+        if (!source) return;
+        const newId = generateId();
+        set({
+          loadouts: [...state.loadouts, { id: newId, name: `${source.name} (copy)`, items: [...source.items] }],
+          activeLoadoutId: newId,
+        });
       },
 
       deleteLoadout: (id) => {

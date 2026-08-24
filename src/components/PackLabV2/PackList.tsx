@@ -19,6 +19,7 @@ import {
   X,
   ChevronDown,
   Archive,
+  Copy,
 } from "lucide-react";
 import {
   CATEGORY_LABELS,
@@ -48,6 +49,7 @@ export function PackList() {
   const setPackName = usePackStore((s) => s.setPackName);
   const getBaseWeight = usePackStore((s) => s.getBaseWeight);
   const createLoadout = usePackStore((s) => s.createLoadout);
+  const duplicateLoadout = usePackStore((s) => s.duplicateLoadout);
   const switchLoadout = usePackStore((s) => s.switchLoadout);
   const deleteLoadout = usePackStore((s) => s.deleteLoadout);
   const removeItem = usePackStore((s) => s.removeItem);
@@ -162,6 +164,13 @@ export function PackList() {
             title="New loadout"
           >
             <Plus className="size-3.5" />
+          </button>
+          <button
+            onClick={() => duplicateLoadout(activeLoadoutId)}
+            className="px-2 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            title="Duplicate current loadout"
+          >
+            <Copy className="size-3.5" />
           </button>
         </div>
 

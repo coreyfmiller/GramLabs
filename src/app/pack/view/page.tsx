@@ -191,13 +191,39 @@ function PackViewContent() {
           <p className="mt-1 text-sm text-muted-foreground">
             HikeMind helps you track, optimize, and compare your hiking gear. Free forever.
           </p>
-          <Link
-            href="/pack-lab"
-            className="inline-flex items-center gap-2 mt-4 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:brightness-110 transition-all"
-          >
-            Start building
-            <ArrowRight className="size-4" />
-          </Link>
+          <div className="flex items-center justify-center gap-3 mt-4">
+            <button
+              onClick={() => {
+                // Import this pack as a new loadout
+                const { usePackStore } = require("@/store/pack-store");
+                const store = usePackStore.getState();
+                store.createLoadout(pack.n || "Copied Pack");
+                items.forEach((item) => {
+                  store.addItem({
+                    id: `copy-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`,
+                    name: item.n,
+                    brand: item.b || "",
+                    category: item.c || "accessories",
+                    weightOz: item.w,
+                    priceUsd: 0,
+                    tier: "mid",
+                    description: "",
+                  });
+                });
+                window.location.href = "/pack-lab";
+              }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border bg-card font-medium text-sm text-foreground hover:bg-muted transition-colors"
+            >
+              Copy this pack to mine
+            </button>
+            <Link
+              href="/pack-lab"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:brightness-110 transition-all"
+            >
+              Start from scratch
+              <ArrowRight className="size-4" />
+            </Link>
+          </div>
         </div>
       </main>
     </div>

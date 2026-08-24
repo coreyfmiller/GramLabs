@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Nav } from "@/components/Nav";
 import { cn } from "@/lib/utils";
 import { Flame, Droplets, Package, Mountain, TrendingUp } from "lucide-react";
+import { usePackStore } from "@/store/pack-store";
 
 /**
  * Pandolf Equation (simplified for hiking):
@@ -128,6 +129,8 @@ function calculateCalories(inputs: CalorieInputs): CalorieResult {
 }
 
 export default function CaloriesPage() {
+  const getBaseWeight = usePackStore((s) => s.getBaseWeight);
+
   const [inputs, setInputs] = useState<CalorieInputs>({
     bodyWeightLbs: 170,
     packWeightLbs: 20,
@@ -138,6 +141,14 @@ export default function CaloriesPage() {
     sex: "male",
     tripDays: 3,
   });
+
+  // Auto-fill pack weight from active loadout
+  useEffect(() => {
+    const baseWeightOz = getBaseWeight();
+    if (baseWeightOz > 0) {
+      setInputs((prev) => ({ ...prev, packWeightLbs: Math.round((baseWeightOz / 16) * 10) / 10 }));
+    }
+  }, [getBaseWeight]);
 
   const [result, setResult] = useState<CalorieResult | null>(null);
 
