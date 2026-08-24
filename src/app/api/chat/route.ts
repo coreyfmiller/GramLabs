@@ -1,13 +1,64 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
-import { gearDatabase, CATEGORY_LABELS, TIER_LABELS } from "@/data/gear-database";
+import { CATEGORY_LABELS, TIER_LABELS, type GearItem } from "@/data/gear-database";
+import { getEmbeddingCache, embedQuery, cosineSimilarity } from "@/lib/gear-embeddings";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
-function buildGearContext(): string {
+/**
+ * Retrieve the top-N gear items most relevant to the user's message
+ * using embedding similarity against the pre-computed cache.
+ */
+async function retrieveRelevantGear(query: string, topN: number = 60): Promise<GearItem[]> {
+  const { gearDatabase } = await import("@/data/gear-database");
+  const cache = await getEmbeddingCache();
+  const queryEmbedding = await embedQuery(query);
+
+  const scored = gearDatabase
+    .map((item) => {
+      const itemEmbedding = cache.get(item.id);
+      if (!itemEmbedding) return { item, score: 0 };
+      return { item, score: cosineSimilarity(queryEmbedding, itemEmbedding) };
+    })
+    .sort((a, b) => b.score - a.score);
+
+  // Ensure category diversity: at least 2 items per category in results
+  const selected = new Map<string, GearItem[]>();
+  const overflow: { item: GearItem; score: number }[] = [];
+
+  for (const entry of scored) {
+    const cat = entry.item.category;
+    const catList = selected.get(cat) || [];
+    if (catList.length < 3) {
+      catList.push(entry.item);
+      selected.set(cat, catList);
+    } else {
+      overflow.push(entry);
+    }
+  }
+
+  const result: GearItem[] = [];
+  for (const items of selected.values()) {
+    result.push(...items);
+  }
+
+  // Fill remaining with top-scoring items
+  const alreadySelected = new Set(result.map((i) => i.id));
+  const extras = overflow
+    .filter((e) => !alreadySelected.has(e.item.id))
+    .slice(0, topN - result.length);
+  result.push(...extras.map((e) => e.item));
+
+  return result.slice(0, topN);
+}
+
+/**
+ * Format retrieved gear items into a compact context string.
+ */
+function formatGearContext(items: GearItem[]): string {
   const grouped = new Map<string, string[]>();
 
-  gearDatabase.forEach((item) => {
+  items.forEach((item) => {
     const cat = CATEGORY_LABELS[item.category];
     if (!grouped.has(cat)) grouped.set(cat, []);
     grouped.get(cat)!.push(
@@ -25,16 +76,18 @@ function buildGearContext(): string {
 
 const BACKTICKS = "```";
 
-const SYSTEM_INSTRUCTION = `You are HikeMind AI, an expert ultralight backpacking gear advisor.
+function buildSystemInstruction(gearContext: string, itemCount: number): string {
+  return `You are HikeMind AI, an expert ultralight backpacking gear advisor.
 
-DATABASE OF AVAILABLE GEAR:
-${buildGearContext()}
+DATABASE OF AVAILABLE GEAR (${itemCount} items most relevant to this conversation):
+${gearContext}
 
 RULES:
 - Only recommend items from the database above. Never invent items.
 - Be honest about budget constraints. A $300 budget means AliExpress gear, not premium brands.
 - Use lb+oz format for weights.
 - Keep text explanations brief. Gear cards are the main content.
+- If asked about gear NOT in the list above, say you don't have data on that specific item but suggest alternatives from what's available.
 
 GEAR DEPENDENCIES (MANDATORY):
 - Trekking pole tent or tarp → MUST include trekking poles
@@ -71,6 +124,7 @@ ${BACKTICKS}gear
   {"category":"Sleeping Pad","brand":"Flextail","name":"Zero Mattress R05 Mummy","weight":"18.3 oz","price":"$55","reason":"R-5.6 pad for under $60. Great warmth."}
 ]
 ${BACKTICKS}`;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -83,9 +137,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Build a search query from recent conversation context
+    // Use the last user message + any earlier context for better retrieval
+    const userMessages = messages
+      .filter((m: { role: string }) => m.role === "user")
+      .slice(-3)
+      .map((m: { content: string }) => m.content);
+    const searchQuery = userMessages.join(" ");
+
+    // Retrieve only relevant gear items via semantic search
+    const relevantGear = await retrieveRelevantGear(searchQuery, 60);
+    const gearContext = formatGearContext(relevantGear);
+    const systemInstruction = buildSystemInstruction(gearContext, relevantGear.length);
+
     const model = genAI.getGenerativeModel({
       model: "gemini-3.6-flash",
-      systemInstruction: SYSTEM_INSTRUCTION,
+      systemInstruction,
     });
 
     const chat = model.startChat({

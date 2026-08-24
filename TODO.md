@@ -1,104 +1,162 @@
 # HikeMind — TODO
 
-## 🚨 DO THIS FIRST (Manual Steps — Blocks Everything Below)
-
-- [ ] Enable YouTube Data API v3: https://console.cloud.google.com/apis/library/youtube.googleapis.com
-- [ ] Create/reuse API key with YouTube Data API access: https://console.cloud.google.com/apis/credentials
-- [ ] Add `YOUTUBE_API_KEY=xxx` to `.env.local`
-- [ ] Add `youtube_video_ids` column to `gear_items` table in Supabase (text array, nullable)
-- [ ] Add GitHub Actions secrets: `YOUTUBE_API_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- [ ] Push workflow to GitHub and verify it runs: `.github/workflows/youtube-reviews.yml`
-- [ ] Test script locally: `node scripts/fetch-youtube-reviews.mjs --dry-run`
-
-Once done: workflow auto-runs 1st-10th of each month, ~95 items/day. Full DB covered in 10 days.
+**Last updated:** August 19, 2026
 
 ---
 
-## 🔥 Priority: Build Order
+## ✅ COMPLETED
 
-### Step 0 — YouTube API Setup (BLOCKING) ✅ Script & Workflow Built
+### Gear Database ✅
+- [x] 1000+ items in Supabase with full specs
+- [x] Subcategory tagging (967+ items)
+- [x] Sleeping pads: R-values filled
+- [x] Shelters: seasons + capacity filled
+- [x] Quilts/bags: temp_rating + fill_type + fill_power filled
+- [x] Brand coverage verified (115+ brands)
+- [x] Full-text search (`fts` column) working
+
+### YouTube Pipeline ✅
 - [x] Build video search script: `scripts/fetch-youtube-reviews.mjs`
 - [x] Build GitHub Action for automated daily runs (1st-10th monthly)
-- [ ] Complete manual setup steps above
-- [ ] Then: Build Gear Compare with embedded fullscreen YouTube reviews
+- [x] Add `youtube_video_ids` column to Supabase `gear_items` table
+- [x] Add `YOUTUBE_API_KEY` to `.env.local`
+- [x] 92 items already have video IDs populated
+- [x] Gear detail page (`/gear/[id]`) renders YouTube embeds with fullscreen
 
-### ~~Step 1 — Complete the Gear Database~~ ✅ DONE
-- [x] Sleeping pads: R-values filled (all pads have R-values)
-- [x] Shelters: Seasons filled (0 missing)
-- [x] Shelters: Capacity filled (0 missing)
-- [x] Quilts/bags: temp_rating filled (0 missing)
-- [x] Quilts/bags: fill_type + fill_power filled (983/1000 complete, remainder is synthetic with no fill_power)
-- [x] Brand coverage verified (115+ brands tracked, only edge cases missing)
+### Gear Compare (`/compare`) ✅
+- [x] Select 2-3 items to compare (from search)
+- [x] Category-locked comparisons
+- [x] Side-by-side specs table (weight, price, R-value, temp rating, etc.)
+- [x] Category-specific spec definitions (shelter, sleep, pack, kitchen, electronics, accessories)
+- [x] Winner detection with trophy icons (lightest, cheapest, best value)
+- [x] Weight diff, price diff, value-per-oz calculations
+- [x] "Add to Pack" button on each item
+- [x] Shareable comparison URL (query params)
+- [x] URL hydration on page load
 
-### Step 2 — Gear Compare (`/compare`)
-- [ ] Select 2-3 items to compare (from search or Pack Lab)
-- [ ] Side-by-side specs table (weight, price, R-value, temp rating, etc.)
-- [ ] Weight diff, price diff, value-per-oz calculations
-- [ ] "Winner" highlighting (lightest, best value, warmest)
-- [ ] "Add to Pack" button on any item
-- [ ] Shareable comparison URL
-- [ ] Embedded YouTube review videos per item (fullscreen capable)
-  - YouTube IFrame embed with fullscreen enabled
-  - 2-3 videos per item from trusted channels
-  - Prioritize: JupiterHikes, Darwin OnTheTrail, Clever Hiker, Dixie, Adventure Alan
-- [ ] YouTube Data API v3 integration:
-  - Enable on existing Google Cloud project
-  - Add `youtube_video_ids` field to gear_items table (array of video IDs)
-  - Monthly script: search `"{brand} {product name} review"`
-  - Filter for relevant results (>1min, English, from known gear channels)
-  - Flag items with no matches for manual review
-  - Free tier: 10,000 units/day (100 searches/day) — enough for 1000 items over 10 days
+### Pack Lab ✅
+- [x] Multi-loadout gear list builder
+- [x] Category + subcategory pill filters
+- [x] Custom item entry (any gear)
+- [x] Worn/packed/consumable status
+- [x] Share URL encoding
+- [x] Star/priority items
+- [x] LighterPack import
 
-### Step 3 — Gear Explorer (`/gear`)
-- [ ] Browsable, filterable grid/table of all 1000+ items
-- [ ] Search by name/brand
-- [ ] Filter by category, tier, price range, weight range
-- [ ] Sort by weight, price, warmth-to-weight, cost-per-oz-saved
-- [ ] Item cards with key specs + "Add to Pack" button
-- [ ] Click into item detail with full specs + embedded YouTube reviews (fullscreen)
-- [ ] "Compare" button (select 2-3 and jump to compare view)
-- [ ] External "Buy" link (when URL exists)
-- [ ] SEO: individual item pages or rich metadata for search traffic
+### Other Pages ✅
+- [x] Build My Kit wizard (AI-generated kits by budget/trip/climate)
+- [x] AI Chat (Gemini, constrained to real DB items)
+- [x] Trip Engine (location + weather → pack readiness scoring)
+- [x] Brands Admin (coverage audit dashboard)
+- [x] Gear Detail pages (`/gear/[id]`) with specs + YouTube
 
 ---
 
-## Gear Database — Links & Monitoring
-- [ ] URLs on all items (0/1012 currently) — use monthly AI link updater script when ready
-- [ ] Monthly AI link updater script:
-  - Search API (Serper) to find current product URLs
-  - AI filters for actual product pages vs junk
-  - Validate links return 200 + correct product
-  - Auto-disable broken links in UI
-  - Monthly report: updated/failed/needs-review
-- [ ] Add affiliate links where applicable (REI, Amazon, brand sites)
-- [ ] Admin dashboard showing link health (% working, recently broken)
-- [ ] Clothing category — users enter their own for now; future: add rain shells, puffies, fleece, base layers as browsable items
+## 🔥 NEXT UP — Build Order
 
-## Pack Lab — Polish
-- [ ] Priority matrix for cost (quadrant chart: cost vs weight savings per item/upgrade)
-- [ ] Weight vs community average per category
-- [ ] Category filter as horizontal scroll on mobile (currently wraps ugly)
-- [ ] HikeMind AI Suggestions — contextual swap recommendations (marked FUTURE/PRO)
+### Step 1 — Populate YouTube Videos (manual, 15 min/day for ~8 days)
 
-## Pack Lab — Import
+731 searchable items still need video IDs. No code to write — just run the script:
+
+```bash
+node scripts/fetch-youtube-reviews.mjs
+```
+
+Run once per day (95 items/run). All items covered in ~8 days.
+
+**Also needed:** Add GitHub repo secrets so the Action runs automatically:
+- `YOUTUBE_API_KEY`
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+---
+
+### Step 2 — SEO-Ready Gear Pages ✅ DONE (Aug 19, 2026)
+
+- [x] Convert `/gear/[id]` to server component (SSR — dynamic render)
+- [x] `generateMetadata` with title, description, OG tags, canonical URL per item
+- [x] JSON-LD Product structured data (brand, price, weight, category specs, rating)
+- [x] `/sitemap.xml` generated from Supabase (all static pages + 1000+ gear URLs)
+- [x] "Compare with similar" internal linking section on every gear detail page
+- [x] Build passes clean (`tsc --noEmit` + `next build`)
+
+Still TODO:
+- [ ] "Best [category] for ultralight" collection pages (e.g., `/gear/best-quilts`)
+- [ ] Submit sitemap to Google Search Console
+
+---
+
+### Step 3 — Auth + Cloud Packs (user retention)
+
+- [ ] Add Supabase Auth (email + Google OAuth)
+- [ ] Create `users` table + `user_packs` table
+- [ ] Auth UI: sign in/up modal, user avatar in nav
+- [ ] Auto-sync Zustand pack store to DB when authenticated
+- [ ] Migrate existing localStorage packs on first sign-in
+- [ ] Protect admin routes (check user role)
+- [ ] Free tier: 3 loadouts. Pro: unlimited (track now, enforce later)
+
+---
+
+### Step 4 — Community Data Pipeline (the moat)
+
+- [ ] Reddit scraper v1: pull shakedown posts from r/Ultralight
+- [ ] Extract gear item mentions (brand + product name matching)
+- [ ] LighterPack bulk parser: scrape public pack lists
+- [ ] Store in `community_mentions` / `community_packs` tables
+- [ ] Surface on gear pages: "Used by X% of PCT thru-hikers"
+- [ ] Surface in Pack Lab: "Your shelter is heavier than 73% of community packs"
+- [ ] Admin dashboard: pipeline health, match rate, data freshness
+
+---
+
+## 📋 POLISH & ENHANCEMENTS (after Steps 1-5)
+
+### Compare Page Polish
+- [ ] Add YouTube video embeds to Compare page (inline per item)
+- [ ] SEO slugs: `/compare/nemo-tensor-vs-thermarest-neoair` instead of query params
+- [ ] Open Graph meta tags for social sharing (rich previews on Reddit/Discord)
+
+### Pack Lab Polish
+- [ ] Priority matrix: cost vs weight savings quadrant chart
+- [ ] Weight vs community average per category (needs Step 5 data)
+- [ ] Category filter horizontal scroll on mobile (currently wraps ugly)
 - [ ] PackWizard import
-- [ ] CSV/spreadsheet import (parser exists, needs UI)
+- [ ] CSV import UI (parser exists, needs UI)
 
-## Trip Engine — Enhancements
+### Trip Engine Enhancements
 - [ ] Calorie/food weight estimation per day
 - [ ] Water carry calculator between sources
 - [ ] Resupply planning for multi-day trips
-- [ ] Daily pack weight curve (shows decrease as consumables are used)
+- [ ] Daily pack weight curve (consumables decrease over time)
 - [ ] Risk flags ("12-mile dry stretch in 90°F — carry minimum 4L")
 - [ ] Trail database with known waypoints/water sources
 
-## Gear Intel (Future)
-- [ ] Community gear ratings from real trail data
-- [ ] "What are people carrying on [trail]?" aggregated data
-- [ ] Trending gear (what's gaining/losing popularity)
-- [ ] Browse/search community packs by trail, season, base weight
+### Gear Database Maintenance
+- [ ] URLs on all items (0/1012 currently)
+- [ ] Monthly AI link updater script (Serper → validate → insert)
+- [ ] Affiliate links where applicable (REI, Amazon, brand sites)
+- [ ] Admin dashboard showing link health
+- [ ] Add clothing items as browsable (rain shells, puffies, fleece, base layers)
 
-## System Analyzer (AI Layer)
+### Homepage / Marketing
+- [ ] Fix mobile nav (hamburger does nothing)
+- [ ] Below-the-fold sections: feature showcase
+- [ ] Pricing page (Free / Pro $8/mo / Annual $60/yr)
+
+---
+
+## 💰 MONETIZATION (after auth + community data)
+
+- [ ] Stripe integration
+- [ ] Pro features: unlimited loadouts, AI suggestions, trip engine, priority compare
+- [ ] Affiliate links on gear pages (passive revenue)
+- [ ] Monthly AI link updater script for affiliate URLs
+
+---
+
+## 🧠 AI INTELLIGENCE LAYER (future Pro features)
+
 - [ ] Gap detection ("no wind layer but exposed ridgeline on your route")
 - [ ] Redundancy detection ("headlamp + lantern — headlamp covers both")
 - [ ] Combined warmth modeling (quilt + pad R-value + clothing + shelter)
@@ -106,21 +164,13 @@ Once done: workflow auto-runs 1st-10th of each month, ~95 items/day. Full DB cov
 - [ ] Season transition recommendations
 - [ ] Safety audit (missing essentials flagged)
 
-## Homepage / Marketing
-- [ ] AI-generated hero videos — improve quality (try Kling 3.0)
-- [ ] Below-the-fold sections: feature showcase, testimonials, pricing
-- [ ] Mobile nav menu (hamburger currently does nothing)
-- [ ] Pricing page (Free / Pro $8/mo / Annual $60/yr)
+---
 
-## Tech Debt
-- [ ] Add user auth (Clerk or NextAuth)
-- [ ] Move pack data to database (Supabase or PlanetScale)
+## 🔧 TECH DEBT
+
+- [ ] Convert `/gear/[id]` from client component to server component (SEO)
 - [ ] Server-side API for share links (more reliable than URL encoding)
-- [ ] SEO metadata per page
+- [ ] Performance: virtualize long lists in Gear Explorer
 - [ ] Accessibility audit (keyboard nav, screen reader support)
-- [ ] Performance: lazy load gear database, virtualize long lists
-- [ ] Set up Gemini health check alerts:
-  - Add `GEMINI_API_KEY` to GitHub Actions secrets
-  - Create a Discord/Slack webhook for alerts
-  - Add `ALERT_WEBHOOK` to GitHub Actions secrets
-  - Script + workflow already created (`scripts/check-gemini.mjs`, `.github/workflows/gemini-health.yml`)
+- [ ] Error boundaries and graceful fallbacks
+- [ ] Set up Gemini health check alerts (Discord/Slack webhook)

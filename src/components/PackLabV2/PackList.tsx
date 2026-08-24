@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   GripVertical,
   Minus,
@@ -17,10 +17,12 @@ import {
   Pencil,
   Import,
   X,
+  ChevronDown,
 } from "lucide-react";
 import {
   CATEGORY_LABELS,
   CATEGORY_COLORS,
+  GearItem,
 } from "@/data/gear-database";
 import { usePackStore, PackItem, ItemStatus } from "@/store/pack-store";
 import { formatWeightWithUnit } from "@/utils/format";
@@ -58,6 +60,10 @@ export function PackList() {
   const addQuickItem = usePackStore((s) => s.addQuickItem);
   const addCustomCategory = usePackStore((s) => s.addCustomCategory);
   const importFromLighterPack = usePackStore((s) => s.importFromLighterPack);
+  const rehydrateItems = usePackStore((s) => s.rehydrateItems);
+
+  // Refresh stored items with latest specs from Supabase on mount
+  useEffect(() => { rehydrateItems(); }, [rehydrateItems]);
 
   const items = loadouts.find((l) => l.id === activeLoadoutId)?.items ?? [];
   const packName = getPackName();
@@ -414,6 +420,94 @@ function Metric({ label, value, accent }: { label: string; value: string; accent
 }
 
 /* ========== Pack Row (with inline editing) ========== */
+// ─── Spec Display Helper ────────────────────────────────────────────────────
+
+interface SpecDisplay {
+  label: string;
+  value: string;
+}
+
+function getItemSpecs(item: GearItem): SpecDisplay[] {
+  const specs: SpecDisplay[] = [];
+  const cat = item.category;
+  const sub = item.subcategory;
+
+  // Price always shown
+  if (item.priceUsd) specs.push({ label: "Price", value: `$${item.priceUsd}` });
+
+  // Shelter
+  if (cat === "shelter") {
+    if (item.capacity) specs.push({ label: "Capacity", value: `${item.capacity}P` });
+    if (item.seasons) specs.push({ label: "Seasons", value: item.seasons });
+    if (item.setupType) specs.push({ label: "Setup", value: item.setupType });
+    if (item.floorArea) specs.push({ label: "Floor", value: `${item.floorArea} sq ft` });
+    if (item.peakHeight) specs.push({ label: "Height", value: `${item.peakHeight}"` });
+    if (item.fabric) specs.push({ label: "Fabric", value: item.fabric });
+    if (item.doors) specs.push({ label: "Doors", value: String(item.doors) });
+    if (item.vestibuleArea) specs.push({ label: "Vestibule", value: `${item.vestibuleArea} sq ft` });
+  }
+
+  // Sleep - quilts/bags
+  if (cat === "sleep" && (sub === "quilt" || sub === "sleeping-bag" || sub === "underquilt")) {
+    if (item.tempRating !== undefined) specs.push({ label: "Temp", value: `${item.tempRating}°F` });
+    if (item.fillType) specs.push({ label: "Fill", value: item.fillType });
+    if (item.fillPower) specs.push({ label: "Fill Power", value: `${item.fillPower} FP` });
+    if (item.fillWeight) specs.push({ label: "Fill Weight", value: `${item.fillWeight} oz` });
+    if (item.sleepStyle) specs.push({ label: "Style", value: item.sleepStyle });
+  }
+
+  // Sleep - pads
+  if (cat === "sleep" && (sub === "pad-inflatable" || sub === "pad-foam")) {
+    if (item.rValue) specs.push({ label: "R-Value", value: String(item.rValue) });
+    if (item.thickness) specs.push({ label: "Thickness", value: `${item.thickness}"` });
+    if (item.padWidth) specs.push({ label: "Width", value: `${item.padWidth}"` });
+    if (item.padLength) specs.push({ label: "Length", value: `${item.padLength}"` });
+  }
+
+  // Pack
+  if (cat === "pack") {
+    if (item.volume) specs.push({ label: "Volume", value: `${item.volume}L` });
+    if (item.frameType) specs.push({ label: "Frame", value: item.frameType });
+    if (item.hipBelt) specs.push({ label: "Hip Belt", value: item.hipBelt });
+  }
+
+  // Kitchen - stoves
+  if (sub === "stove") {
+    if (item.fuelType) specs.push({ label: "Fuel", value: item.fuelType });
+    if (item.boilTime) specs.push({ label: "Boil Time", value: `${item.boilTime} min` });
+    if (item.igniter !== undefined) specs.push({ label: "Igniter", value: item.igniter ? "Yes" : "No" });
+    if (item.simmerControl !== undefined) specs.push({ label: "Simmer", value: item.simmerControl ? "Yes" : "No" });
+    if (item.potIncluded !== undefined) specs.push({ label: "Pot Included", value: item.potIncluded ? "Yes" : "No" });
+    if (item.communityRating) specs.push({ label: "Rating", value: `${item.communityRating}/10` });
+  }
+
+  // Electronics - headlamps
+  if (sub === "headlamp") {
+    if (item.lumens) specs.push({ label: "Lumens", value: String(item.lumens) });
+    if (item.runtime) specs.push({ label: "Runtime", value: `${item.runtime} hrs` });
+  }
+
+  // Accessories - trekking poles
+  if (sub === "trekking-poles") {
+    if (item.poleMaterial) specs.push({ label: "Material", value: item.poleMaterial });
+  }
+
+  // Accessories - insulation
+  if (sub === "insulation") {
+    if (item.fillType) specs.push({ label: "Fill", value: item.fillType });
+    if (item.fillPower) specs.push({ label: "Fill Power", value: `${item.fillPower} FP` });
+  }
+
+  // Fallback — show description for items without category-specific specs
+  if (specs.length <= 1 && item.description) {
+    specs.push({ label: "Info", value: item.description });
+  }
+
+  return specs;
+}
+
+// ─── PackRow Component ──────────────────────────────────────────────────────
+
 function PackRow({ packItem, color, weightUnit, categories, isDragging, isDropTarget, onRemove, onQty, onStatusChange, onToggleStar, onUpdateUrl, onUpdateDetails }: {
   packItem: PackItem; color: string; weightUnit: "oz" | "g"; categories: Record<string, string>;
   isDragging: boolean; isDropTarget: boolean;
@@ -422,6 +516,7 @@ function PackRow({ packItem, color, weightUnit, categories, isDragging, isDropTa
   onUpdateDetails: (updates: { name?: string; brand?: string; weightOz?: number; category?: string }) => void;
 }) {
   const [editing, setEditing] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const [editName, setEditName] = useState(packItem.item.name);
   const [editWeight, setEditWeight] = useState(String(packItem.item.weightOz));
   const [editUrl, setEditUrl] = useState(packItem.url || packItem.item.url || "");
@@ -458,54 +553,86 @@ function PackRow({ packItem, color, weightUnit, categories, isDragging, isDropTa
     );
   }
 
+  const specs = getItemSpecs(packItem.item);
+  const hasSpecs = specs.length > 1; // more than just price
+
   return (
-    <div className={cn(
-      "group relative flex items-center gap-2 rounded-lg border border-white/[0.07] bg-white/[0.02] px-2 py-2.5 transition-all duration-200 sm:gap-3 sm:px-3",
-      "hover:border-white/20 hover:bg-white/[0.05]",
-      isDragging && "opacity-40",
-      isDropTarget && "border-primary/60 bg-primary/[0.06]"
-    )}>
-      <span aria-hidden="true" className="hidden cursor-grab text-muted-foreground/40 transition-colors group-hover:text-muted-foreground active:cursor-grabbing sm:block">
-        <GripVertical className="size-4" />
-      </span>
+    <div className="space-y-0">
+      <div className={cn(
+        "group relative flex items-center gap-2 rounded-lg border border-white/[0.07] bg-white/[0.02] px-2 py-2.5 transition-all duration-200 sm:gap-3 sm:px-3",
+        "hover:border-white/20 hover:bg-white/[0.05]",
+        isDragging && "opacity-40",
+        isDropTarget && "border-primary/60 bg-primary/[0.06]",
+        expanded && "rounded-b-none border-b-0"
+      )}>
+        <span aria-hidden="true" className="hidden cursor-grab text-muted-foreground/40 transition-colors group-hover:text-muted-foreground active:cursor-grabbing sm:block">
+          <GripVertical className="size-4" />
+        </span>
 
-      <span aria-hidden="true" className="size-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
+        <span aria-hidden="true" className="size-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
 
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <p className="text-pretty text-base font-medium leading-tight">{packItem.item.name}</p>
-          {isWorn && <span className="shrink-0 rounded border border-primary/30 bg-primary/10 px-1.5 py-px text-[10px] font-semibold uppercase tracking-wider text-primary">Worn</span>}
-          {isConsumable && <span className="shrink-0 rounded border border-blue-400/30 bg-blue-400/10 px-1.5 py-px text-[10px] font-semibold uppercase tracking-wider text-blue-400">Consumable</span>}
-          {packItem.starred && <Star className="size-3 shrink-0 fill-yellow-400 text-yellow-400" />}
-          {itemUrl && (
-            <a href={itemUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="shrink-0 text-muted-foreground hover:text-primary transition-colors">
-              <ExternalLink className="size-3" />
-            </a>
-          )}
+        <div className="min-w-0 flex-1 cursor-pointer" onClick={() => hasSpecs && setExpanded(!expanded)}>
+          <div className="flex items-center gap-2">
+            <p className="text-pretty text-base font-medium leading-tight">{packItem.item.name}</p>
+            {isWorn && <span className="shrink-0 rounded border border-primary/30 bg-primary/10 px-1.5 py-px text-[10px] font-semibold uppercase tracking-wider text-primary">Worn</span>}
+            {isConsumable && <span className="shrink-0 rounded border border-blue-400/30 bg-blue-400/10 px-1.5 py-px text-[10px] font-semibold uppercase tracking-wider text-blue-400">Consumable</span>}
+            {packItem.starred && <Star className="size-3 shrink-0 fill-yellow-400 text-yellow-400" />}
+            {itemUrl && (
+              <a href={itemUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="shrink-0 text-muted-foreground hover:text-primary transition-colors">
+                <ExternalLink className="size-3" />
+              </a>
+            )}
+          </div>
+          {packItem.item.brand && <p className="truncate text-xs uppercase tracking-wider text-muted-foreground">{packItem.item.brand}</p>}
         </div>
-        {packItem.item.brand && <p className="truncate text-xs uppercase tracking-wider text-muted-foreground">{packItem.item.brand}</p>}
+
+        {/* Quantity */}
+        <div className="flex shrink-0 items-center gap-0.5 sm:opacity-0 sm:transition-opacity sm:focus-within:opacity-100 sm:group-hover:opacity-100">
+          <IconBtn label="Decrease" onClick={() => onQty(-1)} icon={<Minus className="size-3.5" />} />
+          <span className="num w-4 text-center text-xs text-muted-foreground">{packItem.quantity}</span>
+          <IconBtn label="Increase" onClick={() => onQty(1)} icon={<Plus className="size-3.5" />} />
+        </div>
+
+        {/* Weight */}
+        <div className="shrink-0 text-right">
+          <span className="num text-base font-medium">{formatWeightWithUnit(packItem.item.weightOz * packItem.quantity, weightUnit)}</span>
+        </div>
+
+        {/* Expand toggle */}
+        {hasSpecs && (
+          <button
+            type="button"
+            onClick={() => setExpanded(!expanded)}
+            aria-label={expanded ? "Collapse specs" : "Expand specs"}
+            className="flex size-5 items-center justify-center text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+          >
+            <ChevronDown className={cn("size-3.5 transition-transform duration-200", expanded && "rotate-180")} />
+          </button>
+        )}
+
+        {/* Actions */}
+        <div className="flex shrink-0 items-center gap-0.5">
+          <IconBtn label="Edit" onClick={() => { setEditName(packItem.item.name); setEditWeight(String(packItem.item.weightOz)); setEditUrl(packItem.url || packItem.item.url || ""); setEditing(true); }} icon={<Pencil className="size-3.5" />} />
+          <IconBtn label="Star" onClick={onToggleStar} active={packItem.starred} icon={<Star className={cn("size-3.5", packItem.starred && "fill-current")} />} />
+          <IconBtn label="Worn" onClick={() => onStatusChange(isWorn ? "packed" : "worn")} active={isWorn} icon={<Shirt className="size-3.5" />} />
+          <IconBtn label="Consumable" onClick={() => onStatusChange(isConsumable ? "packed" : "consumable")} active={isConsumable} activeColor="text-blue-400" icon={<Droplets className="size-3.5" />} />
+          <IconBtn label="Remove" onClick={onRemove} danger icon={<Trash2 className="size-3.5" />} />
+        </div>
       </div>
 
-      {/* Quantity */}
-      <div className="flex shrink-0 items-center gap-0.5 sm:opacity-0 sm:transition-opacity sm:focus-within:opacity-100 sm:group-hover:opacity-100">
-        <IconBtn label="Decrease" onClick={() => onQty(-1)} icon={<Minus className="size-3.5" />} />
-        <span className="num w-4 text-center text-xs text-muted-foreground">{packItem.quantity}</span>
-        <IconBtn label="Increase" onClick={() => onQty(1)} icon={<Plus className="size-3.5" />} />
-      </div>
-
-      {/* Weight */}
-      <div className="shrink-0 text-right">
-        <span className="num text-base font-medium">{formatWeightWithUnit(packItem.item.weightOz * packItem.quantity, weightUnit)}</span>
-      </div>
-
-      {/* Actions */}
-      <div className="flex shrink-0 items-center gap-0.5">
-        <IconBtn label="Edit" onClick={() => { setEditName(packItem.item.name); setEditWeight(String(packItem.item.weightOz)); setEditUrl(packItem.url || packItem.item.url || ""); setEditing(true); }} icon={<Pencil className="size-3.5" />} />
-        <IconBtn label="Star" onClick={onToggleStar} active={packItem.starred} icon={<Star className={cn("size-3.5", packItem.starred && "fill-current")} />} />
-        <IconBtn label="Worn" onClick={() => onStatusChange(isWorn ? "packed" : "worn")} active={isWorn} icon={<Shirt className="size-3.5" />} />
-        <IconBtn label="Consumable" onClick={() => onStatusChange(isConsumable ? "packed" : "consumable")} active={isConsumable} activeColor="text-blue-400" icon={<Droplets className="size-3.5" />} />
-        <IconBtn label="Remove" onClick={onRemove} danger icon={<Trash2 className="size-3.5" />} />
-      </div>
+      {/* Expanded specs panel */}
+      {expanded && hasSpecs && (
+        <div className="rounded-b-lg border border-t-0 border-white/[0.07] bg-white/[0.01] px-4 py-3 animate-in slide-in-from-top-1 duration-200">
+          <div className="flex flex-wrap gap-x-5 gap-y-1.5">
+            {specs.map((spec) => (
+              <div key={spec.label} className="flex items-baseline gap-1.5">
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground/60">{spec.label}</span>
+                <span className="num text-xs font-medium text-foreground">{spec.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

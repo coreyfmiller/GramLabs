@@ -1,14 +1,11 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import { Nav } from "@/components/Nav";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { Loader2, ArrowLeft, Plus, ExternalLink } from "lucide-react";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { GearDetailClient } from "./gear-detail-client";
 
-interface GearDetail {
+// === TYPES ===
+
+export interface GearDetailData {
   id: string;
   name: string;
   brand: string;
@@ -18,156 +15,216 @@ interface GearDetail {
   weight_oz: number;
   price_usd: number;
   description: string;
+  url: string | null;
   youtube_video_ids: string[] | null;
+  // Shelter
+  shelter_type: string | null;
+  capacity: number | null;
+  seasons: string | null;
+  setup_type: string | null;
+  floor_area: number | null;
+  peak_height: number | null;
+  packed_size: string | null;
+  fabric: string | null;
+  fabric_denier: number | null;
+  stakes_needed: number | null;
+  doors: number | null;
+  vestibule_area: number | null;
+  // Sleep
   temp_rating: number | null;
   r_value: number | null;
   fill_power: number | null;
   fill_type: string | null;
+  fill_weight: number | null;
+  sleep_style: string | null;
+  thickness: number | null;
+  pad_width: number | null;
+  pad_length: number | null;
+  // Pack
   volume: number | null;
-  capacity: number | null;
-  seasons: string | null;
-  shelter_type: string | null;
+  frame_type: string | null;
+  hip_belt: string | null;
+  max_carry_weight: number | null;
+  // Kitchen
+  fuel_type: string | null;
+  boil_time: number | null;
+  // Electronics
   lumens: number | null;
+  battery_type: string | null;
+  runtime: number | null;
+  // Accessories
   pole_material: string | null;
   waterproof: boolean | null;
-  fuel_type: string | null;
+  hood_type: string | null;
+  // Community
+  community_rating: number | null;
 }
 
-export default function GearDetailPage() {
-  const params = useParams();
-  const id = params.id as string;
-  const [item, setItem] = useState<GearDetail | null>(null);
-  const [loading, setLoading] = useState(true);
+export interface SimilarItem {
+  id: string;
+  name: string;
+  brand: string;
+  weight_oz: number;
+  price_usd: number;
+  tier: string;
+}
 
-  useEffect(() => {
-    async function load() {
-      const { data } = await supabase
-        .from("gear_items")
-        .select("*")
-        .eq("id", id)
-        .single();
-      setItem(data);
-      setLoading(false);
-    }
-    if (id) load();
-  }, [id]);
+// === DATA FETCHING ===
 
-  if (loading) {
-    return (
-      <div className="min-h-dvh bg-background">
-        <Nav />
-        <div className="flex items-center justify-center py-32">
-          <Loader2 className="size-8 animate-spin text-primary" />
-        </div>
-      </div>
-    );
+async function getGearItem(id: string): Promise<GearDetailData | null> {
+  const { data, error } = await supabase
+    .from("gear_items")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error || !data) return null;
+  return data as GearDetailData;
+}
+
+async function getSimilarItems(item: GearDetailData): Promise<SimilarItem[]> {
+  // Find items in the same category + subcategory, excluding current item
+  let query = supabase
+    .from("gear_items")
+    .select("id, name, brand, weight_oz, price_usd, tier")
+    .eq("category", item.category)
+    .neq("id", item.id)
+    .order("weight_oz", { ascending: true })
+    .limit(6);
+
+  if (item.subcategory) {
+    query = query.eq("subcategory", item.subcategory);
   }
+
+  const { data } = await query;
+  return (data as SimilarItem[]) || [];
+}
+
+// === METADATA ===
+
+type Props = {
+  params: Promise<{ id: string }>;
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const item = await getGearItem(id);
 
   if (!item) {
-    return (
-      <div className="min-h-dvh bg-background">
-        <Nav />
-        <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-          <p className="text-muted-foreground">Item not found.</p>
-          <Link href="/brands" className="text-primary text-sm mt-4 inline-block">← Back to Brands</Link>
-        </div>
-      </div>
-    );
+    return { title: "Gear Not Found | HikeMind" };
   }
 
-  const specs = [
-    item.temp_rating != null && { label: "Temp Rating", value: `${item.temp_rating}°F` },
-    item.r_value != null && { label: "R-Value", value: `${item.r_value}` },
-    item.fill_power != null && { label: "Fill Power", value: `${item.fill_power} FP` },
-    item.fill_type && { label: "Fill Type", value: item.fill_type },
-    item.volume != null && { label: "Volume", value: `${item.volume}L` },
-    item.capacity != null && { label: "Capacity", value: `${item.capacity}-person` },
-    item.seasons && { label: "Seasons", value: item.seasons },
-    item.shelter_type && { label: "Type", value: item.shelter_type },
-    item.lumens != null && { label: "Lumens", value: `${item.lumens}` },
-    item.pole_material && { label: "Material", value: item.pole_material },
-    item.waterproof != null && { label: "Waterproof", value: item.waterproof ? "Yes" : "No" },
-    item.fuel_type && { label: "Fuel", value: item.fuel_type },
-  ].filter(Boolean);
+  const title = `${item.brand} ${item.name} — ${item.weight_oz}oz, $${item.price_usd} | HikeMind`;
+  const description = buildDescription(item);
 
-  const tierColors: Record<string, string> = {
-    "ultra-budget": "text-cyan-400",
-    budget: "text-green-400",
-    mid: "text-yellow-400",
-    premium: "text-purple-400",
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${item.brand} ${item.name}`,
+      description,
+      type: "website",
+      siteName: "HikeMind",
+      url: `https://hikemind.app/gear/${item.id}`,
+    },
+    twitter: {
+      card: "summary",
+      title: `${item.brand} ${item.name} — ${item.weight_oz}oz`,
+      description,
+    },
+    alternates: {
+      canonical: `https://hikemind.app/gear/${item.id}`,
+    },
   };
+}
+
+function buildDescription(item: GearDetailData): string {
+  const parts: string[] = [];
+  parts.push(`${item.brand} ${item.name}: ${item.weight_oz}oz, $${item.price_usd}.`);
+
+  if (item.temp_rating != null) parts.push(`Rated to ${item.temp_rating}°F.`);
+  if (item.r_value != null) parts.push(`R-value ${item.r_value}.`);
+  if (item.fill_power != null) parts.push(`${item.fill_power}FP ${item.fill_type || "down"}.`);
+  if (item.capacity != null) parts.push(`${item.capacity}-person.`);
+  if (item.seasons) parts.push(`${item.seasons}-season.`);
+  if (item.volume != null) parts.push(`${item.volume}L.`);
+  if (item.lumens != null) parts.push(`${item.lumens} lumens.`);
+
+  parts.push("Full specs, video reviews, and comparison tools on HikeMind.");
+
+  return parts.join(" ").slice(0, 160);
+}
+
+// === JSON-LD STRUCTURED DATA ===
+
+function buildJsonLd(item: GearDetailData) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: `${item.brand} ${item.name}`,
+    brand: {
+      "@type": "Brand",
+      name: item.brand,
+    },
+    description: item.description || `${item.brand} ${item.name} — ultralight backpacking gear`,
+    category: item.category,
+    offers: {
+      "@type": "Offer",
+      price: item.price_usd,
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+    },
+    additionalProperty: [
+      {
+        "@type": "PropertyValue",
+        name: "Weight",
+        value: `${item.weight_oz} oz`,
+      },
+      ...(item.temp_rating != null
+        ? [{ "@type": "PropertyValue", name: "Temperature Rating", value: `${item.temp_rating}°F` }]
+        : []),
+      ...(item.r_value != null
+        ? [{ "@type": "PropertyValue", name: "R-Value", value: `${item.r_value}` }]
+        : []),
+      ...(item.volume != null
+        ? [{ "@type": "PropertyValue", name: "Volume", value: `${item.volume}L` }]
+        : []),
+      ...(item.capacity != null
+        ? [{ "@type": "PropertyValue", name: "Capacity", value: `${item.capacity}-person` }]
+        : []),
+    ],
+    ...(item.community_rating != null && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: item.community_rating,
+        bestRating: 10,
+        worstRating: 1,
+      },
+    }),
+    ...(item.url && { url: item.url }),
+  };
+}
+
+// === PAGE COMPONENT (Server) ===
+
+export default async function GearDetailPage({ params }: Props) {
+  const { id } = await params;
+  const item = await getGearItem(id);
+
+  if (!item) {
+    notFound();
+  }
+
+  const similarItems = await getSimilarItems(item);
+  const jsonLd = buildJsonLd(item);
 
   return (
-    <div className="min-h-dvh bg-background text-foreground">
-      <Nav />
-
-      <div className="max-w-4xl mx-auto px-4 md:px-8 py-8">
-        <Link href="/brands" className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1 mb-6">
-          <ArrowLeft className="size-3" /> Back to Brands
-        </Link>
-
-        {/* Header */}
-        <div className="mb-8">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">{item.brand}</p>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight mt-1">{item.name}</h1>
-          <div className="flex items-center gap-4 mt-3">
-            <span className="num text-xl font-semibold text-primary">{item.weight_oz}oz</span>
-            <span className="num text-lg text-muted-foreground">${item.price_usd}</span>
-            <span className={cn("text-xs font-semibold uppercase", tierColors[item.tier] || "text-muted-foreground")}>
-              {item.tier}
-            </span>
-            <span className="text-xs text-muted-foreground">{item.category}{item.subcategory ? ` / ${item.subcategory}` : ""}</span>
-          </div>
-          {item.description && (
-            <p className="text-sm text-muted-foreground mt-3 max-w-2xl">{item.description}</p>
-          )}
-        </div>
-
-        {/* Specs */}
-        {specs.length > 0 && (
-          <div className="glass rounded-xl border border-white/10 p-5 mb-8">
-            <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground mb-4">Specifications</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {specs.map((spec) => spec && (
-                <div key={spec.label}>
-                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{spec.label}</p>
-                  <p className="num text-sm font-medium mt-0.5">{spec.value}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* YouTube Reviews */}
-        {item.youtube_video_ids && item.youtube_video_ids.length > 0 && (
-          <div className="glass rounded-xl border border-white/10 p-5">
-            <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground mb-4">
-              Video Reviews ({item.youtube_video_ids.length})
-            </h2>
-            <div className="grid grid-cols-1 gap-4">
-              {item.youtube_video_ids.map((videoId) => (
-                <div key={videoId} className="aspect-video rounded-lg overflow-hidden border border-white/10">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${videoId}`}
-                    title="YouTube video review"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                    allowFullScreen
-                    className="w-full h-full"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* No videos */}
-        {(!item.youtube_video_ids || item.youtube_video_ids.length === 0) && (
-          <div className="glass rounded-xl border border-white/10 p-5 text-center">
-            <p className="text-sm text-muted-foreground">No video reviews loaded yet for this item.</p>
-            <p className="text-xs text-muted-foreground/60 mt-1">Run `npm run fetch-videos` to populate.</p>
-          </div>
-        )}
-      </div>
-    </div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <GearDetailClient item={item} similarItems={similarItems} />
+    </>
   );
 }

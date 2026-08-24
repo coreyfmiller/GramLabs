@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
 import { scenes } from "@/config/scenes";
 
 interface HeroContentProps {
@@ -73,7 +74,8 @@ export default function HeroContent({ sceneIndex, visible }: HeroContentProps) {
       </p>
 
       {/* CTA */}
-      <span
+      <Link
+        href={scene.href}
         className={`text-[13px] md:text-[16px] font-bold tracking-[0.2em] text-white uppercase pointer-events-auto cursor-pointer hover:text-lime-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] transition-all duration-700 ease-out ${
           contentVisible
             ? "opacity-100 translate-y-0"
@@ -82,7 +84,7 @@ export default function HeroContent({ sceneIndex, visible }: HeroContentProps) {
         style={{ transitionDelay: contentVisible ? "300ms" : "0ms" }}
       >
         {scene.cta}
-      </span>
+      </Link>
     </div>
   );
 }

@@ -1,63 +1,84 @@
 # HikeMind (Ridgeline) — Current Status
 
-**Last updated:** August 18, 2026
+**Last updated:** August 19, 2026
 
 ---
 
-## What's Built
+## What's Built & Working
 
-- **Next.js app** with routes: homepage, `/gear`, `/pack-lab`, `/trip`, `/chat`, `/brands`, `/build`
-- **1000+ item gear database** seeded in Supabase (tools, knives, shelters, packs, quilts, pads, shoes, etc.)
-- **Supabase integration** — GearSearch fetches from DB instead of shipping 359KB client-side
-- **Pack Lab** — gear list builder with categories, subcategory pill filters, custom item entry
-- **Subcategory tagging** — 967+ items auto-tagged with subcategories
-- **Custom Item form** — users can add any gear (clothing, shoes, etc.) with name, weight, price, category
+### Core Pages
+- **Homepage** — Hero video, marketing copy, nav
+- **Pack Lab** (`/pack-lab`) — Multi-loadout gear list builder with categories, subcategory pill filters, custom item entry, share URLs, LighterPack import, buy list
+- **Gear Compare** (`/compare`) — Search items, side-by-side specs table, winner detection (trophy icons), weight/price diffs, cost-per-oz-saved, "Add to Pack" buttons, shareable URL (query param)
+- **Gear Detail** (`/gear/[id]`) — Full specs display, YouTube video embeds (fullscreen), tier badges
+- **Build My Kit** (`/build`) — Wizard → AI-generated optimized kit by budget/trip/climate (Gemini)
+- **AI Chat** (`/chat`) — Gear advisor constrained to real database items (Gemini)
+- **Trip Engine** (`/trip`) — Location + weather forecast → AI pack-readiness scoring (labeled PRO)
+- **Brands Admin** (`/brands`) — Coverage audit dashboard, search, category breakdown, missing brand detection
 
-## Last Commits
+### Data & Backend
+- **1000+ item gear database** in Supabase (full specs, subcategories, 115+ brands)
+- **Supabase integration** — All search/filter goes through DB, not client-side
+- **Full-text search** (Supabase `fts` column) working
+- **YouTube video IDs** — Column exists, 92 items populated, 731 remaining
+- **YouTube fetch script** (`scripts/fetch-youtube-reviews.mjs`) — Built, tested, works
+- **GitHub Action** (`.github/workflows/youtube-reviews.yml`) — Built, runs 1st-10th monthly
+- **Gemini health check** script + workflow built
 
-1. Add 15 ultralight tools/knives (Derma-Safe, Opinel, Benchmade Bugout, etc.)
-2. Supabase integration: GearSearch now fetches from database
-3. Replace Clothing button with Custom Item form
-4. Subcategory filters merged to main (pills UI + constants + auto-tagging)
+### Pack Lab Features
+- Category + subcategory filtering (pill UI)
+- Custom item entry (any gear with name, weight, price, category)
+- Multiple loadouts
+- Share URL encoding (base64 JSON)
+- Worn/packed/consumable status
+- Star/priority items
+
+### Compare Page Features
+- Item search (Supabase-backed, debounced)
+- Category locking (can only compare within same category)
+- Category-specific spec definitions (shelter, sleep, pack, kitchen, electronics, accessories)
+- Winner detection with trophy icons
+- Diff badges: weight, price, cost-per-oz-saved
+- Shareable URL (`?items=id1,id2`)
+- URL hydration on load (shareable links work)
+- "Add to Pack" integration
 
 ---
 
-## What's Next
+## What Does NOT Exist Yet
 
-### Step 0 — YouTube API Setup (BLOCKING for Gear Compare)
+| Feature | Status | Notes |
+|---------|--------|-------|
+| SEO on gear detail pages | ✅ DONE | Server-rendered, generateMetadata, JSON-LD Product, OG tags, canonical URLs. |
+| Sitemap | ✅ DONE | /sitemap.xml lists all static pages + 1000+ gear item URLs. |
+| Internal linking (similar items) | ✅ DONE | "Compare with similar" section on every gear detail page. |
+| User auth | NOT BUILT | No accounts. All data in localStorage. |
+| Cloud-saved packs | NOT BUILT | Packs live in Zustand → localStorage only. |
+| Community data pipeline | NOT BUILT | No Reddit scraping, no LighterPack parsing. |
+| Affiliate/buy links on items | NOT BUILT | 0/1012 items have URLs. |
+| Compare SEO slugs | NOT BUILT | Uses `?items=` query params, not `/compare/item-vs-item` slugs. |
+| YouTube on Compare page | NOT BUILT | Videos display on `/gear/[id]` only, not on Compare. |
+| Pricing/monetization | NOT BUILT | No Stripe, no Pro tier enforcement. |
+| Mobile nav | BROKEN | Hamburger does nothing. |
 
-1. Enable YouTube Data API v3 on Google Cloud project
-2. Create/reuse API key with YouTube Data API access
-3. Add `YOUTUBE_API_KEY=xxx` to `.env.local`
-4. Add `youtube_video_ids` column to `gear_items` table in Supabase (text array)
-5. Build video search script: populate top 2-3 review video IDs per item
-6. Then: Build Gear Compare with embedded fullscreen YouTube reviews
+**Conscious decisions (will NOT build):**
+- No `/gear` browse/index page — discovery through SEO + Compare search + Pack Lab. Detail pages are the product.
+- No Stripe until 100+ authenticated users.
 
-### Step 2 — Gear Compare (`/compare`)
+---
 
-- Select 2-3 items to compare (from search or Pack Lab)
-- Side-by-side specs table (weight, price, R-value, temp rating, etc.)
-- Weight diff, price diff, value-per-oz calculations
-- "Winner" highlighting (lightest, best value, warmest)
-- "Add to Pack" button on any item
-- Shareable comparison URL
-- Embedded YouTube review videos per item (fullscreen capable)
+## YouTube Video Pipeline Status
 
-### Step 3 — Gear Explorer Polish (`/gear`)
+| Metric | Count |
+|--------|-------|
+| Items with videos | 179+ (actively growing) |
+| Items without videos (searchable) | ~730 |
+| Items skipped (food/hygiene/generic) | ~177 |
+| API key | ✅ Configured in `.env.local` |
+| GitHub Action | ✅ Built, needs secrets added to repo |
+| Script | ✅ Running — 95 items per run, ~8 more runs to full coverage |
 
-- Browsable, filterable grid/table of all 1000+ items
-- Search by name/brand, filter by category/tier/price/weight
-- Sort by weight, price, warmth-to-weight, cost-per-oz-saved
-- Item detail pages with full specs + YouTube reviews
-- "Compare" button, "Buy" links, SEO metadata
-
-### After That
-
-- Pack Lab polish (priority matrix, community weight averages)
-- Trip Engine enhancements (calorie estimation, water carry, resupply planning)
-- User auth + DB-backed pack storage
-- Homepage/marketing improvements
-- Data pipeline (Reddit, LighterPack, surveys — see DATA_STRATEGY.md)
+**To fill remaining items:** Run `node scripts/fetch-youtube-reviews.mjs` once daily. Full coverage in ~8 days.
 
 ---
 
@@ -66,18 +87,24 @@
 - **Framework:** Next.js (App Router)
 - **Database:** Supabase (PostgreSQL)
 - **Styling:** Tailwind CSS + PostCSS
-- **State:** Zustand (local store)
-- **AI:** Gemini (chat/suggestions)
+- **State:** Zustand (localStorage persistence)
+- **AI:** Gemini (chat, build-kit, trip analysis)
 - **Deployment:** Vercel
+- **Search:** Supabase full-text search (`fts` column)
 
 ---
 
 ## Key Files
 
-- `TODO.md` — Full feature backlog
-- `DATA_STRATEGY.md` — Data pipeline architecture and sources
-- `src/app/` — App routes
-- `src/data/` — Local data files
-- `src/lib/` — Supabase client, utilities
-- `src/store/` — Zustand stores
-- `scripts/` — Utility scripts (Gemini health check, etc.)
+| File | Purpose |
+|------|---------|
+| `src/app/compare/page.tsx` | Gear comparison tool |
+| `src/app/gear/[id]/page.tsx` | Individual gear detail + YouTube |
+| `src/app/pack-lab/page.tsx` | Pack builder |
+| `src/app/build/page.tsx` | AI kit builder wizard |
+| `src/app/chat/page.tsx` | AI gear advisor |
+| `src/app/trip/page.tsx` | Trip weather/pack analyzer |
+| `src/lib/gear-api.ts` | Supabase query layer (search, counts, getByIds) |
+| `src/store/pack-store.ts` | Zustand pack state |
+| `scripts/fetch-youtube-reviews.mjs` | YouTube video ID populator |
+| `.github/workflows/youtube-reviews.yml` | Monthly auto-fetch action |

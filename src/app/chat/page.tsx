@@ -142,7 +142,7 @@ export default function ChatPage() {
           </button>
         </form>
         <p className="max-w-3xl mx-auto mt-2 text-xs text-muted-foreground/50 text-center">
-          Powered by 250+ verified gear items and PCT thru-hiker survey data
+          Powered by 1500+ verified gear items and PCT thru-hiker survey data
         </p>
       </div>
     </div>

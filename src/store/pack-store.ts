@@ -81,6 +81,9 @@ export interface PackStore {
   getTotalCost: () => number;
   getItemCount: () => number;
 
+  // Rehydration — refresh stored items from Supabase so specs stay current
+  rehydrateItems: () => Promise<void>;
+
   // Share
   hydrateFromShareData: (items: PackItem[], name: string) => void;
   generateShareURL: () => string;
@@ -558,6 +561,32 @@ export const usePackStore = create<PackStore>()(
         const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
         if (!loadout) return 0;
         return loadout.items.reduce((sum, i) => sum + i.quantity, 0);
+      },
+
+      rehydrateItems: async () => {
+        const { getGearByIds } = await import("@/lib/gear-api");
+        const state = get();
+        // Collect all non-quick item IDs across all loadouts
+        const allIds = new Set<string>();
+        state.loadouts.forEach((l) =>
+          l.items.forEach((pi) => {
+            if (!pi.gearId.startsWith("quick-")) allIds.add(pi.gearId);
+          })
+        );
+        if (allIds.size === 0) return;
+        const freshItems = await getGearByIds(Array.from(allIds));
+        if (freshItems.length === 0) return;
+        const freshMap = new Map(freshItems.map((g) => [g.id, g]));
+        set({
+          loadouts: state.loadouts.map((l) => ({
+            ...l,
+            items: l.items.map((pi) => {
+              const fresh = freshMap.get(pi.gearId);
+              if (fresh) return { ...pi, item: { ...pi.item, ...fresh } };
+              return pi;
+            }),
+          })),
+        });
       },
 
       hydrateFromShareData: (items, name) => {

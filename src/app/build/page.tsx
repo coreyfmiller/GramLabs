@@ -75,7 +75,7 @@ export default function BuildPage() {
             <div className="text-center mb-10">
               <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-3">Build My Kit</h1>
               <p className="text-base text-muted-foreground max-w-lg mx-auto">
-                Tell us your budget and trip style. We&apos;ll build you an optimized pack from 250+ verified gear items.
+                Tell us your budget and trip style. We&apos;ll build you an optimized pack from 1500+ verified gear items.
               </p>
             </div>
 

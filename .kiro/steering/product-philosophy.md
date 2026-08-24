@@ -45,10 +45,39 @@ We beat everyone by combining things nobody else connects:
 3. **AI constrained to truth** — our chat only recommends products that exist in our database with real specs
 4. **Network effects** — more users = more pack data = better recommendations = more users
 
+## Database Scope — What We Carry
+
+**IN:** Any backpacking-specific gear a person would realistically carry on an overnight or thru-hike.
+- All tiers: Walmart/Amazon budget → REI mid-range → cottage premium → ultralight exotic
+- International brands people actually buy (Naturehike, 3F UL, Decathlon, Alpkit)
+- Discontinued cult classics still discussed on trail and forums (Arc Blast, Aeon Li)
+- The full decision spectrum: a college kid with $200 and a thru-hiker going sub-8lbs both need to see themselves here
+
+**OUT:** Gear that doesn't belong in a backpacking loadout.
+- Car camping (10-person tents, 15lb bags, non-packable camp chairs)
+- Fashion/lifestyle outdoor (not trail-functional)
+- Mountaineering-specific (ice axes, crampons, 8000m expedition suits)
+- Fishing, hunting, kayaking, cycling
+- Individual food items beyond calorie-dense trail staples
+
+**CLOTHING: Limited scope.** We cannot comprehensively cover all hiking clothing — the matrix of sizes, fits, seasonal variations, and fashion overlap makes it infinite. We carry:
+- Rain shells and wind shells (the functional layer everyone needs)
+- Insulated jackets and vests (puffies, synthetic, fleece)
+- Base layers that hikers specifically buy for trail (Capilene, merino)
+- Sun hoodies
+- We do NOT attempt to cover: pants/shorts exhaustively, underwear, every color/size variant, athleisure that happens to work on trail
+
+**DEPTH TARGETS:**
+- Hammocks + suspension: full ecosystem (hammock camping is 15-20% of backpackers)
+- Budget tier: comprehensive Amazon/Walmart/Decathlon coverage (where most people start)
+- Stoves + cookware: alcohol, integrated, wood, titanium pot ecosystem
+- GPS/satellite communicators: every major option
+
 ## How We Make Decisions
 
 - **Accuracy over speed.** Take the time to get the data right.
-- **Depth over breadth.** 1000 items with full specs beats 10,000 items with just name and weight.
+- **Depth over breadth.** Items with full specs beat items with just name and weight. But we build as comprehensive a list as we can.
+- **UL-leaning, everyone-serving.** We lean ultralight — that's our identity. But we carry gear for every budget and every base weight. A user building a 15lb kit deserves the same tool as someone going sub-8. Budget options from Ozark Trail, Naturehike, Decathlon sit alongside Zpacks and HMG. The compare page is where a beginner sees the upgrade path.
 - **Community data over individual opinions.** "87% of PCT hikers used this" is more useful than "one reviewer liked it."
 - **Show the math.** Don't just say "this is lighter" — show the exact weight diff, cost per oz saved, warmth-to-weight ratio.
 - **Respect the user's intelligence.** Hikers are smart. Give them data, tools, and AI reasoning — not dumbed-down recommendations.

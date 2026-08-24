@@ -1,8 +1,9 @@
 /**
- * HikeMind Database Audit
+ * HikeMind Database Audit v2
  * 
- * Queries Supabase and reports fill rates for every column,
- * broken down by category. Shows exactly what's populated vs empty.
+ * Measures COMPARE READINESS: for each item, does it have the specs
+ * required for its category/subcategory? Uses the same REQUIRED_SPECS
+ * as the enrichment script — the single source of truth.
  * 
  * Usage: node scripts/audit-data.mjs
  */
@@ -30,202 +31,206 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// All spec columns we care about (excluding id, name, brand, etc. which are always filled)
-const SPEC_COLUMNS = [
-  'url', 'subcategory',
-  // Shelter
-  'shelter_type', 'capacity', 'seasons', 'setup_type', 'floor_area', 'peak_height', 'packed_size',
-  // Sleep
-  'temp_rating', 'fill_type', 'fill_power', 'fill_weight', 'sleep_style',
-  'r_value', 'thickness', 'pad_width', 'pad_length',
-  // Pack
-  'volume', 'frame_type', 'hip_belt',
-  // Clothing
-  'waterproof', 'hood_type',
-  // Kitchen
-  'fuel_type',
-  // Electronics
-  'lumens', 'battery_type', 'runtime',
-  // Trekking poles
-  'pole_material',
-  // Fabric (cross-category)
-  'fabric', 'fabric_denier',
-  // YouTube
-  'youtube_video_ids',
-];
+// ─── REQUIRED SPECS PER SUBCATEGORY ─────────────────────────────────────────
+// This is the source of truth. If a subcategory has an empty array, those items
+// are compare-ready with just weight + price (which every item has).
+// "fill_power" is only required when fill_type includes "down".
 
-// Which specs matter for which categories (for the "relevant fill rate")
-const CATEGORY_RELEVANT_SPECS = {
-  shelter: ['shelter_type', 'capacity', 'seasons', 'setup_type', 'floor_area', 'peak_height', 'packed_size', 'fabric', 'fabric_denier'],
-  sleep: ['temp_rating', 'fill_type', 'fill_power', 'fill_weight', 'sleep_style', 'r_value', 'thickness', 'pad_width', 'pad_length'],
-  pack: ['volume', 'frame_type', 'hip_belt', 'fabric', 'fabric_denier'],
-  kitchen: ['fuel_type'],
-  electronics: ['lumens', 'battery_type', 'runtime'],
-  accessories: ['pole_material', 'waterproof', 'fabric'],
-  clothing: ['waterproof', 'hood_type', 'fabric', 'fill_power', 'fill_type', 'fill_weight'],
-  tools: [],
-  hygiene: [],
+const REQUIRED_SPECS = {
+  // SHELTER
+  'freestanding-tent': ['setup_type', 'floor_area', 'peak_height', 'fabric', 'capacity', 'seasons'],
+  'trekking-pole-tent': ['setup_type', 'floor_area', 'peak_height', 'fabric', 'capacity', 'seasons'],
+  'tarp': ['capacity', 'seasons', 'fabric'],
+  'tarp-system': ['capacity', 'seasons', 'fabric'],
+  'pyramid': ['capacity', 'seasons', 'fabric', 'floor_area', 'peak_height'],
+  'hammock': ['capacity', 'seasons', 'fabric'],
+  'bivy': ['capacity', 'seasons', 'fabric'],
+
+  // SLEEP
+  'quilt': ['temp_rating', 'fill_type', 'sleep_style'],
+  'sleeping-bag': ['temp_rating', 'fill_type', 'sleep_style'],
+  'underquilt': ['temp_rating', 'fill_type'],
+  'pad-inflatable': ['r_value', 'thickness', 'pad_width', 'pad_length'],
+  'pad-foam': ['r_value', 'thickness'],
+  'pillow': [],
+  'liner': [],
+
+  // PACK
+  'thru-hike': ['volume', 'frame_type', 'hip_belt'],
+  'fast-light': ['volume', 'frame_type', 'hip_belt'],
+  'daypack': ['volume'],
+  'running-vest': ['volume'],
+
+  // KITCHEN
+  'stove': ['fuel_type', 'boil_time'],
+  'cookware': [],
+  'water-filter': [],
+  'water-storage': [],
+  'food': [],
+  'fuel': [],
+  'fire-signal': [],
+
+  // ELECTRONICS
+  'headlamp': ['lumens', 'battery_type', 'runtime'],
+  'power': ['battery_type'],
+  'satellite': ['battery_type'],
+  'gps-watch': ['battery_type'],
+  'solar': [],
+  'camera': [],
+  'nav-app': [],
+
+  // ACCESSORIES
+  'trekking-poles': ['pole_material', 'collapsed_length', 'lock_type', 'grip_material'],
+  'rain-gear': ['waterproof'],
+  'insulation': ['fill_type'],
+  'socks': [],
+  'camp-comfort': [],
+  'hammock-suspension': [],
+  'hygiene': [],
+  'stuff-sacks': [],
+  'sun-protection': [],
+
+  // SAFETY
+  // No specs beyond weight/price
+
+  // CLOTHING (if we add it)
+  'rain-shell': ['waterproof', 'hood_type'],
+  'wind-shell': ['hood_type'],
+  'puffy': ['fill_type', 'hood_type'],
+  'fleece': [],
+  'base-layer': [],
 };
 
+// Conditional spec: fill_power is required only when fill_type is down
+function getEffectiveRequired(item) {
+  const base = REQUIRED_SPECS[item.subcategory] || REQUIRED_SPECS[item.category] || [];
+  const specs = [...base];
+
+  // Add fill_power requirement for down items
+  if (specs.includes('fill_type') && item.fill_type && item.fill_type.includes('down')) {
+    if (!specs.includes('fill_power')) specs.push('fill_power');
+  }
+
+  return specs;
+}
+
+function isFieldFilled(item, field) {
+  const val = item[field];
+  return val !== null && val !== undefined && val !== '';
+}
+
+// ─── MAIN ───────────────────────────────────────────────────────────────────
+
 async function main() {
-  console.log('='.repeat(70));
-  console.log('  HIKEMIND DATABASE AUDIT — Full Field Coverage Report');
-  console.log('='.repeat(70));
-  console.log('');
-
-  // Fetch all items
-  const { data: items, error } = await supabase
-    .from('gear_items')
-    .select('*')
-    .order('category');
-
-  if (error || !items) {
-    console.error('Failed to fetch:', error?.message);
-    process.exit(1);
+  // Paginate to get ALL items (Supabase default limit is 1000)
+  let items = [];
+  let offset = 0;
+  const PAGE_SIZE = 1000;
+  while (true) {
+    const { data, error } = await supabase
+      .from('gear_items')
+      .select('*')
+      .order('category')
+      .order('subcategory')
+      .range(offset, offset + PAGE_SIZE - 1);
+    if (error) { console.error('Failed to fetch:', error.message); process.exit(1); }
+    if (!data || data.length === 0) break;
+    items = items.concat(data);
+    if (data.length < PAGE_SIZE) break;
+    offset += PAGE_SIZE;
   }
 
-  console.log(`Total items in database: ${items.length}`);
-  console.log('');
+  console.log('='.repeat(70));
+  console.log('  HIKEMIND GEAR COMPARE — READINESS AUDIT');
+  console.log('='.repeat(70));
+  console.log(`\n  Total items: ${items.length}\n`);
 
-  // === OVERALL FILL RATES ===
-  console.log('-'.repeat(70));
-  console.log('  OVERALL FILL RATES (all items)');
-  console.log('-'.repeat(70));
-  console.log('');
-  console.log(`${'Column'.padEnd(22)} ${'Filled'.padStart(7)} ${'Empty'.padStart(7)} ${'Fill %'.padStart(8)}  ${'Status'}`);
-  console.log(`${'—'.repeat(22)} ${'—'.repeat(7)} ${'—'.repeat(7)} ${'—'.repeat(8)}  ${'—'.repeat(12)}`);
+  // Score every item
+  let totalReady = 0;
+  let totalItems = 0;
+  const bySubcategory = {};
+  const failures = [];
 
-  for (const col of SPEC_COLUMNS) {
-    const filled = items.filter(i => i[col] !== null && i[col] !== undefined && i[col] !== '').length;
-    const empty = items.length - filled;
-    const pct = ((filled / items.length) * 100).toFixed(1);
-    const status = filled === 0 ? '❌ EMPTY' : filled === items.length ? '✅ FULL' : pct >= 80 ? '✅ GOOD' : pct >= 50 ? '⚠️  PARTIAL' : pct > 0 ? '🟡 SPARSE' : '❌ EMPTY';
-    console.log(`${col.padEnd(22)} ${String(filled).padStart(7)} ${String(empty).padStart(7)} ${(pct + '%').padStart(8)}  ${status}`);
+  for (const item of items) {
+    const sub = item.subcategory || 'none';
+    const required = getEffectiveRequired(item);
+
+    if (!bySubcategory[sub]) {
+      bySubcategory[sub] = { category: item.category, total: 0, ready: 0, specs: required, missing: [] };
+    }
+
+    bySubcategory[sub].total++;
+    totalItems++;
+
+    if (required.length === 0) {
+      // No specs required beyond weight/price — always ready
+      bySubcategory[sub].ready++;
+      totalReady++;
+    } else {
+      const missingFields = required.filter(f => !isFieldFilled(item, f));
+      if (missingFields.length === 0) {
+        bySubcategory[sub].ready++;
+        totalReady++;
+      } else {
+        bySubcategory[sub].missing.push({ name: `${item.brand} ${item.name}`, fields: missingFields });
+        failures.push({ name: `${item.brand} ${item.name}`, sub, fields: missingFields });
+      }
+    }
   }
 
-  // === BY CATEGORY BREAKDOWN ===
-  console.log('');
-  console.log('='.repeat(70));
-  console.log('  BREAKDOWN BY CATEGORY');
-  console.log('='.repeat(70));
-
+  // ─── RESULTS BY SUBCATEGORY ───
   const categories = [...new Set(items.map(i => i.category))].sort();
 
   for (const cat of categories) {
-    const catItems = items.filter(i => i.category === cat);
-    const relevantSpecs = CATEGORY_RELEVANT_SPECS[cat] || [];
-    
+    const subs = Object.entries(bySubcategory)
+      .filter(([, v]) => v.category === cat)
+      .sort((a, b) => a[0].localeCompare(b[0]));
+
+    if (subs.length === 0) continue;
+
+    const catTotal = subs.reduce((s, [, v]) => s + v.total, 0);
+    const catReady = subs.reduce((s, [, v]) => s + v.ready, 0);
+    const catPct = ((catReady / catTotal) * 100).toFixed(1);
+    const catIcon = catPct == 100 ? '✅' : catPct >= 95 ? '🟢' : catPct >= 80 ? '⚠️' : '🟡';
+
+    console.log(`${catIcon} ${cat.toUpperCase()} — ${catReady}/${catTotal} (${catPct}%)`);
+
+    for (const [sub, data] of subs) {
+      const pct = ((data.ready / data.total) * 100).toFixed(0);
+      const icon = pct == 100 ? '✅' : pct >= 95 ? '🟢' : '⚠️';
+      const specLabel = data.specs.length > 0 ? `[${data.specs.join(', ')}]` : '[weight + price only]';
+      console.log(`    ${icon} ${sub} (${data.ready}/${data.total}) ${pct}%  ${specLabel}`);
+    }
     console.log('');
-    console.log(`\n  ${cat.toUpperCase()} (${catItems.length} items)`);
-    console.log(`  ${'—'.repeat(50)}`);
-
-    if (relevantSpecs.length === 0) {
-      console.log(`  No category-specific specs defined (weight + price only)`);
-      continue;
-    }
-
-    // Show subcategory breakdown
-    const subcats = [...new Set(catItems.map(i => i.subcategory || 'none'))].sort();
-    if (subcats.length > 1) {
-      console.log(`  Subcategories: ${subcats.join(', ')}`);
-    }
-
-    console.log(`  ${'Spec'.padEnd(20)} ${'Filled'.padStart(7)} / ${'Total'.padStart(5)}  ${'Fill %'.padStart(7)}  ${'Status'}`);
-
-    for (const spec of relevantSpecs) {
-      const filled = catItems.filter(i => i[spec] !== null && i[spec] !== undefined && i[spec] !== '').length;
-      const pct = ((filled / catItems.length) * 100).toFixed(1);
-      const status = filled === 0 ? '❌ EMPTY' : filled === catItems.length ? '✅ FULL' : pct >= 80 ? '✅ GOOD' : pct >= 50 ? '⚠️  PARTIAL' : '🟡 SPARSE';
-      console.log(`  ${spec.padEnd(20)} ${String(filled).padStart(7)} / ${String(catItems.length).padStart(5)}  ${(pct + '%').padStart(7)}  ${status}`);
-    }
-
-    // Overall category readiness
-    const totalRelevant = relevantSpecs.length * catItems.length;
-    const totalFilled = relevantSpecs.reduce((sum, spec) => {
-      return sum + catItems.filter(i => i[spec] !== null && i[spec] !== undefined && i[spec] !== '').length;
-    }, 0);
-    const overallPct = ((totalFilled / totalRelevant) * 100).toFixed(1);
-    console.log(`  ${'—'.repeat(50)}`);
-    console.log(`  CATEGORY READINESS: ${overallPct}%`);
   }
 
-  // === COMPARE PAGE READINESS ===
-  console.log('');
+  // ─── OVERALL ───
+  const overallPct = ((totalReady / totalItems) * 100).toFixed(1);
   console.log('='.repeat(70));
-  console.log('  GEAR COMPARE READINESS ASSESSMENT');
+  console.log(`  OVERALL COMPARE READINESS: ${totalReady}/${totalItems} (${overallPct}%)`);
   console.log('='.repeat(70));
-  console.log('');
 
-  // Core (always needed)
-  const coreFields = ['weight_oz', 'price_usd'];
-  const coreFilled = coreFields.every(f => items.every(i => i[f] !== null)) ? '✅' : '❌';
-  console.log(`  ${coreFilled} Core (weight + price): 100% — every item`);
+  // ─── FAILURES (if any) ───
+  if (failures.length > 0 && failures.length <= 30) {
+    console.log(`\n  ❌ ITEMS NOT COMPARE-READY (${failures.length}):`);
+    failures.forEach(f => {
+      console.log(`    • ${f.name} [${f.sub}] — missing: ${f.fields.join(', ')}`);
+    });
+  } else if (failures.length > 30) {
+    console.log(`\n  ❌ ${failures.length} ITEMS NOT COMPARE-READY (showing first 30):`);
+    failures.slice(0, 30).forEach(f => {
+      console.log(`    • ${f.name} [${f.sub}] — missing: ${f.fields.join(', ')}`);
+    });
+    console.log(`    ... and ${failures.length - 30} more`);
+  }
 
-  // YouTube
-  const ytFilled = items.filter(i => i.youtube_video_ids && i.youtube_video_ids.length > 0).length;
-  console.log(`  ${ytFilled > 0 ? '⚠️' : '❌'} YouTube videos: ${ytFilled}/${items.length} items have videos`);
-
-  // URLs
+  // ─── SUPPLEMENTARY: URLs + YouTube ───
   const urlFilled = items.filter(i => i.url && i.url !== '').length;
-  console.log(`  ${urlFilled > 0 ? '⚠️' : '❌'} Buy links (url): ${urlFilled}/${items.length} items have URLs`);
+  const ytFilled = items.filter(i => i.youtube_video_ids && i.youtube_video_ids.length > 0).length;
+  console.log(`\n  📎 Buy URLs: ${urlFilled}/${items.length} (${((urlFilled / items.length) * 100).toFixed(0)}%)`);
+  console.log(`  🎬 YouTube: ${ytFilled}/${items.length} (${((ytFilled / items.length) * 100).toFixed(0)}%)`);
 
-  // Compare readiness per category
-  console.log('');
-  console.log('  Per-category compare readiness (extended specs):');
-  for (const cat of categories) {
-    const catItems = items.filter(i => i.category === cat);
-    const relevantSpecs = CATEGORY_RELEVANT_SPECS[cat] || [];
-    if (relevantSpecs.length === 0) {
-      console.log(`    ${cat}: N/A (no specs to compare beyond weight/price)`);
-      continue;
-    }
-    const totalRelevant = relevantSpecs.length * catItems.length;
-    const totalFilled = relevantSpecs.reduce((sum, spec) => {
-      return sum + catItems.filter(i => i[spec] !== null && i[spec] !== undefined && i[spec] !== '').length;
-    }, 0);
-    const pct = ((totalFilled / totalRelevant) * 100).toFixed(1);
-    const icon = pct >= 80 ? '✅' : pct >= 50 ? '⚠️' : pct > 0 ? '🟡' : '❌';
-    console.log(`    ${icon} ${cat}: ${pct}% of relevant specs filled (${totalFilled}/${totalRelevant} data points)`);
-  }
-
-  // === MISSING COLUMNS CHECK ===
-  console.log('');
-  console.log('-'.repeat(70));
-  console.log('  COLUMNS THAT EXIST IN TYPESCRIPT BUT NOT IN DATABASE');
-  console.log('-'.repeat(70));
-
-  const sampleItem = items[0] || {};
-  const dbColumns = Object.keys(sampleItem);
-  
-  const tsOnlyFields = [
-    'boilTime', 'igniter', 'potIncluded', 'simmerControl',
-    'heelDrop', 'stackHeight', 'toeBoxWidth',
-    'waterproofRating', 'breathability', 'fabricTech', 'pitZips', 'seamSealed',
-    'collapsedLength', 'lockType', 'gripMaterial', 'poleSections',
-    'maxCarryWeight', 'frameMaterial', 'packFabric', 'torsoRange', 'waterBottleAccess',
-    'chargeMethod', 'redLight', 'ipxRating',
-    'stakesNeeded', 'doors', 'vestibuleArea',
-    'sleepWidth', 'sleepLength', 'padAttachment', 'enTested', 'padPackedSize', 'padShape', 'inflationMethod',
-    'pockets', 'packable',
-    'communityRating', 'pctUsagePercent', 'pairsPerThru',
-  ];
-
-  // Convert camelCase to snake_case for DB check
-  const toSnake = (s) => s.replace(/[A-Z]/g, m => '_' + m.toLowerCase());
-  
-  const missingFromDb = tsOnlyFields.filter(f => !dbColumns.includes(toSnake(f)));
-  const existsInDb = tsOnlyFields.filter(f => dbColumns.includes(toSnake(f)));
-
-  if (existsInDb.length > 0) {
-    console.log(`\n  Already in DB (${existsInDb.length}):`);
-    existsInDb.forEach(f => console.log(`    ✅ ${toSnake(f)}`));
-  }
-
-  console.log(`\n  NOT in DB yet (${missingFromDb.length}):`);
-  missingFromDb.forEach(f => console.log(`    ❌ ${toSnake(f)}`));
-
-  console.log('');
-  console.log('='.repeat(70));
+  console.log('\n' + '='.repeat(70));
   console.log('  AUDIT COMPLETE');
   console.log('='.repeat(70));
 }

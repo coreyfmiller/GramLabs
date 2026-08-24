@@ -9,6 +9,7 @@ export interface Scene {
   headline: string;
   copy: string;
   cta: string;
+  href: string;
   contentPosition: "left-center" | "left-lower" | "right-center" | "right-lower";
 }
 
@@ -24,6 +25,7 @@ export const scenes: Scene[] = [
     headline: "PLAN FOR WHAT'S AHEAD.",
     copy: "Build your trip around distance, elevation, weather and the conditions ahead.",
     cta: "OPEN TRIP PLANNER →",
+    href: "/trip",
     contentPosition: "left-center",
   },
   {
@@ -37,6 +39,7 @@ export const scenes: Scene[] = [
     headline: "BUILD A LIGHTER PACK.",
     copy: "Analyze every item in your pack and see exactly where your weight is going.",
     cta: "OPEN PACK LAB →",
+    href: "/pack-lab",
     contentPosition: "left-lower",
   },
   {
@@ -50,6 +53,7 @@ export const scenes: Scene[] = [
     headline: "EVERY GRAM EARNS ITS PLACE.",
     copy: "Optimize your complete hiking system without cutting the capability you actually need.",
     cta: "OPTIMIZE MY PACK →",
+    href: "/pack-lab",
     contentPosition: "left-center",
   },
   {
@@ -63,6 +67,7 @@ export const scenes: Scene[] = [
     headline: "PACK FOR THE CONDITIONS.",
     copy: "Adjust your system around temperature, precipitation, elevation and trip length.",
     cta: "ANALYZE MY TRIP →",
+    href: "/trip",
     contentPosition: "right-center",
   },
   {
@@ -76,6 +81,7 @@ export const scenes: Scene[] = [
     headline: "KNOW YOUR SYSTEM.",
     copy: "Model warmth, weight and conditions before you ever reach the trailhead.",
     cta: "ANALYZE MY GEAR →",
+    href: "/compare",
     contentPosition: "left-lower",
   },
 ];

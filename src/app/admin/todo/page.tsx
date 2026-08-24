@@ -103,7 +103,7 @@ const SECTIONS: TodoSection[] = [
     icon: <Package className="size-5" />,
     priority: "high",
     items: [
-      { text: "Browsable, filterable grid/table of all 1000+ items", done: false, indent: 0 },
+      { text: "Browsable, filterable grid/table of all 1500+ items", done: false, indent: 0 },
       { text: "Search by name/brand", done: false, indent: 0 },
       { text: "Filter by category, tier, price range, weight range", done: false, indent: 0 },
       { text: "Sort by weight, price, warmth-to-weight, cost-per-oz-saved", done: false, indent: 0 },

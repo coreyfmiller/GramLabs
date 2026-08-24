@@ -13,10 +13,13 @@
     "enrich-db:dry": "node scripts/enrich-database.mjs --dry-run",
     "enrich-db:report": "node scripts/enrich-database.mjs --report-only",
     "fetch-videos": "node scripts/fetch-youtube-reviews.mjs",
-    "fetch-videos:dry": "node scripts/fetch-youtube-reviews.mjs --dry-run"
+    "fetch-videos:dry": "node scripts/fetch-youtube-reviews.mjs --dry-run",
+    "generate-embeddings": "node scripts/generate-embeddings.mjs",
+    "sync-db": "node scripts/sync-from-supabase.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.3",
     "@tailwindcss/typography": "^0.5.20",
     "clsx": "^2.1.1",

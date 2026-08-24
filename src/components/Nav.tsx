@@ -7,9 +7,12 @@ import { Mountain, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
+  { label: "CLOSET", href: "/closet" },
+  { label: "LOADOUTS", href: "/loadouts" },
   { label: "PACK LAB", href: "/pack-lab" },
   { label: "BUILD MY KIT", href: "/build" },
   { label: "GEAR ADVISOR", href: "/chat" },
+  { label: "COMPARE", href: "/compare" },
   { label: "TRIP ENGINE", href: "/trip", pro: true },
   { label: "BRANDS", href: "/brands", admin: true },
   { label: "TODO", href: "/admin/todo", admin: true },
