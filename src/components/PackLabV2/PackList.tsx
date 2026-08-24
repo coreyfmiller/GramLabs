@@ -193,17 +193,13 @@ export function PackList() {
           </button>
 
           {/* Import */}
-          <button
-            type="button"
-            onClick={() => setShowImport(!showImport)}
-            title="Import from LighterPack"
-            className={cn(
-              "flex size-8 items-center justify-center rounded-md border border-border bg-card text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary",
-              showImport && "border-primary/40 text-primary"
-            )}
+          <a
+            href="/import"
+            title="Import gear (LighterPack, CSV, or text)"
+            className="flex size-8 items-center justify-center rounded-md border border-border bg-card text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
           >
             <Import className="size-3.5" />
-          </button>
+          </a>
 
           {/* Share */}
           <button

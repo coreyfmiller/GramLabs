@@ -26,6 +26,7 @@ import {
   Shield,
   Puzzle,
   PackagePlus,
+  Upload,
 } from "lucide-react";
 import { usePackStore } from "@/store/pack-store";
 
@@ -140,13 +141,22 @@ export default function ClosetPage() {
               {items.length} items · {totalWeight.toFixed(1)} oz total
             </p>
           </div>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-110 transition-all"
-          >
-            <Plus className="size-4" />
-            Add Gear
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            <a
+              href="/import"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:bg-muted transition-colors"
+            >
+              <Upload className="size-4" />
+              Import
+            </a>
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-110 transition-all"
+            >
+              <Plus className="size-4" />
+              Add Gear
+            </button>
+          </div>
         </div>
 
         {/* Category Filter */}
