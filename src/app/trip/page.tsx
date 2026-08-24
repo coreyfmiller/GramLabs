@@ -160,7 +160,7 @@ export default function TripPage() {
     <div className="min-h-dvh bg-background text-foreground">
       <Nav />
 
-      <div className="max-w-5xl mx-auto px-4 md:px-6 py-6 md:py-8">
+      <div className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-8">
         {!result ? (
           <>
             {/* Title */}

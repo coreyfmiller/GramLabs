@@ -77,11 +77,11 @@ export default function ChatPage() {
     <div className="h-dvh flex flex-col bg-background text-foreground">
       <Nav />
 
-      {/* Page header — compact, same rhythm as other pages */}
-      <div className="shrink-0 px-4 md:px-6 pt-5 pb-4 border-b border-border">
-        <div className="max-w-3xl mx-auto">
+      {/* Page header */}
+      <div className="shrink-0 px-4 md:px-6 py-6 md:py-8">
+        <div className="max-w-6xl mx-auto">
           <h1 className="text-2xl font-bold tracking-tight text-foreground">AI Advisor</h1>
-          <p className="mt-0.5 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground">
             Gear recommendations, kit builds, and comparisons backed by real trail data.
           </p>
         </div>
