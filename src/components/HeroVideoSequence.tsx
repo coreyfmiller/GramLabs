@@ -28,7 +28,24 @@ export default function HeroVideoSequence({ onSceneChange }: HeroVideoSequencePr
     videoA.src = scenes[0].src;
     videoA.playbackRate = 0.7;
     videoA.load();
-    videoA.play().catch(() => {});
+    
+    // Attempt play — retry once if browser blocks it
+    const attemptPlay = () => {
+      videoA.play().catch(() => {
+        // Some browsers need a tiny delay after load
+        setTimeout(() => {
+          videoA.play().catch(() => {});
+        }, 500);
+      });
+    };
+
+    // Play when enough data is buffered, or immediately if already ready
+    if (videoA.readyState >= 3) {
+      attemptPlay();
+    } else {
+      videoA.addEventListener("canplaythrough", attemptPlay, { once: true });
+    }
+    
     onSceneChange?.(0);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -94,6 +111,7 @@ export default function HeroVideoSequence({ onSceneChange }: HeroVideoSequencePr
         ref={videoARef}
         className={`${videoBaseStyles} ${showA ? "opacity-100" : "opacity-0"}`}
         muted
+        autoPlay
         playsInline
         preload="auto"
         aria-hidden="true"
@@ -103,7 +121,7 @@ export default function HeroVideoSequence({ onSceneChange }: HeroVideoSequencePr
         className={`${videoBaseStyles} ${showB ? "opacity-100" : "opacity-0"}`}
         muted
         playsInline
-        preload="auto"
+        preload="none"
         aria-hidden="true"
       />
       {/* Keep currentIndex in sync for potential future use */}
