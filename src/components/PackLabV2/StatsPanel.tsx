@@ -19,7 +19,7 @@ interface PackAnalysis {
   systemNotes?: string[];
 }
 
-const UL_THRESHOLD_OZ = 160; // 10 lb
+const DEFAULT_TARGET_OZ = 160; // 10 lb
 
 export function StatsPanel() {
   const getBaseWeight = usePackStore((s) => s.getBaseWeight);
@@ -34,6 +34,16 @@ export function StatsPanel() {
   const weightUnit = usePackStore((s) => s.weightUnit);
   const customCategories = usePackStore((s) => s.customCategories);
 
+  const [targetOz, setTargetOz] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("hikemind-weight-goal");
+      return saved ? parseFloat(saved) : DEFAULT_TARGET_OZ;
+    }
+    return DEFAULT_TARGET_OZ;
+  });
+  const [editingGoal, setEditingGoal] = useState(false);
+  const [goalInput, setGoalInput] = useState("");
+
   const items = loadouts.find((l) => l.id === activeLoadoutId)?.items ?? [];
   const baseWeight = getBaseWeight();
   const totalWeight = getTotalWeight();
@@ -44,8 +54,15 @@ export function StatsPanel() {
   const itemCount = items.reduce((s, i) => s + i.quantity, 0);
   const breakdown = getCategoryBreakdown();
 
-  const pct = Math.min(baseWeight / UL_THRESHOLD_OZ, 1.4);
-  const underTarget = baseWeight <= UL_THRESHOLD_OZ;
+  const pct = Math.min(baseWeight / targetOz, 1.4);
+  const underTarget = baseWeight <= targetOz;
+
+  function saveGoal(lbs: number) {
+    const oz = lbs * 16;
+    setTargetOz(oz);
+    localStorage.setItem("hikemind-weight-goal", String(oz));
+    setEditingGoal(false);
+  }
 
   // Build color map including custom categories
   const allColors: Record<string, string> = { ...CATEGORY_COLORS };
@@ -66,7 +83,7 @@ export function StatsPanel() {
     <div className="scroll-thin h-full min-h-0 overflow-y-auto">
       <div className="flex flex-col gap-4 p-4">
         {/* Donut */}
-        <section className="glass rounded-xl border border-white/10 p-4">
+        <section className="rounded-xl border border-border bg-card p-4">
           <div className="mb-3 flex items-baseline justify-between">
             <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
               Distribution
@@ -77,10 +94,10 @@ export function StatsPanel() {
           </div>
           <WeightDonut breakdown={breakdown} baseWeight={baseWeight} categoryColors={allColors} categoryLabels={allLabels} weightUnit={weightUnit} />
 
-          <div className="mt-4 border-t border-white/10 pt-3">
+          <div className="mt-4 border-t border-border pt-3">
             <div className="mb-1.5 flex items-baseline justify-between gap-2">
               <span className="min-w-0 truncate text-xs text-muted-foreground">
-                Ultralight target
+                Base weight goal
               </span>
               <span
                 className={cn(
@@ -88,10 +105,10 @@ export function StatsPanel() {
                   underTarget ? "text-primary" : "text-destructive"
                 )}
               >
-                {`${(Math.abs(UL_THRESHOLD_OZ - baseWeight) / 16).toFixed(1)} lb ${underTarget ? "under" : "over"}`}
+                {`${(Math.abs(targetOz - baseWeight) / 16).toFixed(1)} lb ${underTarget ? "under" : "over"}`}
               </span>
             </div>
-            <div className="relative h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
+            <div className="relative h-1.5 overflow-hidden rounded-full bg-muted">
               <div
                 className={cn(
                   "h-full rounded-full transition-[width] duration-700 ease-out",
@@ -100,14 +117,38 @@ export function StatsPanel() {
                 style={{ width: `${Math.min(pct, 1) * 100}%` }}
               />
             </div>
-            <p className="mt-1.5 text-xs uppercase tracking-[0.14em] text-muted-foreground">
-              10 lb base weight threshold
-            </p>
+            {editingGoal ? (
+              <form
+                className="mt-2 flex items-center gap-2"
+                onSubmit={(e) => { e.preventDefault(); const v = parseFloat(goalInput); if (v > 0) saveGoal(v); }}
+              >
+                <input
+                  type="number"
+                  step="0.5"
+                  min="1"
+                  max="50"
+                  value={goalInput}
+                  onChange={(e) => setGoalInput(e.target.value)}
+                  className="w-16 rounded border border-border bg-input px-2 py-1 text-xs num text-foreground focus:outline-none focus:border-primary/50"
+                  autoFocus
+                />
+                <span className="text-[10px] text-muted-foreground">lb</span>
+                <button type="submit" className="text-[10px] text-primary hover:underline">Save</button>
+                <button type="button" onClick={() => setEditingGoal(false)} className="text-[10px] text-muted-foreground hover:underline">Cancel</button>
+              </form>
+            ) : (
+              <button
+                onClick={() => { setGoalInput(String(targetOz / 16)); setEditingGoal(true); }}
+                className="mt-1.5 text-xs uppercase tracking-[0.14em] text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {(targetOz / 16).toFixed(1)} lb target · click to change
+              </button>
+            )}
           </div>
         </section>
 
         {/* Big 3 */}
-        <section className="glass rounded-xl border border-white/10 p-4">
+        <section className="rounded-xl border border-border bg-card p-4">
           <div className="mb-3 flex items-baseline justify-between gap-2">
             <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
               The Big 3
@@ -236,8 +277,8 @@ function PackAnalyzer() {
   }
 
   return (
-    <section className="glass rounded-xl border border-white/10">
-      <div className="flex items-center gap-2 border-b border-white/10 p-4">
+    <section className="rounded-xl border border-border bg-card">
+      <div className="flex items-center gap-2 border-b border-border p-4">
         <Sparkles className="size-3.5 text-primary" aria-hidden="true" />
         <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
           Pack Analyzer
@@ -302,7 +343,7 @@ function PackAnalyzer() {
             </div>
             <button
               onClick={() => setAnalysis(null)}
-              className="text-xs text-muted-foreground hover:text-foreground border border-white/10 rounded-md px-2 py-1"
+              className="text-xs text-muted-foreground hover:text-foreground border border-border rounded-md px-2 py-1"
             >
               Re-analyze
             </button>
@@ -383,7 +424,7 @@ function SummaryTile({
   accent?: boolean;
 }) {
   return (
-    <div className="glass rounded-xl border border-white/10 p-3 transition-colors hover:border-white/20">
+    <div className="rounded-xl border border-border bg-card p-3 transition-colors hover:border-white/20">
       <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
         {label}
       </p>
