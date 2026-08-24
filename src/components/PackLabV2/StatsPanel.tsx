@@ -6,6 +6,9 @@ import { usePackStore } from "@/store/pack-store";
 import { CATEGORY_LABELS, CATEGORY_COLORS } from "@/data/gear-database";
 import { formatWeightWithUnit } from "@/utils/format";
 import { WeightDonut } from "./WeightDonut";
+import { TwoRingDonut } from "./TwoRingDonut";
+import { HorizontalStackedBar } from "./HorizontalStackedBar";
+import { ChartToggle, useChartType } from "./ChartToggle";
 import { cn } from "@/lib/utils";
 
 interface PackAnalysis {
@@ -43,6 +46,7 @@ export function StatsPanel() {
   });
   const [editingGoal, setEditingGoal] = useState(false);
   const [goalInput, setGoalInput] = useState("");
+  const [chartType, setChartType] = useChartType();
 
   const items = loadouts.find((l) => l.id === activeLoadoutId)?.items ?? [];
   const baseWeight = getBaseWeight();
@@ -82,17 +86,48 @@ export function StatsPanel() {
   return (
     <div className="scroll-thin h-full min-h-0 overflow-y-auto">
       <div className="flex flex-col gap-4 p-4">
-        {/* Donut */}
+        {/* Distribution chart */}
         <section className="rounded-xl border border-border bg-card p-4">
-          <div className="mb-3 flex items-baseline justify-between">
+          <div className="mb-3 flex items-center justify-between">
             <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
               Distribution
             </h2>
-            <span className="num text-xs text-muted-foreground">
-              {itemCount} items
-            </span>
+            <ChartToggle value={chartType} onChange={setChartType} />
           </div>
-          <WeightDonut breakdown={breakdown} baseWeight={baseWeight} categoryColors={allColors} categoryLabels={allLabels} weightUnit={weightUnit} />
+
+          {chartType === "donut" && (
+            <WeightDonut breakdown={breakdown} baseWeight={baseWeight} categoryColors={allColors} categoryLabels={allLabels} weightUnit={weightUnit} />
+          )}
+          {chartType === "two-ring" && (
+            <TwoRingDonut
+              items={items.filter((i) => i.status === "packed").map((i) => ({
+                id: i.gearId,
+                name: i.item.name,
+                brand: i.item.brand,
+                category: i.item.category,
+                weightOz: i.item.weightOz * i.quantity,
+              }))}
+              baseWeight={baseWeight}
+              categoryColors={allColors}
+              categoryLabels={allLabels}
+              weightUnit={weightUnit}
+            />
+          )}
+          {chartType === "bar" && (
+            <HorizontalStackedBar
+              items={items.filter((i) => i.status === "packed").map((i) => ({
+                id: i.gearId,
+                name: i.item.name,
+                brand: i.item.brand,
+                category: i.item.category,
+                weightOz: i.item.weightOz * i.quantity,
+              }))}
+              baseWeight={baseWeight}
+              categoryColors={allColors}
+              categoryLabels={allLabels}
+              weightUnit={weightUnit}
+            />
+          )}
 
           <div className="mt-4 border-t border-border pt-3">
             <div className="mb-1.5 flex items-baseline justify-between gap-2">

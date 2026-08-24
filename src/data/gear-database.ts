@@ -193,6 +193,18 @@ export const SUBCATEGORIES: Record<GearCategory, { id: string; label: string }[]
   ],
 };
 
+/** Canonical display order for categories — use this for sorting everywhere. */
+export const CATEGORY_ORDER: GearCategory[] = [
+  "shelter",
+  "sleep",
+  "pack",
+  "kitchen",
+  "clothing",
+  "electronics",
+  "safety",
+  "accessories",
+];
+
 export const CATEGORY_LABELS: Record<GearCategory, string> = {
   shelter: "Shelter",
   sleep: "Sleep",

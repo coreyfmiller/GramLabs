@@ -10,7 +10,7 @@ import {
   UserGearItem,
 } from "@/lib/closet-api";
 import { searchGear } from "@/lib/gear-api";
-import { GearItem, GearCategory } from "@/data/gear-database";
+import { GearItem, GearCategory, CATEGORY_ORDER } from "@/data/gear-database";
 import { cn } from "@/lib/utils";
 import {
   Package,
@@ -25,6 +25,7 @@ import {
   Zap,
   Shield,
   Puzzle,
+  Shirt,
   PackagePlus,
   Upload,
 } from "lucide-react";
@@ -35,6 +36,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   sleep: <Moon className="size-4" />,
   pack: <Backpack className="size-4" />,
   kitchen: <Flame className="size-4" />,
+  clothing: <Shirt className="size-4" />,
   electronics: <Zap className="size-4" />,
   safety: <Shield className="size-4" />,
   accessories: <Puzzle className="size-4" />,
@@ -45,6 +47,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   sleep: "text-indigo-400 bg-indigo-400/10 border-indigo-400/20",
   pack: "text-amber-400 bg-amber-400/10 border-amber-400/20",
   kitchen: "text-orange-400 bg-orange-400/10 border-orange-400/20",
+  clothing: "text-sky-400 bg-sky-400/10 border-sky-400/20",
   electronics: "text-yellow-400 bg-yellow-400/10 border-yellow-400/20",
   safety: "text-red-400 bg-red-400/10 border-red-400/20",
   accessories: "text-primary bg-primary/10 border-primary/20",
@@ -115,8 +118,16 @@ export default function ClosetPage() {
       ? items
       : items.filter((i) => getItemCategory(i) === filterCategory);
 
+  const sortedFilteredItems = [...filteredItems].sort(
+    (a, b) =>
+      CATEGORY_ORDER.indexOf(getItemCategory(a) as GearCategory) -
+      CATEGORY_ORDER.indexOf(getItemCategory(b) as GearCategory)
+  );
+
   const totalWeight = items.reduce((sum, i) => sum + getItemWeight(i), 0);
-  const categories = [...new Set(items.map(getItemCategory))];
+  const categories = [...new Set(items.map(getItemCategory))].sort(
+    (a, b) => CATEGORY_ORDER.indexOf(a as GearCategory) - CATEGORY_ORDER.indexOf(b as GearCategory)
+  );
 
   if (authLoading) {
     return (
@@ -192,7 +203,7 @@ export default function ClosetPage() {
         {/* Gear Grid */}
         {loading ? (
           <div className="text-center text-muted-foreground py-16">Loading your gear...</div>
-        ) : filteredItems.length === 0 ? (
+        ) : sortedFilteredItems.length === 0 ? (
           <div className="text-center py-16">
             {items.length === 0 ? (
               <>
@@ -230,7 +241,7 @@ export default function ClosetPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {filteredItems.map((item) => (
+            {sortedFilteredItems.map((item) => (
               <div
                 key={item.id}
                 className="group relative p-4 rounded-xl border border-border bg-card hover:border-border transition-colors"
