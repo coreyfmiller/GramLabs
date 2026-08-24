@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Mountain, Sun, Moon } from "lucide-react";
+import { Mountain, Sun, Moon, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -20,6 +21,7 @@ export function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const pathname = usePathname();
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     const saved = localStorage.getItem("hikemind-theme") as "dark" | "light" | null;
@@ -72,8 +74,18 @@ export function Nav() {
             </nav>
           </div>
 
-          {/* Theme toggle + Mobile hamburger */}
+          {/* Theme toggle + Auth + Mobile hamburger */}
           <div className="flex items-center gap-2">
+            {user && (
+              <button
+                onClick={signOut}
+                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-white/[0.05] transition-colors"
+                title="Sign out"
+              >
+                <LogOut className="size-3.5" />
+                <span className="max-w-[100px] truncate">{user.email?.split("@")[0]}</span>
+              </button>
+            )}
             <button
               onClick={toggleTheme}
               className="size-9 flex items-center justify-center rounded-lg border border-border bg-white/[0.03] hover:bg-white/[0.08] transition-colors"

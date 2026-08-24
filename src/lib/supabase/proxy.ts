@@ -31,12 +31,14 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Redirect unauthenticated users to login for protected routes
-  const protectedRoutes = ["/closet", "/loadouts", "/trip", "/import"];
-  const isProtected = protectedRoutes.some((route) =>
-    request.nextUrl.pathname.startsWith(route)
-  );
+  // Everything except the homepage, login, auth callback, API routes, and static assets requires auth
+  const publicRoutes = ["/", "/login", "/auth"];
+  const isPublic =
+    publicRoutes.some(
+      (route) => request.nextUrl.pathname === route || request.nextUrl.pathname.startsWith("/auth")
+    ) || request.nextUrl.pathname.startsWith("/api"); // API routes handle their own auth
 
-  if (!user && isProtected) {
+  if (!user && !isPublic) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("redirect", request.nextUrl.pathname);
