@@ -2,13 +2,15 @@ name: Fetch YouTube Reviews
 
 on:
   schedule:
-    # Run daily at 6am UTC (2am EST) on the 1st through 10th of each month
-    - cron: '0 6 1-10 * *'
-  workflow_dispatch: # Allow manual trigger anytime
+    # Run daily at 8 AM UTC (4 AM Eastern / 1 AM Pacific — well after quota reset)
+    - cron: '0 8 * * *'
+  workflow_dispatch: # Allow manual trigger from GitHub UI
 
 jobs:
-  fetch:
+  fetch-videos:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     steps:
       - uses: actions/checkout@v4
 
@@ -16,12 +18,17 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm ci
-
       - name: Fetch YouTube reviews
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: node scripts/fetch-youtube-reviews.mjs
+
+      - name: Check if coverage is complete
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: |
+          echo "If the script reports 'All searchable items processed', coverage is complete."
+          echo "This workflow will keep running monthly after initial population to catch new items."

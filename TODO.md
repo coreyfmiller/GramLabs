@@ -36,6 +36,16 @@
    - `https://kkncobvfavgyibisdevc.supabase.co/auth/v1/callback`
 5. Save and wait 5 minutes for propagation
 
+### Test Auth Flow End-to-End (After OAuth Fix)
+1. Go to your Vercel production URL
+2. Click login → "Continue with Google"
+3. Complete Google consent → should redirect to /closet
+4. If error: check browser console + Supabase Auth logs in dashboard
+5. Once in /closet: add a gear item from search
+6. Open Pack Lab → verify gear shows up
+7. Open AI Advisor → send a message → confirm response (not rate limit error)
+8. **If login page shows after callback:** the `exchangeCodeForSession` failed — check Supabase dashboard → Authentication → Logs
+
 ### Submit Sitemap to Google Search Console
 1. Go to [search.google.com/search-console](https://search.google.com/search-console)
 2. Add property for your Vercel URL

@@ -67,12 +67,12 @@ function LoginForm() {
       {/* Header */}
       <div className="text-center">
         <h1 className="text-2xl font-bold text-white">
-          {mode === "login" ? "Welcome back" : "Create your account"}
+          {mode === "login" ? "Welcome back" : "Create your free account"}
         </h1>
         <p className="text-sm text-zinc-400 mt-1">
           {mode === "login"
             ? "Sign in to access your gear closet"
-            : "Start building your gear library"}
+            : "Pack Lab, Compare, and AI Advisor — free forever"}
         </p>
       </div>
 
@@ -100,7 +100,7 @@ function LoginForm() {
             d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
           />
         </svg>
-        Continue with Google
+        {mode === "signup" ? "Sign up free with Google" : "Continue with Google"}
       </button>
 
       {/* Divider */}
@@ -159,7 +159,7 @@ function LoginForm() {
               onClick={() => setMode("signup")}
               className="text-emerald-400 hover:text-emerald-300"
             >
-              Create an account
+              Sign up free
             </button>
           </>
         ) : (
