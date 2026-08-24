@@ -18,6 +18,8 @@ import {
   Import,
   X,
   ChevronDown,
+  ChevronsDownUp,
+  ChevronsUpDown,
   Archive,
   Copy,
 } from "lucide-react";
@@ -79,6 +81,7 @@ export function PackList() {
   const uncheckAll = usePackStore((s) => s.uncheckAll);
 
   const [packingMode, setPackingMode] = useState(false);
+  const [allExpanded, setAllExpanded] = useState(true);
   const [showLoadoutMenu, setShowLoadoutMenu] = useState(false);
   const [showQuickAdd, setShowQuickAdd] = useState(false);
   const [showCategoryAdd, setShowCategoryAdd] = useState(false);
@@ -211,6 +214,15 @@ export function PackList() {
             {packingMode ? "Done Packing" : "Pack Mode"}
           </button>
 
+          {/* Expand/Collapse all */}
+          <button
+            type="button"
+            onClick={() => setAllExpanded(!allExpanded)}
+            className="rounded-md border border-border bg-card px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
+          >
+            {allExpanded ? <ChevronsDownUp className="size-3.5" /> : <ChevronsUpDown className="size-3.5" />}
+          </button>
+
           {/* Unit toggle */}
           <button
             type="button"
@@ -333,6 +345,7 @@ export function PackList() {
                           }}
                           packingMode={packingMode}
                           onToggleChecked={() => toggleItemChecked(packItem.gearId)}
+                          allExpanded={allExpanded}
                         />
                       </li>
                     ))}
@@ -577,7 +590,7 @@ function getItemSpecs(item: GearItem): SpecDisplay[] {
 
 // ─── PackRow Component ──────────────────────────────────────────────────────
 
-function PackRow({ packItem, color, weightUnit, categories, isDragging, isDropTarget, onRemove, onQty, onStatusChange, onToggleStar, onUpdateUrl, onUpdateDetails, onAddToCloset, packingMode, onToggleChecked }: {
+function PackRow({ packItem, color, weightUnit, categories, isDragging, isDropTarget, onRemove, onQty, onStatusChange, onToggleStar, onUpdateUrl, onUpdateDetails, onAddToCloset, packingMode, onToggleChecked, allExpanded }: {
   packItem: PackItem; color: string; weightUnit: "oz" | "g"; categories: Record<string, string>;
   isDragging: boolean; isDropTarget: boolean;
   onRemove: () => void; onQty: (delta: number) => void; onStatusChange: (status: ItemStatus) => void;
@@ -586,10 +599,16 @@ function PackRow({ packItem, color, weightUnit, categories, isDragging, isDropTa
   onAddToCloset?: () => void;
   packingMode?: boolean;
   onToggleChecked?: () => void;
+  allExpanded?: boolean;
 }) {
   const [editing, setEditing] = useState(false);
-  const [expanded, setExpanded] = useState(true);
+  const [localExpanded, setLocalExpanded] = useState<boolean | null>(null); // null = follow global
   const [editName, setEditName] = useState(packItem.item.name);
+
+  // Reset local override when global toggle changes
+  useEffect(() => { setLocalExpanded(null); }, [allExpanded]);
+
+  const expanded = localExpanded !== null ? localExpanded : (allExpanded ?? true);
   const [editWeight, setEditWeight] = useState(String(packItem.item.weightOz));
   const [editUrl, setEditUrl] = useState(packItem.url || packItem.item.url || "");
 
@@ -657,7 +676,7 @@ function PackRow({ packItem, color, weightUnit, categories, isDragging, isDropTa
 
         <span aria-hidden="true" className="size-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
 
-        <div className={cn("min-w-0 flex-1 cursor-pointer", packingMode && packItem.checked && "opacity-50")} onClick={() => hasSpecs && setExpanded(!expanded)}>
+        <div className={cn("min-w-0 flex-1 cursor-pointer", packingMode && packItem.checked && "opacity-50")} onClick={() => hasSpecs && setLocalExpanded(!expanded)}>
           <div className="flex items-center gap-2">
             <p className="text-pretty text-base font-medium leading-tight">{packItem.item.name}</p>
             {isWorn && <span className="shrink-0 rounded border border-primary/30 bg-primary/10 px-1.5 py-px text-[10px] font-semibold uppercase tracking-wider text-primary">Worn</span>}
@@ -688,7 +707,7 @@ function PackRow({ packItem, color, weightUnit, categories, isDragging, isDropTa
         {hasSpecs && (
           <button
             type="button"
-            onClick={() => setExpanded(!expanded)}
+            onClick={() => setLocalExpanded(!expanded)}
             aria-label={expanded ? "Collapse specs" : "Expand specs"}
             className="flex size-5 items-center justify-center text-muted-foreground/50 hover:text-muted-foreground transition-colors"
           >
