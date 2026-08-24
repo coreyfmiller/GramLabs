@@ -145,6 +145,8 @@
 ## 📋 FUTURE FEATURES (After Business Model is Solid)
 
 ### Community & Social
+- [ ] **Public pack pages** (`/pack/[id]`) — SSR, SEO-indexable, pie chart, clean layout, "Build yours free" CTA. The growth engine.
+- [ ] **Community packs gallery** — browse public packs by trip type/season/weight class. Users toggle packs public/private.
 - [ ] Public loadout share pages (`/u/[username]/[slug]`)
 - [ ] YouTube creator packs (AI-extracted gear lists from video transcripts)
 - [ ] Community loadout cloning ("Copy this pack to mine")
@@ -157,7 +159,7 @@
 - [ ] Health warnings at category thresholds (shoes @ 500mi, pads @ 200 nights)
 
 ### AI Intelligence Layer
-- [ ] AI Pack Audit ("swap X for Y, save 8oz")
+- [ ] **Pack Analyzer v2** — specific swap recommendations ("replace X with Y, save 8oz, costs $20 more"), gap detection, redundancy detection
 - [ ] Gear-for-Conditions engine (weather → gear spec thresholds)
 - [ ] Gap detection ("no wind layer but exposed ridgeline")
 - [ ] Redundancy detection ("headlamp + lantern — one covers both")
