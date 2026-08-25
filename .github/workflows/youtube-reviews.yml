@@ -1,10 +1,14 @@
-name: Fetch YouTube Reviews
+name: Fetch YouTube Reviews (DISABLED — bad matching logic, use /admin/videos instead)
 
 on:
-  schedule:
-    # Run daily at 8 AM UTC (4 AM Eastern / 1 AM Pacific — well after quota reset)
-    - cron: '0 8 * * *'
-  workflow_dispatch: # Allow manual trigger from GitHub UI
+  # DISABLED: This workflow matched videos too loosely (brand-only, not exact product).
+  # Videos are now manually approved via the admin enrichment dashboard.
+  # To re-enable, fix the matching logic in fetch-youtube-reviews.mjs to require
+  # exact product name in video title before assigning.
+  #
+  # schedule:
+  #   - cron: '0 8 * * *'
+  workflow_dispatch: # Allow manual trigger from GitHub UI (for testing fixes only)
 
 jobs:
   fetch-videos:
