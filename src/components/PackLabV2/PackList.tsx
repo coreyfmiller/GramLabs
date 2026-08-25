@@ -228,9 +228,10 @@ export function PackList() {
           <button
             type="button"
             onClick={() => setAllExpanded(!allExpanded)}
-            className="rounded-md border border-border bg-card px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
+            className="flex items-center gap-1 rounded-md border border-border bg-card px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
           >
             {allExpanded ? <ChevronsDownUp className="size-3.5" /> : <ChevronsUpDown className="size-3.5" />}
+            {allExpanded ? "Compact" : "Expand"}
           </button>
 
           {/* Unit toggle */}
