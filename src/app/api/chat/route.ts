@@ -76,11 +76,23 @@ function formatGearContext(items: GearItem[]): string {
 
 const BACKTICKS = "```";
 
-function buildSystemInstruction(gearContext: string, itemCount: number): string {
+function buildSystemInstruction(gearContext: string, itemCount: number, loadout?: { name: string; items: { name: string; brand: string; category: string; weightOz: number; priceUsd: number; status: string }[] }): string {
+  const loadoutSection = loadout && loadout.items.length > 0
+    ? `\n\nUSER'S CURRENT PACK ("${loadout.name}" — ${loadout.items.length} items):
+Base weight: ${(loadout.items.filter(i => i.status === "packed").reduce((s, i) => s + i.weightOz, 0) / 16).toFixed(1)} lb
+Total cost: $${loadout.items.reduce((s, i) => s + i.priceUsd, 0).toFixed(0)}
+
+Items:
+${loadout.items.map(i => `- ${i.brand} ${i.name} | ${i.category} | ${i.weightOz}oz | $${i.priceUsd} | ${i.status}`).join("\n")}
+
+When the user asks about upgrades, budget allocation, or weight savings, analyze THIS pack specifically. Identify the heaviest items where lighter alternatives exist in the database above, and prioritize recommendations by oz-saved-per-dollar-spent.`
+    : "";
+
   return `You are HikeMind AI, an expert ultralight backpacking gear advisor.
 
 DATABASE OF AVAILABLE GEAR (${itemCount} items most relevant to this conversation):
 ${gearContext}
+${loadoutSection}
 
 RULES:
 - Only recommend items from the database above. Never invent items.
@@ -145,7 +157,10 @@ export async function POST(req: NextRequest) {
   if (check.error) return check.error;
 
   try {
-    const { messages } = await req.json();
+    const { messages, loadout } = await req.json() as {
+      messages: { role: string; content: string }[];
+      loadout?: { name: string; items: { name: string; brand: string; category: string; weightOz: number; priceUsd: number; status: string }[] };
+    };
 
     // Abuse detection: check for repeated prompts
     const latestUserMsg = messages?.filter((m: { role: string }) => m.role === "user").pop();
@@ -174,7 +189,7 @@ export async function POST(req: NextRequest) {
     // Retrieve only relevant gear items via semantic search
     const relevantGear = await retrieveRelevantGear(searchQuery, 60);
     const gearContext = formatGearContext(relevantGear);
-    const systemInstruction = buildSystemInstruction(gearContext, relevantGear.length);
+    const systemInstruction = buildSystemInstruction(gearContext, relevantGear.length, loadout);
 
     const model = genAI.getGenerativeModel({
       model: "gemini-3.6-flash",

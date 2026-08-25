@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, Loader2, Sparkles, Plus, ShoppingCart } from "lucide-react";
+import { Send, Bot, User, Loader2, Sparkles, Plus, ShoppingCart, Backpack } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Nav } from "@/components/Nav";
 import { usePackStore } from "@/store/pack-store";
@@ -18,7 +18,10 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedLoadoutId, setSelectedLoadoutId] = useState<string | "none">("none");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const loadouts = usePackStore((s) => s.loadouts);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -35,10 +38,29 @@ export default function ChatPage() {
     setLoading(true);
 
     try {
+      // Build loadout payload if one is selected
+      const selectedLoadout = selectedLoadoutId !== "none"
+        ? loadouts.find((l) => l.id === selectedLoadoutId)
+        : null;
+
+      const loadoutPayload = selectedLoadout && selectedLoadout.items.length > 0
+        ? {
+            name: selectedLoadout.name,
+            items: selectedLoadout.items.map((pi) => ({
+              name: pi.item.name,
+              brand: pi.item.brand,
+              category: pi.item.category,
+              weightOz: pi.item.weightOz * pi.quantity,
+              priceUsd: pi.item.priceUsd * pi.quantity,
+              status: pi.status,
+            })),
+          }
+        : undefined;
+
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ messages: newMessages, loadout: loadoutPayload }),
       });
 
       const data = await res.json();
@@ -140,8 +162,32 @@ export default function ChatPage() {
 
           <div ref={messagesEndRef} />
 
-          {/* Input */}
-          <form onSubmit={handleSubmit} className="flex items-end gap-3 pt-4">
+          {/* Loadout selector + Input */}
+          <div className="pt-4 space-y-2">
+            {loadouts.length > 0 && loadouts.some((l) => l.items.length > 0) && (
+              <div className="flex items-center gap-2">
+                <Backpack className="size-3.5 text-muted-foreground" />
+                <select
+                  value={selectedLoadoutId}
+                  onChange={(e) => setSelectedLoadoutId(e.target.value)}
+                  className="rounded-lg border border-border bg-input px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-colors"
+                >
+                  <option value="none">No pack context</option>
+                  {loadouts.filter((l) => l.items.length > 0).map((l) => (
+                    <option key={l.id} value={l.id}>
+                      {l.name} ({l.items.reduce((s, i) => s + i.quantity, 0)} items)
+                    </option>
+                  ))}
+                </select>
+                {selectedLoadoutId !== "none" && (
+                  <span className="text-[10px] text-muted-foreground">
+                    AI sees your full pack for targeted advice
+                  </span>
+                )}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="flex items-end gap-3">
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -159,6 +205,7 @@ export default function ChatPage() {
               <Send className="size-4" />
             </button>
           </form>
+          </div>
         </div>
       </main>
     </div>
