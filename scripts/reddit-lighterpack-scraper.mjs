@@ -203,6 +203,12 @@ async function deduplicateAgainstDB(items) {
   for (const item of items) {
     // Skip items without a real brand
     if (item.brand === "Unknown") { unknownCount++; continue; }
+    // Skip low-value categories — focus on the Big 3 + kitchen + safety gear
+    const skipCats = ["clothing", "electronics", "accessories"];
+    if (skipCats.includes(item.category)) { unknownCount++; continue; }
+    // Skip generic items that aren't real products
+    const skipNames = ["toothbrush", "toothpaste", "soap", "sunscreen", "lighter", "phone", "socks", "underwear", "shorts", "hat", "gloves", "buff", "shoes", "shirt", "pants", "fleece", "trowel", "spoon", "water"];
+    if (skipNames.some(s => item.name.toLowerCase().includes(s))) { unknownCount++; continue; }
     const norm = normalize(`${item.brand} ${item.name}`);
     if (existingNorm.has(norm)) { dupeCount++; continue; }
     let fuzzy = false;
