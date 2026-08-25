@@ -1,6 +1,44 @@
 # HikeMind — TODO
 
-**Last updated:** August 23, 2026
+**Last updated:** August 24, 2026
+
+---
+
+## 🚨 PRIORITY 0 — Data Pipeline (NEXT)
+
+### Reddit r/Ultralight Shakedown Scraper
+The single best source for "what gear do real hikers actually carry." Shakedown posts contain LighterPack links with full gear lists. Scrape the last year, parse every pack, aggregate items by frequency, diff against our DB to find gaps.
+
+**Setup required (Corey — 2 minutes):**
+1. Go to [reddit.com/prefs/apps](https://www.reddit.com/prefs/apps)
+2. Click "create another app" at the bottom
+3. Name: `hikemind-data` (or whatever)
+4. Type: **script**
+5. Redirect URI: `http://localhost:8080` (doesn't matter, won't be used)
+6. Click "create app"
+7. Copy the **client ID** (under the app name) and **secret**
+8. Add to `.env.local`:
+   ```
+   REDDIT_CLIENT_ID=your_client_id
+   REDDIT_CLIENT_SECRET=your_client_secret
+   REDDIT_USER_AGENT=hikemind:v1.0 (by /u/your_username)
+   ```
+
+**What the script does (I build this):**
+- Authenticates with Reddit OAuth
+- Pulls all shakedown-flaired posts from r/Ultralight (last 12 months)
+- Extracts LighterPack URLs from post bodies
+- Parses each LighterPack (we already have this parser)
+- Aggregates: counts how many packs each item appears in
+- Diffs against gear_items DB — items in 5+ packs that we're missing = confirmed gaps
+- Outputs missing items into `gear_candidates` table for admin review
+
+### Brand Catalog Audit Script
+For each brand in our BRAND_WEBSITES map:
+- Scrape their product pages
+- AI-extract product specs (Gemini Flash)
+- Dedup against existing DB
+- Insert missing items into `gear_candidates` for admin review
 
 ---
 
