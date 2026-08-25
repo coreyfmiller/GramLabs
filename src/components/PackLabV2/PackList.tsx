@@ -22,6 +22,7 @@ import {
   ChevronsUpDown,
   Archive,
   Copy,
+  Sparkles,
 } from "lucide-react";
 import {
   CATEGORY_LABELS,
@@ -31,6 +32,7 @@ import {
 import { usePackStore, PackItem, ItemStatus } from "@/store/pack-store";
 import { formatWeightWithUnit } from "@/utils/format";
 import { addToCloset } from "@/lib/closet-api";
+import { BuildFromClosetModal } from "./BuildFromClosetModal";
 import { cn } from "@/lib/utils";
 
 const CATEGORY_ORDER: string[] = [
@@ -86,6 +88,7 @@ export function PackList() {
   const [showQuickAdd, setShowQuickAdd] = useState(false);
   const [showCategoryAdd, setShowCategoryAdd] = useState(false);
   const [showImport, setShowImport] = useState(false);
+  const [showBuildModal, setShowBuildModal] = useState(false);
   const [shareSuccess, setShareSuccess] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState(packName);
@@ -174,6 +177,13 @@ export function PackList() {
             title="Duplicate current loadout"
           >
             <Copy className="size-3.5" />
+          </button>
+          <button
+            onClick={() => setShowBuildModal(true)}
+            className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+            title="Build optimal pack from your closet"
+          >
+            <Sparkles className="size-3.5" />
           </button>
         </div>
 
@@ -286,6 +296,13 @@ export function PackList() {
             <p className="max-w-xs text-sm text-muted-foreground">
               Add gear from the library, quick-add below, or import from LighterPack.
             </p>
+            <button
+              onClick={() => setShowBuildModal(true)}
+              className="mt-4 flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:brightness-110"
+            >
+              <Sparkles className="size-4" />
+              Build from your closet
+            </button>
           </div>
         ) : (
           <div className="flex flex-col gap-6 pb-4">
@@ -383,6 +400,9 @@ export function PackList() {
           </div>
         )}
       </div>
+
+      {/* Build from closet modal */}
+      <BuildFromClosetModal open={showBuildModal} onClose={() => setShowBuildModal(false)} />
     </div>
   );
 }
