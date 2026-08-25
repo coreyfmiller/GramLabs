@@ -273,6 +273,20 @@ export default function EnrichmentDashboard() {
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
+                      {/* Product page link (manufacturer URL stored on item) */}
+                      {item.url && (
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-primary/30 bg-primary/5 text-xs text-primary hover:bg-primary/10 transition-colors"
+                          title="Manufacturer product page"
+                        >
+                          <ExternalLink className="size-3" />
+                          Product page
+                        </a>
+                      )}
+
                       {/* Manufacturer link */}
                       {brandUrl && (
                         <a
@@ -313,6 +327,41 @@ export default function EnrichmentDashboard() {
                       </button>
                     </div>
                   </div>
+
+                  {/* Existing assigned videos — shown so admin can audit */}
+                  {hasExistingVideos && (
+                    <div className="mt-3 border-t border-border pt-3">
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">
+                        Currently assigned videos
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {item.youtube_video_ids!.map((videoId) => (
+                          <div key={videoId} className="rounded-lg border border-border overflow-hidden">
+                            <div className="aspect-video">
+                              <iframe
+                                src={`https://www.youtube.com/embed/${videoId}`}
+                                title={`${item.brand} ${item.name}`}
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                                allowFullScreen
+                                className="w-full h-full"
+                                loading="lazy"
+                              />
+                            </div>
+                            <div className="px-2 py-1.5 flex items-center justify-between">
+                              <a
+                                href={`https://www.youtube.com/watch?v=${videoId}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[10px] text-muted-foreground hover:text-foreground"
+                              >
+                                {videoId}
+                              </a>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Video results */}
                   {videos.length > 0 && (
