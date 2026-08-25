@@ -5,7 +5,6 @@ import { Search, Check, X, ExternalLink, Play, Loader2, ChevronLeft, ChevronRigh
 import { Nav } from "@/components/Nav";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { BRAND_WEBSITES } from "@/data/brand-websites";
 import { CATEGORY_ORDER } from "@/data/gear-database";
 import { cn } from "@/lib/utils";
 
@@ -244,7 +243,6 @@ export default function EnrichmentDashboard() {
         ) : (
           <div className="flex flex-col gap-4">
             {items.map((item) => {
-              const brandUrl = BRAND_WEBSITES[item.brand];
               const videos = videoResults[item.id] || [];
               const approved = approvedVideos[item.id] || new Set<string>();
               const rejected = rejectedVideos[item.id] || new Set<string>();
@@ -273,33 +271,22 @@ export default function EnrichmentDashboard() {
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      {/* Product page link (manufacturer URL stored on item) */}
-                      {item.url && (
-                        <a
-                          href={item.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-primary/30 bg-primary/5 text-xs text-primary hover:bg-primary/10 transition-colors"
-                          title="Manufacturer product page"
-                        >
-                          <ExternalLink className="size-3" />
-                          Product page
-                        </a>
-                      )}
-
-                      {/* Manufacturer link */}
-                      {brandUrl && (
-                        <a
-                          href={`${brandUrl}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-border text-xs text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
-                          title={`Visit ${item.brand} website`}
-                        >
-                          <ExternalLink className="size-3" />
-                          Brand site
-                        </a>
-                      )}
+                      {/* Product page link (stored URL or Google search fallback) */}
+                      <a
+                        href={item.url || `https://www.google.com/search?q=${encodeURIComponent(`${item.brand} ${item.name}`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(
+                          "flex items-center gap-1 px-2.5 py-1.5 rounded-lg border text-xs transition-colors",
+                          item.url
+                            ? "border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
+                            : "border-border text-muted-foreground hover:text-foreground hover:border-primary/30"
+                        )}
+                        title={item.url ? "Manufacturer product page" : `Search for ${item.brand} ${item.name}`}
+                      >
+                        <ExternalLink className="size-3" />
+                        {item.url ? "Product page" : "Find product"}
+                      </a>
 
                       {/* Gear page link */}
                       <a
