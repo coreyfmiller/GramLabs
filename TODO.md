@@ -212,6 +212,7 @@
 
 ## 🔧 TECH DEBT (Clean Up When Time Allows)
 
+- [ ] **YouTube video validation** — build a script/GitHub Action that periodically checks all `youtube_video_ids` in the database for embeddability (oEmbed check or YouTube Data API `status.embeddable`). Remove or replace IDs that are blocked/private/deleted. Run weekly.
 - [ ] Remove static `src/data/gear-database.ts` data array (keep types only, use Supabase for all data)
 - [ ] Unify Supabase clients (old `supabase.ts` → new `supabase/client.ts` pattern)
 - [ ] Rename store's `Loadout` type to `PackLoadout` to avoid collision with loadout-api's `Loadout`

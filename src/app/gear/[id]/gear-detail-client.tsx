@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Nav } from "@/components/Nav";
 import { ArrowLeft, ExternalLink, PackagePlus, GitCompareArrows } from "lucide-react";
 import Link from "next/link";
@@ -188,25 +189,7 @@ export function GearDetailClient({
 
         {/* YouTube Reviews */}
         {item.youtube_video_ids && item.youtube_video_ids.length > 0 && (
-          <div className="glass rounded-xl border border-white/10 p-5 mb-8">
-            <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground mb-4">
-              Video Reviews ({item.youtube_video_ids.length})
-            </h2>
-            <div className="grid grid-cols-1 gap-4">
-              {item.youtube_video_ids.map((videoId) => (
-                <div key={videoId} className="aspect-video rounded-lg overflow-hidden border border-white/10">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${videoId}`}
-                    title={`${item.brand} ${item.name} review`}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                    allowFullScreen
-                    className="w-full h-full"
-                    loading="lazy"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
+          <YouTubeSection videoIds={item.youtube_video_ids} itemName={`${item.brand} ${item.name}`} />
         )}
 
         {/* No videos state */}
@@ -255,6 +238,71 @@ export function GearDetailClient({
             </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * YouTubeSection — renders only embeddable videos.
+ * Uses YouTube's oEmbed endpoint to check if a video allows embedding.
+ * Videos that are blocked, private, or unavailable are silently hidden.
+ * If no videos are embeddable, the entire section is hidden.
+ */
+function YouTubeSection({ videoIds, itemName }: { videoIds: string[]; itemName: string }) {
+  const [validIds, setValidIds] = useState<string[]>([]);
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function checkEmbeddability() {
+      const results = await Promise.all(
+        videoIds.map(async (id) => {
+          try {
+            // YouTube oEmbed returns 401/403/404 for non-embeddable or unavailable videos
+            const res = await fetch(
+              `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`,
+              { mode: "cors" }
+            );
+            return res.ok ? id : null;
+          } catch {
+            return null;
+          }
+        })
+      );
+
+      if (!cancelled) {
+        setValidIds(results.filter((id): id is string => id !== null));
+        setChecked(true);
+      }
+    }
+
+    checkEmbeddability();
+    return () => { cancelled = true; };
+  }, [videoIds]);
+
+  // Don't show anything while checking or if no valid videos
+  if (!checked || validIds.length === 0) return null;
+
+  return (
+    <div className="rounded-xl border border-border bg-card p-5 mb-8">
+      <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground mb-4">
+        Video Reviews ({validIds.length})
+      </h2>
+      <div className="grid grid-cols-1 gap-4">
+        {validIds.map((videoId) => (
+          <div key={videoId} className="aspect-video rounded-lg overflow-hidden border border-border">
+            <iframe
+              src={`https://www.youtube.com/embed/${videoId}`}
+              title={`${itemName} review`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+              allowFullScreen
+              className="w-full h-full"
+              loading="lazy"
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
