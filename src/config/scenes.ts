@@ -80,8 +80,8 @@ export const scenes: Scene[] = [
     technicalLabel: "SYSTEM ANALYSIS",
     headline: "KNOW YOUR SYSTEM.",
     copy: "Model warmth, weight and conditions before you ever reach the trailhead.",
-    cta: "ANALYZE MY GEAR →",
-    href: "/compare",
+    cta: "EXPLORE GEAR →",
+    href: "/explore",
     contentPosition: "left-lower",
   },
 ];

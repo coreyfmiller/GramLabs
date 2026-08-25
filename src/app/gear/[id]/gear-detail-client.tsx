@@ -117,10 +117,10 @@ export function GearDetailClient({
       <div className="max-w-4xl mx-auto px-4 md:px-8 py-8">
         {/* Back link */}
         <Link
-          href="/compare"
+          href="/explore"
           className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1 mb-6"
         >
-          <ArrowLeft className="size-3" /> Back to Compare
+          <ArrowLeft className="size-3" /> Back to Gear Explorer
         </Link>
 
         {/* Header */}
@@ -246,11 +246,11 @@ export function GearDetailClient({
             {/* Compare CTA */}
             <div className="mt-4 pt-4 border-t border-white/[0.07] text-center">
               <Link
-                href={`/compare?items=${item.id}${similarItems[0] ? "," + similarItems[0].id : ""}`}
+                href={`/explore?category=${item.category}`}
                 className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
               >
                 <GitCompareArrows className="size-3.5" />
-                Open in Compare Tool
+                Explore similar gear
               </Link>
             </div>
           </div>
