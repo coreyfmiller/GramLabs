@@ -197,25 +197,58 @@ async function main() {
   // Read existing file to preserve the header (types, constants, etc.)
   const existing = readFileSync(DB_PATH, "utf-8");
 
-  // Find where the gearDatabase array starts
-  const marker = existing.match(/export\s+const\s+gearDatabase\s*:\s*GearItem\[\]\s*=\s*\[/);
-  if (!marker) {
-    console.error("❌ Could not find gearDatabase export in gear-database.ts");
+  // Find where the data section starts. Handle BOTH formats so sync is idempotent:
+  //   old: `export const gearDatabase: GearItem[] = [ ... ]`
+  //   new: `import gearDatabaseRaw from "./gear-database.json"` (+ wrapper export)
+  // Split at whichever appears first.
+  const candidates = [
+    /^\s*\/\/\s*@ts-(?:expect-error|ignore).*$/m,
+    /^\s*import\s+gearDatabaseRaw\s+from/m,
+    /export\s+const\s+gearDatabase\s*:\s*GearItem\[\]\s*=/,
+  ];
+  let splitIdx = -1;
+  for (const re of candidates) {
+    const m = existing.match(re);
+    if (m && (splitIdx === -1 || m.index < splitIdx)) splitIdx = m.index;
+  }
+  if (splitIdx === -1) {
+    console.error("❌ Could not find gearDatabase export/import in gear-database.ts");
     process.exit(1);
   }
 
-  const header = existing.slice(0, marker.index);
+  // Header = everything before the data section. Strip any stray
+  // @ts-expect-error/@ts-ignore left over from a previous wrapper attempt, plus
+  // any prior JSON import line, so we emit a single clean wrapper.
+  let header = existing.slice(0, splitIdx)
+    .replace(/^\s*\/\/\s*@ts-(expect-error|ignore).*$/gm, "")
+    .replace(/^\s*import\s+gearDatabaseRaw\s+from\s+["'].*$/gm, "")
+    .replace(/\n{3,}/g, "\n\n");
+  if (!header.endsWith("\n")) header += "\n";
 
-  // Map and serialize all items
+  // Map all items.
   const items = allRows.map(mapRow);
-  const serialized = items.map(serializeItem).join(",\n");
 
-  // Write the full file
-  const output = `${header}export const gearDatabase: GearItem[] = [\n${serialized},\n];\n`;
+  // Write records to a JSON file (imported by gear-database.ts). Keeping the
+  // 3,877 records out of the .ts source means TypeScript type-checks the array
+  // ONCE (via a single `as GearItem[]` assertion) instead of validating every
+  // literal — which otherwise exhausts the type-checker's heap at build time.
+  const jsonPath = DB_PATH.replace(/\.ts$/, ".json");
+  writeFileSync(jsonPath, JSON.stringify(items));
+
+  // Write the .ts: preserved header (types/labels) + a typed import of the JSON.
+  // Records live in JSON so TS type-checks the array ONCE via the cast below,
+  // instead of validating 3,877 literals (which exhausts the checker's heap).
+  // `as unknown as` is required because resolveJsonModule infers wide `string`
+  // types for enum-like fields (category/tier) that don't match GearItem.
+  const output = `${header}import gearDatabaseRaw from "./gear-database.json";
+
+export const gearDatabase: GearItem[] = gearDatabaseRaw as unknown as GearItem[];
+`;
   writeFileSync(DB_PATH, output);
 
-  console.log(`✅ Wrote ${items.length} items to ${DB_PATH}`);
-  console.log(`   File size: ${(Buffer.byteLength(output) / 1024).toFixed(1)} KB`);
+  console.log(`✅ Wrote ${items.length} items to ${jsonPath}`);
+  console.log(`   JSON size: ${(Buffer.byteLength(JSON.stringify(items)) / 1024).toFixed(1)} KB`);
+  console.log(`   TS wrapper: ${DB_PATH}`);
 }
 
 main().catch((err) => {

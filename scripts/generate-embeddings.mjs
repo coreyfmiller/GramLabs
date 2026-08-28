@@ -32,38 +32,9 @@ if (!API_KEY) {
 // --- Parse gear database (extract the exported array from TS source) ---
 
 function parseGearDatabase() {
-  const source = readFileSync(DB_PATH, "utf-8");
-
-  // Find the gearDatabase array start (handle potential line breaks in declaration)
-  const startMatch = source.match(/export\s+const\s+gearDatabase\s*:\s*GearItem\[\]\s*=\s*\[/);
-  if (!startMatch) {
-    console.error("❌ Could not find gearDatabase export in gear-database.ts");
-    process.exit(1);
-  }
-
-  // Find the opening bracket of the array
-  const matchEnd = startMatch.index + startMatch[0].length;
-  const arrayStart = matchEnd - 1; // position of the '['
-
-  // Extract the array by tracking bracket depth
-  let depth = 0;
-  let i = arrayStart;
-  for (; i < source.length; i++) {
-    if (source[i] === "[") depth++;
-    if (source[i] === "]") depth--;
-    if (depth === 0) break;
-  }
-
-  const arrayStr = source.slice(arrayStart, i + 1);
-
-  // Clean TS-specific syntax for eval: remove type assertions, trailing commas before ]
-  const cleaned = arrayStr
-    .replace(/\/\/.*$/gm, "") // strip single-line comments
-    .replace(/as\s+\w+/g, ""); // strip type assertions
-
-  // Parse with Function constructor (safe — we control the input file)
-  const items = new Function(`return ${cleaned}`)();
-  return items;
+  // Records now live in gear-database.json (gear-database.ts is a typed wrapper).
+  const jsonPath = DB_PATH.replace(/\.ts$/, ".json");
+  return JSON.parse(readFileSync(jsonPath, "utf-8"));
 }
 
 // --- Build text representation (mirrors buildItemText in gear-embeddings.ts) ---
@@ -131,30 +102,52 @@ async function batchEmbed(texts) {
     process.stdout.write(`  Batch ${batchNum}/${totalBatches} (${batch.length} items)...`);
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:batchEmbedContents?key=${API_KEY}`;
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        requests: batch.map((text) => ({
-          model: `models/${MODEL}`,
-          content: { parts: [{ text }] },
-        })),
-      }),
+    const body = JSON.stringify({
+      requests: batch.map((text) => ({
+        model: `models/${MODEL}`,
+        content: { parts: [{ text }] },
+        // 768-dim keeps the JSON ~4x smaller (deployable) with no meaningful
+        // retrieval-quality loss. MUST match embedQuery() in src/lib/gear-embeddings.ts.
+        outputDimensionality: 768,
+      })),
     });
 
-    if (!res.ok) {
-      const error = await res.text();
-      console.error(`\n❌ Embedding API error: ${res.status} ${error}`);
+    // Retry with backoff, honoring 429 retryDelay (paid tier: 3000 embed reqs/min).
+    let data = null;
+    for (let attempt = 0; attempt < 6; attempt++) {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body,
+      });
+
+      if (res.ok) { data = await res.json(); break; }
+
+      const errText = await res.text();
+      if (res.status === 429) {
+        // Parse suggested retry delay; default to 45s, add small buffer.
+        let waitMs = 45000;
+        const m = errText.match(/retry in ([\d.]+)s|"retryDelay":\s*"([\d.]+)s"/);
+        if (m) waitMs = Math.ceil(parseFloat(m[1] || m[2]) * 1000) + 2000;
+        process.stdout.write(` [429, waiting ${Math.round(waitMs / 1000)}s]`);
+        await new Promise((r) => setTimeout(r, waitMs));
+        continue;
+      }
+      console.error(`\n❌ Embedding API error: ${res.status} ${errText}`);
       process.exit(1);
     }
 
-    const data = await res.json();
+    if (!data) {
+      console.error(`\n❌ Batch ${batchNum} failed after retries (rate limit).`);
+      process.exit(1);
+    }
+
     allEmbeddings.push(...data.embeddings.map((e) => e.values));
     console.log(" ✓");
 
-    // Small delay to avoid rate limits
+    // Pace to stay under the per-minute quota (~100 items/batch).
     if (i + BATCH_SIZE < texts.length) {
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 1500));
     }
   }
 

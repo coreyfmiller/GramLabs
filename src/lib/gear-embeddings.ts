@@ -14,6 +14,14 @@ import precomputedEmbeddings from "@/data/gear-embeddings.json";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
+/**
+ * Embedding dimension. 768 (down from the model default of 3072) keeps the
+ * pre-computed JSON ~4x smaller so it stays under serverless bundle limits,
+ * with no meaningful retrieval-quality loss. MUST match the value used in
+ * scripts/generate-embeddings.mjs, or cosine similarity will be invalid.
+ */
+const EMBED_DIM = 768;
+
 /** Cached embeddings: Map<gearId, float[]> */
 let embeddingCache: Map<string, number[]> | null = null;
 
@@ -79,9 +87,11 @@ async function batchEmbed(texts: string[]): Promise<number[][]> {
   for (let i = 0; i < texts.length; i += batchSize) {
     const batch = texts.slice(i, i + batchSize);
     const result = await model.batchEmbedContents({
+      // outputDimensionality is supported by the API but missing from the SDK types.
       requests: batch.map((text) => ({
         content: { role: "user", parts: [{ text }] },
-      })),
+        outputDimensionality: EMBED_DIM,
+      })) as unknown as Parameters<typeof model.batchEmbedContents>[0]["requests"],
     });
     allEmbeddings.push(...result.embeddings.map((e) => e.values));
   }
@@ -132,7 +142,10 @@ export async function embedQuery(query: string): Promise<number[]> {
   const model = genAI.getGenerativeModel({ model: "gemini-embedding-001" });
   const result = await model.embedContent({
     content: { role: "user", parts: [{ text: query }] },
-  });
+    // MUST match the stored embedding dimension or cosine similarity is meaningless.
+    // outputDimensionality is supported by the API but missing from the SDK types.
+    outputDimensionality: EMBED_DIM,
+  } as unknown as Parameters<typeof model.embedContent>[0]);
   return result.embedding.values;
 }
 
