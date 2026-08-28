@@ -677,7 +677,8 @@ export const usePackStore = create<PackStore>()(
             `"${pi.item.name}"`,
             `"${pi.item.brand}"`,
             `"${labels[pi.item.category] || pi.item.category}"`,
-            pi.item.weightOz.toFixed(1),
+            // Export full precision (2dp, no forced trailing zeros) — weight is the point.
+            String(Math.round(pi.item.weightOz * 100) / 100),
             pi.item.priceUsd.toFixed(2),
             pi.status,
             pi.quantity,
