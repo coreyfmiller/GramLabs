@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { GearItem, GearCategory, CATEGORY_COLORS } from "@/data/gear-database";
+import type { SharePayload } from "@/lib/pack-share";
 
 export type ItemStatus = "packed" | "worn" | "consumable";
 
@@ -89,6 +90,7 @@ export interface PackStore {
 
   // Share
   hydrateFromShareData: (items: PackItem[], name: string) => void;
+  getSharePayload: () => SharePayload | null;
   generateShareURL: () => string;
   exportCSV: () => string;
 }
@@ -644,11 +646,18 @@ export const usePackStore = create<PackStore>()(
         });
       },
 
-      generateShareURL: () => {
+      // Raw self-describing pack payload (SharePayload shape). Reused by both the
+      // ?share= URL encoder and the DB save API so there's one source of truth.
+      getSharePayload: (): SharePayload | null => {
         const state = get();
         const loadout = state.loadouts.find((l) => l.id === state.activeLoadoutId);
-        if (!loadout) return "";
-        const shareData = {
+        if (!loadout) return null;
+        // Only include definitions for custom (free-text) categories actually in use.
+        const usedCats = new Set<string>(loadout.items.map((pi) => pi.item.category));
+        const cats = state.customCategories
+          .filter((c) => usedCats.has(c.id))
+          .map((c) => ({ id: c.id, label: c.label, color: c.color }));
+        return {
           n: loadout.name,
           i: loadout.items.map((pi) => ({
             nm: pi.item.name,
@@ -661,7 +670,13 @@ export const usePackStore = create<PackStore>()(
             sr: pi.starred ? 1 : 0,
             ur: pi.url || pi.item.url || "",
           })),
+          ...(cats.length ? { c: cats } : {}),
         };
+      },
+
+      generateShareURL: () => {
+        const shareData = get().getSharePayload();
+        if (!shareData) return "";
         const encoded = btoa(encodeURIComponent(JSON.stringify(shareData)));
         // /list decodes ?share= via decodeShareParam and works without login.
         // (Previously pointed at /pack/view which never existed.)
