@@ -1,20 +1,16 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { usePackStore } from "@/store/pack-store";
 import type { ItemStatus } from "@/store/pack-store";
-import { useAuth } from "@/hooks/use-auth";
 import { formatWeightWithUnit } from "@/utils/format";
-import { decodeShareParam, payloadToItems, type SharePayload } from "@/lib/pack-share";
+import { decodeShareParam } from "@/lib/pack-share";
+import { PackSaveMenu } from "@/components/PackSaveMenu";
 import { ListChart, CHART_OPTIONS, type ListChartType, type Slice } from "@/components/list/ListCharts";
-import { Plus, Trash2, Share2, Download, Upload, LayoutGrid, X, Save, FolderOpen, Check, Trash } from "lucide-react";
-
-interface SavedPackSummary {
-  id: string; name: string; isPublic: boolean; viewCount: number; itemCount: number; updatedAt: string;
-}
+import { Plus, Trash2, Share2, Download, Upload, LayoutGrid, X } from "lucide-react";
 
 // Reuse a fixed palette for auto-coloring free-text categories.
 const PALETTE = ["#f97316", "#ec4899", "#14b8a6", "#8b5cf6", "#f59e0b", "#06b6d4", "#ef4444", "#10b981", "#6366f1", "#d946ef", "#3b82f6", "#84cc16"];
@@ -46,8 +42,6 @@ function ListInner() {
   const updateItemQuantity = usePackStore((s) => s.updateItemQuantity);
   const updateItemDetails = usePackStore((s) => s.updateItemDetails);
   const generateShareURL = usePackStore((s) => s.generateShareURL);
-  const getSharePayload = usePackStore((s) => s.getSharePayload);
-  const hydrateFromShareData = usePackStore((s) => s.hydrateFromShareData);
   const exportCSV = usePackStore((s) => s.exportCSV);
   const importFromLighterPack = usePackStore((s) => s.importFromLighterPack);
   const getBaseWeight = usePackStore((s) => s.getBaseWeight);
@@ -58,21 +52,12 @@ function ListInner() {
   const getAllCategoryLabels = usePackStore((s) => s.getAllCategoryLabels);
   const getAllCategoryColors = usePackStore((s) => s.getAllCategoryColors);
 
-  const { user } = useAuth();
-
   const [chart, setChart] = useState<ListChartType>("donut");
   const [showImport, setShowImport] = useState(false);
   const [lpUrl, setLpUrl] = useState("");
   const [csv, setCsv] = useState("");
   const [toast, setToast] = useState<string | null>(null);
   const [importMsg, setImportMsg] = useState<string | null>(null);
-
-  // Save / My Packs (Phase 2, DB-backed)
-  const [showPacks, setShowPacks] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [savedLink, setSavedLink] = useState<string | null>(null);
-  const [myPacks, setMyPacks] = useState<SavedPackSummary[] | null>(null);
-  const [packsBusy, setPacksBusy] = useState(false);
 
   const labels = getAllCategoryLabels();
   const colors = getAllCategoryColors();
@@ -122,72 +107,6 @@ function ListInner() {
     const url = generateShareURL(); // now emits a working /list?share= link
     try { await navigator.clipboard.writeText(url); flash("Share link copied to clipboard"); }
     catch { flash("Couldn't copy — link: " + url); }
-  }
-
-  // Save the current pack to the account and mint a short /p/<id> link.
-  async function doSave() {
-    const payload = getSharePayload();
-    if (!payload || payload.i.length === 0) { flash("Add an item before saving"); return; }
-    if (!user) { window.location.href = "/login?redirect=/list"; return; }
-    setSaving(true); setSavedLink(null);
-    try {
-      const res = await fetch("/api/packs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: payload.n, payload, isPublic: true }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        if (res.status === 401 || data.authRequired) { window.location.href = "/login?redirect=/list"; return; }
-        flash(data.error || "Save failed"); return;
-      }
-      const full = `${window.location.origin}${data.url}`;
-      setSavedLink(full);
-      try { await navigator.clipboard.writeText(full); flash("Saved — short link copied"); }
-      catch { flash("Saved to your account"); }
-      setMyPacks(null); // force refresh next open
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  const loadMyPacks = useCallback(async () => {
-    setPacksBusy(true);
-    try {
-      const res = await fetch("/api/packs");
-      if (res.status === 401) { setMyPacks([]); return; }
-      const data = await res.json();
-      setMyPacks(res.ok ? (data.packs || []) : []);
-    } catch { setMyPacks([]); }
-    finally { setPacksBusy(false); }
-  }, []);
-
-  function openPacks() {
-    setShowPacks(true);
-    if (!user) return;
-    if (myPacks === null) loadMyPacks();
-  }
-
-  async function loadPack(id: string) {
-    setPacksBusy(true);
-    try {
-      const res = await fetch(`/api/packs/${id}`);
-      const data = await res.json();
-      if (!res.ok) { flash(data.error || "Couldn't load pack"); return; }
-      const decoded = payloadToItems(data.payload as SharePayload);
-      hydrateFromShareData(decoded.items, data.name || "Saved Pack");
-      setShowPacks(false);
-      flash(`Loaded “${data.name}”`);
-    } finally { setPacksBusy(false); }
-  }
-
-  async function deletePack(id: string) {
-    setPacksBusy(true);
-    try {
-      const res = await fetch(`/api/packs/${id}`, { method: "DELETE" });
-      if (res.ok) setMyPacks((prev) => (prev ? prev.filter((p) => p.id !== id) : prev));
-      else flash("Delete failed");
-    } finally { setPacksBusy(false); }
   }
 
   function doExportCSV() {
@@ -252,8 +171,7 @@ function ListInner() {
             <button onClick={() => setShowImport(true)} className="inline-flex items-center gap-1 rounded-lg border border-foreground/15 px-2.5 py-1.5 text-xs font-medium"><Upload size={14} /> Import</button>
             <button onClick={doExportCSV} className="inline-flex items-center gap-1 rounded-lg border border-foreground/15 px-2.5 py-1.5 text-xs font-medium"><Download size={14} /> CSV</button>
             <button onClick={doShare} className="inline-flex items-center gap-1 rounded-lg border border-foreground/15 px-2.5 py-1.5 text-xs font-medium"><Share2 size={14} /> Share</button>
-            <button onClick={openPacks} className="inline-flex items-center gap-1 rounded-lg border border-foreground/15 px-2.5 py-1.5 text-xs font-medium"><FolderOpen size={14} /> My Packs</button>
-            <button onClick={doSave} disabled={saving} className="inline-flex items-center gap-1 rounded-lg bg-foreground px-2.5 py-1.5 text-xs font-medium text-background disabled:opacity-60"><Save size={14} /> {saving ? "Saving…" : "Save"}</button>
+            <PackSaveMenu variant="list" redirectTo="/list" />
             <Link href="/pack-lab" className="inline-flex items-center gap-1 rounded-lg border border-foreground/15 px-2.5 py-1.5 text-xs font-medium"><LayoutGrid size={14} /> Pack Lab</Link>
           </div>
         </div>
@@ -340,50 +258,6 @@ function ListInner() {
           </div>
         </div>
       </div>
-
-      {/* My Packs modal */}
-      {showPacks && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowPacks(false)}>
-          <div className="w-full max-w-md rounded-2xl bg-background p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-base font-semibold">My Packs</h2>
-              <button onClick={() => setShowPacks(false)} aria-label="Close"><X size={18} /></button>
-            </div>
-
-            {savedLink && (
-              <div className="mb-3 flex items-center gap-2 rounded-lg border border-foreground/15 bg-foreground/5 px-3 py-2 text-xs">
-                <Check size={14} className="shrink-0 text-green-500" />
-                <a href={savedLink} target="_blank" rel="noreferrer" className="min-w-0 flex-1 truncate underline">{savedLink}</a>
-                <button onClick={() => { navigator.clipboard?.writeText(savedLink); flash("Link copied"); }} className="shrink-0 rounded border border-foreground/15 px-1.5 py-0.5">Copy</button>
-              </div>
-            )}
-
-            {!user ? (
-              <div className="py-6 text-center text-sm text-muted-foreground">
-                <p className="mb-3">Sign in to save packs to your account and get a permanent short link.</p>
-                <a href="/login?redirect=/list" className="inline-block rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background">Sign in</a>
-              </div>
-            ) : packsBusy && myPacks === null ? (
-              <p className="py-6 text-center text-sm text-muted-foreground">Loading…</p>
-            ) : myPacks && myPacks.length > 0 ? (
-              <ul className="max-h-80 space-y-1 overflow-y-auto">
-                {myPacks.map((p) => (
-                  <li key={p.id} className="flex items-center gap-2 rounded-lg border border-foreground/10 px-3 py-2">
-                    <button onClick={() => loadPack(p.id)} className="min-w-0 flex-1 text-left">
-                      <div className="truncate text-sm font-medium">{p.name}</div>
-                      <div className="text-[11px] text-muted-foreground">{p.itemCount} items · {p.viewCount} views</div>
-                    </button>
-                    <a href={`/p/${p.id}`} target="_blank" rel="noreferrer" className="shrink-0 rounded border border-foreground/15 px-1.5 py-0.5 text-[11px]" title="Open public link"><FolderOpen size={12} /></a>
-                    <button onClick={() => deletePack(p.id)} disabled={packsBusy} className="shrink-0 text-muted-foreground hover:text-red-500" aria-label="Delete pack"><Trash size={14} /></button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="py-6 text-center text-sm text-muted-foreground">No saved packs yet. Hit “Save” to store your current list and get a shareable link.</p>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Import modal */}
       {showImport && (

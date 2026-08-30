@@ -33,6 +33,7 @@ import { usePackStore, PackItem, ItemStatus } from "@/store/pack-store";
 import { formatWeightWithUnit } from "@/utils/format";
 import { addToCloset } from "@/lib/closet-api";
 import { BuildFromClosetModal } from "./BuildFromClosetModal";
+import { PackSaveMenu } from "@/components/PackSaveMenu";
 import { cn } from "@/lib/utils";
 
 const CATEGORY_ORDER: string[] = [
@@ -271,6 +272,9 @@ export function PackList() {
           >
             <Download className="size-3.5" />
           </button>
+
+          {/* Save to account + My Packs (shared with /list) */}
+          <PackSaveMenu variant="icon" redirectTo="/pack-lab" />
 
           <span aria-hidden="true" className="hidden h-7 w-px bg-white/10 sm:block" />
 
