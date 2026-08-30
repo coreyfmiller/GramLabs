@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { usePackStore } from "@/store/pack-store";
 import type { ItemStatus } from "@/store/pack-store";
-import { formatWeightWithUnit } from "@/utils/format";
+import { formatWeightWithUnit, formatPrice } from "@/utils/format";
 import { decodeShareParam } from "@/lib/pack-share";
 import { PackSaveMenu } from "@/components/PackSaveMenu";
 import { ListChart, CHART_OPTIONS, type ListChartType, type Slice } from "@/components/list/ListCharts";
@@ -191,7 +191,7 @@ function ListInner() {
           ))}
           <div className="rounded-lg border border-foreground/10 px-3 py-2">
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Cost</div>
-            <div className="num text-sm font-semibold">${getTotalCost().toFixed(0)}</div>
+            <div className="num text-sm font-semibold">{formatPrice(Math.round(getTotalCost()))}</div>
           </div>
         </div>
 

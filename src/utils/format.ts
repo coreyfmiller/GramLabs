@@ -43,3 +43,19 @@ export function formatWeightWithUnit(oz: number, unit: "oz" | "g"): string {
   }
   return formatWeight(oz);
 }
+
+/**
+ * Format a USD price for display. Missing prices — null, undefined, or 0 — render
+ * as an em dash rather than "$0", since $0 reads as broken data (the item simply
+ * has no verified price yet). Real free items don't exist in this catalog.
+ */
+export function formatPrice(usd: number | null | undefined): string {
+  if (usd == null || usd <= 0) return "—";
+  // Whole-dollar prices drop the cents; otherwise show 2 decimals.
+  return Number.isInteger(usd) ? `$${usd}` : `$${usd.toFixed(2)}`;
+}
+
+/** True when a price is present and meaningful (used to gate rendering price UI). */
+export function hasPrice(usd: number | null | undefined): boolean {
+  return usd != null && usd > 0;
+}
