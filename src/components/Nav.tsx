@@ -29,6 +29,7 @@ const NAV_LINKS: NavLink[] = [
 const ADMIN_LINKS: NavLink[] = [
   { label: "Brands", href: "/brands" },
   { label: "TODO", href: "/admin/todo" },
+  { label: "CORRECTIONS", href: "/admin/corrections" },
 ];
 
 export function Nav() {
