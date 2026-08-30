@@ -448,59 +448,54 @@ export const usePackStore = create<PackStore>()(
 
       importFromLighterPack: async (url) => {
         try {
-          // Extract the share ID from lighterpack URL
-          const match = url.match(/lighterpack\.com\/r\/([a-z0-9]+)/i);
-          if (!match) return { success: false, count: 0, error: "Invalid LighterPack URL" };
+          // Fetch + parse happens server-side (browser can't fetch lighterpack.com — CORS,
+          // and the real data lives in the page HTML, not a JSON endpoint).
+          const res = await fetch(`/api/import/lighterpack?url=${encodeURIComponent(url)}`);
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            return { success: false, count: 0, error: data?.error || "Could not import this list" };
+          }
 
-          const shareId = match[1];
-          const res = await fetch(`https://lighterpack.com/r/${shareId}.json`);
-          if (!res.ok) return { success: false, count: 0, error: "Could not fetch pack data" };
+          const parsedItems: {
+            nm: string; br: string; ca: string; wt: number; pr: number; st: string; qt: number; sr: number; ur: string;
+          }[] = data.items || [];
+          const parsedCats: { id: string; label: string; color: string }[] = data.categories || [];
 
-          const data = await res.json();
-          const { mapCategory } = await import("@/utils/import-parser");
+          if (parsedItems.length === 0) return { success: false, count: 0, error: "No items found" };
 
-          const items: PackItem[] = (data.items || []).map((raw: { name?: string; description?: string; category?: string; weight?: number; unit?: string; price?: number; url?: string; worn?: boolean; consumable?: boolean; qty?: number; star?: number }) => {
-            // Convert weight to oz
-            let weightOz = raw.weight || 0;
-            const unit = (raw.unit || "oz").toLowerCase();
-            if (unit === "g" || unit === "grams") weightOz = weightOz / 28.3495;
-            if (unit === "kg") weightOz = (weightOz * 1000) / 28.3495;
-            if (unit === "lb" || unit === "lbs") weightOz = weightOz * 16;
-
-            const category = raw.category ? mapCategory(raw.category) : "accessories";
-
+          const items: PackItem[] = parsedItems.map((raw) => {
             const item: GearItem = {
               id: `lp-${Date.now()}-${generateId()}`,
-              name: raw.name || "Unknown Item",
-              brand: "",
-              category,
+              name: raw.nm || "Unknown Item",
+              brand: raw.br || "",
+              // Free-text LighterPack categories are kept as raw ids; labels/colors are
+              // registered as custom categories below so they render + chart correctly.
+              category: (raw.ca || "accessories") as GearCategory,
               tier: "mid",
-              weightOz: Math.round(weightOz * 100) / 100,
-              priceUsd: raw.price || 0,
-              description: raw.description || "",
-              url: raw.url || undefined,
+              weightOz: raw.wt || 0,
+              priceUsd: raw.pr || 0,
+              description: raw.br || "",
+              url: raw.ur || undefined,
             };
-
-            let status: ItemStatus = "packed";
-            if (raw.worn) status = "worn";
-            if (raw.consumable) status = "consumable";
-
             return {
               gearId: item.id,
               item,
-              status,
-              quantity: raw.qty || 1,
-              starred: (raw.star || 0) > 0,
-              url: raw.url || undefined,
+              status: (["worn", "consumable", "packed"].includes(raw.st) ? raw.st : "packed") as ItemStatus,
+              quantity: raw.qt || 1,
+              starred: raw.sr === 1,
+              url: raw.ur || undefined,
             };
           });
 
-          if (items.length === 0) return { success: false, count: 0, error: "No items found" };
-
-          // Create a new loadout with the imported data
-          const newId = generateId();
+          // Merge imported category definitions (label + color) so free-text
+          // categories keep their identity; don't clobber existing ones.
           const state = get();
+          const existing = new Set(state.customCategories.map((c) => c.id));
+          const newCats = parsedCats.filter((c) => c.id && !existing.has(c.id));
+
+          const newId = generateId();
           set({
+            customCategories: [...state.customCategories, ...newCats],
             loadouts: [
               ...state.loadouts,
               { id: newId, name: data.name || "LighterPack Import", items },
@@ -509,7 +504,7 @@ export const usePackStore = create<PackStore>()(
           });
 
           return { success: true, count: items.length };
-        } catch (e) {
+        } catch {
           return { success: false, count: 0, error: "Failed to import" };
         }
       },
