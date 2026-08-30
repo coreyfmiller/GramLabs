@@ -32,11 +32,14 @@ export async function updateSession(request: NextRequest) {
 
   // Redirect unauthenticated users to login for protected routes
   // Everything except the homepage, login, auth callback, API routes, and static assets requires auth
-  const publicRoutes = ["/", "/login", "/auth"];
+  const publicRoutes = ["/", "/login", "/auth", "/list"];
   const isPublic =
     publicRoutes.some(
       (route) => request.nextUrl.pathname === route || request.nextUrl.pathname.startsWith("/auth")
-    ) || request.nextUrl.pathname.startsWith("/api"); // API routes handle their own auth
+    ) ||
+    request.nextUrl.pathname.startsWith("/api") || // API routes handle their own auth
+    request.nextUrl.pathname.startsWith("/list") || // simple gear list — usable without login
+    request.nextUrl.pathname.startsWith("/p/"); // public shared-pack view (Phase 2)
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone();

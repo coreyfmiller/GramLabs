@@ -663,7 +663,9 @@ export const usePackStore = create<PackStore>()(
           })),
         };
         const encoded = btoa(encodeURIComponent(JSON.stringify(shareData)));
-        return `${typeof window !== "undefined" ? window.location.origin : ""}/pack/view?share=${encoded}`;
+        // /list decodes ?share= via decodeShareParam and works without login.
+        // (Previously pointed at /pack/view which never existed.)
+        return `${typeof window !== "undefined" ? window.location.origin : ""}/list?share=${encoded}`;
       },
 
       exportCSV: () => {
