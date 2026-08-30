@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import SuggestEdit from "@/components/SuggestEdit";
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -28,6 +29,7 @@ export default function RootLayout({
     <html lang="en" className={`${archivo.variable} ${jetbrainsMono.variable}`}>
       <body className="bg-background font-[family-name:var(--font-archivo)]">
         {children}
+        <SuggestEdit />
       </body>
     </html>
   );
